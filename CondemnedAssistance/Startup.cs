@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CondemnedAssistance.Models;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
-namespace CondemnedAssistance {
+namespace CondemnedAssistance
+{
     public class Startup {
         public Startup(IHostingEnvironment env) {
             var builder = new ConfigurationBuilder()
@@ -22,6 +24,7 @@ namespace CondemnedAssistance {
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services){
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<UserContext>(options => options.UseSqlServer(connectionString));
             services.AddMvc();
         }
 
