@@ -32,6 +32,13 @@ namespace CondemnedAssistance
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
             loggerFactory.AddConsole();
 
+            app.UseCookieAuthentication(new CookieAuthenticationOptions {
+                AuthenticationScheme = "Cookies",
+                LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login"),
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true
+            });
+
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
