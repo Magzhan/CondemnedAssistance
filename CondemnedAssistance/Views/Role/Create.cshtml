@@ -1,0 +1,22 @@
+﻿@model CondemnedAssistance.ViewModels.RoleModel
+@{
+    Layout = "_Layout";
+}
+<form asp-action="Create" asp-controller="Role" asp-anti-forgery="true">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <div>
+        <div class="form-group">
+            <label asp-for="Name">Role Name</label>
+            <input type="text" asp-for="Name" />
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description"></textarea>
+            <span asp-validation-for="Description"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn" />
+        </div>
+    </div>
+</form>

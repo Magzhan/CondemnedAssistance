@@ -30,7 +30,7 @@ namespace CondemnedAssistance.Controllers {
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login && u.PasswordHash == model.Password);
                 if(user != null) {
-                    await Authenticate(model.Login);
+                    await Authenticate(user.Id);
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -59,7 +59,7 @@ namespace CondemnedAssistance.Controllers {
 
                     await _db.SaveChangesAsync();
 
-                    await Authenticate(model.Login);
+                    await Authenticate(user.Id);
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -70,13 +70,13 @@ namespace CondemnedAssistance.Controllers {
             return View(model);
         }
 
-        private async Task Authenticate(string login) {
+        private async Task Authenticate(int userId) {
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, login)
+                new Claim("UserId", userId.ToString())
             };
 
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", "UserId", ClaimsIdentity.DefaultRoleClaimType);
 
             await HttpContext.Authentication.SignInAsync("Cookies", new ClaimsPrincipal(id));
         }
