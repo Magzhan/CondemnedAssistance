@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace CondemnedAssistance.Models {
+namespace CondemnedAssistance.Models
+{
     public class User {
         [Key]
         public int Id { get; set; }
@@ -20,5 +21,23 @@ namespace CondemnedAssistance.Models {
         public DateTimeOffset ModifiedUserDate { get; set; }
 
         public ICollection<UserRole> UserRoles { get; set; }
+    }
+
+    public class TemplateUserHelperTables {
+        [Key]
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public string Name { get; set; }
+        public string NormalizedName { get; set; }
+        public int RequestUser { get; set; }
+        public DateTime RequestDate { get; set; }
+    }
+
+    public class UserStatus : TemplateUserHelperTables {
+
+    }
+
+    public class UserType : TemplateUserHelperTables {
+
     }
 }
