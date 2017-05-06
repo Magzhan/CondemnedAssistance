@@ -1,5 +1,6 @@
 ﻿using CondemnedAssistance.Models;
 using CondemnedAssistance.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -17,11 +18,13 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login() {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model) {
             if (ModelState.IsValid) {
