@@ -99,7 +99,10 @@ namespace CondemnedAssistance.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id) {
-            return View();
+            Role role = await _db.Roles.FirstOrDefaultAsync(r => r.Id == id);
+            _db.Roles.Remove(role);
+            await _db.SaveChangesAsync();
+            return RedirectToAction("Index", "Role");
         }
     }
 }
