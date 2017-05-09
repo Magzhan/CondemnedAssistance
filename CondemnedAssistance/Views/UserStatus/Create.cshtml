@@ -1,0 +1,17 @@
+﻿@model CondemnedAssistance.Models.UserStatus
+@{
+    Layout = "_Layout";
+}
+<form asp-controller="UserStatus" asp-action="Create" asp-anti-forgery="true">
+    <div>
+        <label asp-for="">Name</label>
+        <input type="text" asp-for="Name" />
+    </div>
+    <div>
+        <label asp-for="Description">Description</label>
+        <textarea asp-for="Description"></textarea>
+    </div>
+    <div>
+        <input type="submit" value="Create" class="btn"/>
+    </div>
+</form>

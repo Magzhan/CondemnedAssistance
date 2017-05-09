@@ -1,0 +1,18 @@
+﻿@model CondemnedAssistance.Models.UserType
+@{
+    Layout = "_Layout";
+}
+<form asp-controller="UserType" asp-action="Update" asp-anti-forgery="true">
+    <div>
+        <input type="hidden" asp-for="Id" />
+    </div>
+    <div>
+        <input type="text" asp-for="Name" />
+    </div>
+    <div>
+        <textarea asp-for="Description"></textarea>
+    </div>
+    <div>
+        <input type="submit" value="Save"/>
+    </div>
+</form>

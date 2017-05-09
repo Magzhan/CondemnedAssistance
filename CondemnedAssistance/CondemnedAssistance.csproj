@@ -6,8 +6,6 @@
 
   <ItemGroup>
     <Folder Include="Views\User\" />
-    <Folder Include="Views\UserStatus\" />
-    <Folder Include="Views\UserType\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
