@@ -4,7 +4,9 @@
     
 </head>
 <body>
-    <div>Menu</div>
+    <div>Menu
+        @await Component.InvokeAsync("LoginStatus");
+    </div>
     <div>Users</div>
     <div>Roles</div>
     @RenderBody()
