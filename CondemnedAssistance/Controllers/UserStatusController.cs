@@ -16,7 +16,8 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public IActionResult Index() {
-            return View();
+            ICollection<UserStatus> statuses = _db.UserStatuses.ToList();
+            return View(statuses);
         }
 
         [HttpGet]
