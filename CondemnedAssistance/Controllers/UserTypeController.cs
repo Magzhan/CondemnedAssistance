@@ -57,7 +57,7 @@ namespace CondemnedAssistance.Controllers {
                 ModelState.AddModelError("", "Status with that id does not exist");
                 return RedirectToAction("Index", "UserType");
             }
-            return View();
+            return View(type);
         }
 
         [HttpPost]
