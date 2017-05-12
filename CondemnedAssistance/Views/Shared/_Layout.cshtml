@@ -7,8 +7,11 @@
     <div>Menu
         @await Component.InvokeAsync("LoginStatus");
     </div>
-    <div>Users</div>
-    <div>Roles</div>
+    <div class="navigation">
+        <div>Main</div>
+        <div>Messages</div>
+        <div>Management</div>
+    </div>
     @RenderBody()
 </body>
 </html>

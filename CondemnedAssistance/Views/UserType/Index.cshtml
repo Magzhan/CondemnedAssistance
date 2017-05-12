@@ -2,3 +2,14 @@
 @{
     Layout = "_Layout";
 }
+<table>
+    @foreach(var m in Model) {
+        <tr>
+            <td>@m.Id</td>
+            <td>@m.Name</td>
+            <td>@m.Description</td>
+            <td><a asp-action="Update" asp-controller="UserType" asp-route-id="@m.Id">Edit</a></td>
+            <td><a asp-action="Delete" asp-controller="UserType" asp-route-id="@m.Id">Delete</a></td>
+        </tr>
+    }
+</table>

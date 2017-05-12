@@ -1,0 +1,16 @@
+﻿@model ICollection<CondemnedAssistance.Models.User>
+@{
+    Layout = "_Layout";
+}
+<table>
+    @foreach (var user in Model) {
+        <tr>
+            <td>@user.Id</td>
+            <td>@user.Login</td>
+            <td>@user.Email</td>
+            <td><a asp-controller="User" asp-action="View" asp-route-id="@user.Id">View</a></td>
+            <td><a asp-controller="User" asp-action="Update" asp-route-id="@user.Id">Edit</a></td>
+            <td><a asp-controller="User" asp-action="Delete" asp-route-id="@user.Id">Delete</a></td>
+        </tr>
+    }
+</table>
