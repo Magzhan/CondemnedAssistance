@@ -59,8 +59,6 @@ namespace CondemnedAssistance.Controllers {
 
                     await _db.SaveChangesAsync();
 
-                    await Authenticate(user.Id);
-
                     return RedirectToAction("Index", "Home");
                 }
                 else {
