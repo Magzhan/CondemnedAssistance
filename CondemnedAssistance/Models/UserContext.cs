@@ -7,7 +7,6 @@ namespace CondemnedAssistance.Models {
         public DbSet<UserStatus> UserStatuses { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
         public DbSet<UserStaticInfo> UserStaticInfo { get; set; }
-        public DbSet<UserRole> UsersRoles { get; set; }
         public UserContext(DbContextOptions options) : base(options) {
 
         }

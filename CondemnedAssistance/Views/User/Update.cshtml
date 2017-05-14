@@ -2,4 +2,42 @@
 @{
     Layout = "_Layout";
 }
-Testing out something here
+<form asp-controller="User" asp-action="Update" asp-anti-forgery="true">
+    <div>
+        <input type="hidden" asp-for="UserId" />
+    </div>
+    <div>
+        <input type="text" asp-for="Login" disabled="disabled" />
+    </div>
+    <div>
+        <input type="text" asp-for="LastName"  />
+    </div>
+    <div>
+        <input type="text" asp-for="FirstName" />
+    </div>
+    <div>
+        <input type="text" asp-for="MiddleName" />
+    </div>
+    <div>
+        <input type="text" asp-for="Xin" />
+    </div>
+    <div>
+        <input type="date" asp-for="Birthdate" />
+    </div>
+    <div>
+        Male <input type="radio" asp-for="Gender" value="true"/>
+        Female <input type="radio" asp-for="Gender" value="false"/>
+    </div>
+    <div>
+        <select asp-for="RoleId" asp-items="@(new SelectList(Model.Roles, "Id", "Name"))"></select>
+    </div>
+    <div>
+        <select asp-for="UserStatusId" asp-items="@(new SelectList(Model.UserStatuses, "Id", "Name"))"></select>
+    </div>
+    <div>
+        <select asp-for="UserTypeId" asp-items="@(new SelectList(Model.UserTypes, "Id", "Name"))"></select>
+    </div>
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+</form>

@@ -26,10 +26,10 @@ namespace CondemnedAssistance.Controllers {
         public IActionResult View(int id) {
             User user = _db.Users.FirstOrDefault(u => u.Id == id);
             UserStaticInfo userStaticInfo = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == id);
-            UserRole userRole = _db.UsersRoles.FirstOrDefault(u => u.UserId == id);
+            var myRole = user.UserRoles.FirstOrDefault(u => u.UserId == id);
             UserStatus userStatus = _db.UserStatuses.FirstOrDefault(u => u.Id == userStaticInfo.UserStatusId);
             UserType userType = _db.UserTypes.FirstOrDefault(u => u.Id == userStaticInfo.UserTypeId);
-            Role role = _db.Roles.FirstOrDefault(r => r.Id == userRole.Id);
+            Role role = _db.Roles.FirstOrDefault(r => r.Id == myRole.RoleId);
 
             if (user == null) {
                 return RedirectToAction("Index", "User");
@@ -59,13 +59,21 @@ namespace CondemnedAssistance.Controllers {
         public IActionResult Update(int id) {
             User user = _db.Users.FirstOrDefault(u => u.Id == id);
             UserStaticInfo userStaticInfo = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == id);
-            UserRole userRole = _db.UsersRoles.FirstOrDefault(u => u.UserId == id);
+            var myRole = user.UserRoles;
             ICollection<UserStatus> userStatuses = _db.UserStatuses.ToList();
             ICollection<UserType> userTypes = _db.UserTypes.ToList();
             ICollection<Role> roles = _db.Roles.ToList();
-            UserStatus userStatus = _db.UserStatuses.FirstOrDefault(u => u.Id == userStaticInfo.UserStatusId);
-            UserType userType = _db.UserTypes.FirstOrDefault(u => u.Id == userStaticInfo.UserTypeId);
-            Role role = _db.Roles.FirstOrDefault(r => r.Id == userRole.Id);
+            UserStatus userStatus = null;
+            UserType userType = null;
+            if (userStaticInfo != null) {
+                userStatus = _db.UserStatuses.FirstOrDefault(u => u.Id == userStaticInfo.UserStatusId);
+                userType = _db.UserTypes.FirstOrDefault(u => u.Id == userStaticInfo.UserTypeId);
+            }
+            
+            Role role = null;
+            if (myRole != null) {
+                role = _db.Roles.FirstOrDefault(r => r.Id == myRole.FirstOrDefault(m => m.UserId == id).RoleId);
+            }
 
             if (user == null) {
                 return RedirectToAction("Index", "User");
@@ -75,12 +83,17 @@ namespace CondemnedAssistance.Controllers {
 
             model.UserId = id;
             model.Login = user.Login;
-            model.LastName = userStaticInfo.LastName;
-            model.FirstName = userStaticInfo.FirstName;
-            model.MiddleName = userStaticInfo.MiddleName;
-            model.Xin = userStaticInfo.Xin;
-            model.Birthdate = userStaticInfo.Birthdate;
-            model.Gender = userStaticInfo.Gender;            
+            if(userStaticInfo != null) {
+                model.LastName = userStaticInfo.LastName;
+                model.FirstName = userStaticInfo.FirstName;
+                model.MiddleName = userStaticInfo.MiddleName;
+                model.Xin = userStaticInfo.Xin;
+                model.Birthdate = userStaticInfo.Birthdate;
+                model.Gender = userStaticInfo.Gender;
+            }
+            else {
+                model.Gender = true;
+            }
             model.Roles = roles;
             model.UserStatuses = userStatuses;
             model.UserTypes = userTypes;
@@ -109,7 +122,10 @@ namespace CondemnedAssistance.Controllers {
                         UserType userType = _db.UserTypes.FirstOrDefault(u => u.Id == model.UserTypeId);
                         Role role = _db.Roles.FirstOrDefault(r => r.Id == model.RoleId);
                         User user = _db.Users.FirstOrDefault(u => u.Id == id);
-                        UserRole userRole = _db.UsersRoles.FirstOrDefault(u => u.UserId == id);
+                        UserRole myRole = null;
+                        if (user.UserRoles != null) {
+                            myRole = user.UserRoles.FirstOrDefault(u => u.UserId == id);
+                        }
 
                         if(userStaticInfo == null) {
                             userStaticInfo = new UserStaticInfo {
@@ -143,21 +159,27 @@ namespace CondemnedAssistance.Controllers {
                             _db.UserStaticInfo.Attach(userStaticInfo);
                             _db.Entry(userStaticInfo).State = EntityState.Modified;
                         }
-                        if (userRole == null) {
-                            userRole = new UserRole {
-                                Role = role,
-                                RoleId = role.Id,
-                                User = user,
-                                UserId = user.Id
-                            };
-                            _db.UsersRoles.Add(userRole);
+                        if (myRole == null) {
+                            if (role != null) {
+                                myRole = new UserRole
+                                {
+                                    User = user,
+                                    Role = role
+                                };
+                                
+                                user.UserRoles.Add(myRole);
+                                _db.Users.Attach(user);
+                                _db.Entry(user).State = EntityState.Modified;
+                            }
                         }
                         else {
-                            userRole.RoleId = role.Id;
-                            userRole.Role = role;
+                            myRole.RoleId = role.Id;
+                            myRole.Role = role;
 
-                            _db.UsersRoles.Attach(userRole);
-                            _db.Entry(userRole).State = EntityState.Modified;
+                            user.UserRoles.Add(myRole);
+
+                            _db.Users.Attach(user);
+                            _db.Entry(user).State = EntityState.Modified;
                         }
                         _db.SaveChanges();
                         t.Commit();

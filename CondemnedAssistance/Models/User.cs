@@ -21,6 +21,10 @@ namespace CondemnedAssistance.Models
         public DateTimeOffset ModifiedUserDate { get; set; }
 
         public ICollection<UserRole> UserRoles { get; set; }
+
+        public User() {
+            UserRoles = new List<UserRole>();
+        }
     }
 
     public class TemplateUserHelperTables {
