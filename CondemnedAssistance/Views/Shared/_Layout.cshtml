@@ -4,13 +4,12 @@
     
 </head>
 <body>
-    <div>Menu
-        @await Component.InvokeAsync("LoginStatus");
-    </div>
     <div class="navigation">
         <div>Main</div>
-        <div>Messages</div>
-        <div>Management</div>
+        <div>Help</div>
+    </div>
+    <div>
+        @await Component.InvokeAsync("LoginStatus");
     </div>
     @RenderBody()
 </body>
