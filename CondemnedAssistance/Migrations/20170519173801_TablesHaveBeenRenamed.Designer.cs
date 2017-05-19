@@ -8,9 +8,10 @@ using CondemnedAssistance.Models;
 namespace CondemnedAssistance.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20170519173801_TablesHaveBeenRenamed")]
+    partial class TablesHaveBeenRenamed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")
@@ -37,7 +38,7 @@ namespace CondemnedAssistance.Migrations
 
                     b.HasIndex("RegisterLevelId");
 
-                    b.ToTable("Registers");
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("CondemnedAssistance.Models.RegisterHierarchy", b =>

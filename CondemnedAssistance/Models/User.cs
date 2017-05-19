@@ -27,7 +27,7 @@ namespace CondemnedAssistance.Models
         }
     }
 
-    public class TemplateUserHelperTables {
+    public class TemplateHelperTable {
         [Key]
         public int Id { get; set; }
         public string Description { get; set; }
@@ -37,11 +37,11 @@ namespace CondemnedAssistance.Models
         public DateTime RequestDate { get; set; }
     }
 
-    public class UserStatus : TemplateUserHelperTables {
+    public class UserStatus : TemplateHelperTable {
 
     }
 
-    public class UserType : TemplateUserHelperTables {
+    public class UserType : TemplateHelperTable {
 
     }
 }

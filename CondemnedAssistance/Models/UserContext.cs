@@ -7,8 +7,9 @@ namespace CondemnedAssistance.Models {
         public DbSet<UserStatus> UserStatuses { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
         public DbSet<UserStaticInfo> UserStaticInfo { get; set; }
-        public DbSet<Address> Addresses { get; set; }
-        public DbSet<AddressHierarchy> AddressHierarchies { get; set; }
+        public DbSet<Register> Registers { get; set; }
+        public DbSet<RegisterHierarchy> RegisterHierarchies { get; set; }
+        public DbSet<RegisterLevel> RegisterLevels { get; set; }
         public UserContext(DbContextOptions options) : base(options) {
 
         }
