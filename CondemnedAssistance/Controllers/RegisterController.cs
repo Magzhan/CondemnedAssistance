@@ -7,10 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    public class AddressController : Controller {
+    public class RegisterController : Controller {
         private UserContext _db;
 
-        public AddressController(UserContext context) {
+        public RegisterController(UserContext context) {
             _db = context;
         }
 
@@ -47,7 +47,15 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public IActionResult RegisterLevels() {
-            return View();
+            List<RegisterLevelModel> registerLevels = new List<RegisterLevelModel>();
+            foreach(var r in _db.RegisterLevels.ToList()) {
+                registerLevels.Add(new RegisterLevelModel {
+                    Id = r.Id,
+                    Name = r.Name,
+                    Description = r.Description
+                });
+            }
+            return View(registerLevels);
         }
 
         [HttpGet]
@@ -114,9 +122,13 @@ namespace CondemnedAssistance.Controllers {
             return View(model);
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult DeleteRegisterLevel(int id) {
-            return RedirectToAction("", "");
+            RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.Id == id);
+            _db.RegisterLevels.Remove(registerLevel);
+            _db.SaveChanges();
+            
+            return RedirectToAction("RegisterLevels", "Register");
         }
     }
 }

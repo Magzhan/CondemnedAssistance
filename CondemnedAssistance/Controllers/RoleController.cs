@@ -96,8 +96,7 @@ namespace CondemnedAssistance.Controllers {
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> Delete(int id) {
             Role role = await _db.Roles.FirstOrDefaultAsync(r => r.Id == id);
             _db.Roles.Remove(role);

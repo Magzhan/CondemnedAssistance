@@ -89,7 +89,7 @@ namespace CondemnedAssistance.Controllers {
             return View();
         }
 
-        [HttpPost]
+        [HttpGet]
         public IActionResult Delete(int id) {
             UserType type = _db.UserTypes.FirstOrDefault(s => s.Id == id);
             if (type == null) {

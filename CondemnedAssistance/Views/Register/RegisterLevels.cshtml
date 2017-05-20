@@ -1,3 +1,14 @@
-﻿@{
+﻿@model IEnumerable<CondemnedAssistance.ViewModels.RegisterLevelModel>
+@{
     Layout = "_Layout";
 }
+<table>
+@foreach (var m in Model) {
+    <tr>
+        <td>@m.Name</td>
+        <td>@m.Description</td>
+        <td><a asp-controller="Register" asp-action="UpdateRegisterLevel" asp-route-id="@m.Id">Edit</a></td>
+        <td><a asp-controller="Register" asp-action="DeleteRegisterLevel" asp-route-id="@m.Id">Delete</a></td>
+    </tr>
+}
+</table>

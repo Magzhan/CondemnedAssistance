@@ -89,8 +89,7 @@ namespace CondemnedAssistance.Controllers {
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpDelete]
         public IActionResult Delete(int id) {
             UserStatus status = _db.UserStatuses.FirstOrDefault(s => s.Id == id);
             if (status == null) {
