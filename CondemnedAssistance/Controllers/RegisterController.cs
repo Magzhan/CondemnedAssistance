@@ -16,33 +16,96 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public IActionResult Index() {
-            return View();
+            List<RegisterModel> registers = new List<RegisterModel>();
+            _db.Registers.ToList().ForEach(r => {
+                RegisterLevelModel registerLevelModel = new RegisterLevelModel();
+                RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(row => row.Id == r.RegisterLevelId);
+                registerLevelModel.Id = registerLevel.Id;
+                registerLevelModel.Name = registerLevel.Name;
+                registerLevelModel.Description = registerLevel.Description;
+                registers.Add(new RegisterModel { Id = r.Id, Name = r.Name, Description = r.Description, RegisterLevelId = r.RegisterLevelId, RegisterLevels = new List<RegisterLevelModel> { registerLevelModel } });
+            });
+            return View(registers);
         }
 
         [HttpGet]
         public IActionResult Create() {
-            return View();
+            RegisterModel model = new RegisterModel();
+            List<RegisterLevelModel> registerLevels = new List<RegisterLevelModel>();
+            _db.RegisterLevels.ToList().ForEach(row => {
+                registerLevels.Add(new RegisterLevelModel { Id = row.Id, Name = row.Name, Description = row.Description });
+            });
+            model.RegisterLevels.AddRange(registerLevels);
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Register model) {
+        public IActionResult Create(RegisterModel model) {
             if (ModelState.IsValid) {
-                Register address = _db.Registers.FirstOrDefault(a => a.NormalizedName == model.Name.ToUpper());
-                if (address == null) {
-                    address = new Register();
-                    address.Name = model.Name;
-                    address.Description = model.Description;
-                    address.NormalizedName = model.Name.ToUpper();
-                    address.RequestDate = DateTime.Now;
-                    address.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
-                    _db.Registers.Add(address);
+                Register register = _db.Registers.FirstOrDefault(a => a.NormalizedName == model.Name.ToUpper());
+                if (register == null) {
+                    register = new Register();
+                    register.Name = model.Name;
+                    register.Description = model.Description;
+                    register.NormalizedName = model.Name.ToUpper();
+                    register.RegisterLevelId = model.RegisterLevelId;
+                    register.RequestDate = DateTime.Now;
+                    register.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
+                    _db.Registers.Add(register);
                     _db.SaveChanges();
                 } else {
                     ModelState.AddModelError("", "Such address already exists");
                 }
             }
-            return RedirectToAction("Index", "Address");
+            return RedirectToAction("Index", "Register");
+        }
+
+        [HttpGet]
+        public IActionResult Update(int id) {
+            Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
+            RegisterModel model = new RegisterModel();
+            List<RegisterLevel> registerLevels = _db.RegisterLevels.ToList();
+            List<RegisterLevelModel> registerModels = new List<RegisterLevelModel>();
+            if (register != null) {
+                model.Id = register.Id;
+                model.Name = register.Name;
+                model.Description = register.Description;
+                model.RegisterLevelId = register.RegisterLevelId;
+                registerLevels.ForEach(row => registerModels.Add(new RegisterLevelModel { Id = row.Id, Name = row.Name, Description = row.Description }));
+                model.RegisterLevels = registerModels;
+                return View(model);
+            }
+            return RedirectToAction("Index", "Register");
+        }
+
+        [HttpPost]
+        public IActionResult Update(int id, RegisterModel model) {
+            Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
+            if (ModelState.IsValid) {
+                register.Name = model.Name;
+                register.Description = model.Description;
+                register.NormalizedName = model.Name.ToUpper();
+                register.RegisterLevelId = model.RegisterLevelId;
+                register.RequestDate = DateTime.Now;
+                register.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
+
+                _db.RegisterLevels.ToList().ForEach(r => model.RegisterLevels.Add(new RegisterLevelModel { Id = r.Id, Name = r.Name, Description = r.Description }));
+
+                _db.Registers.Attach(register);
+                _db.Entry(register).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                _db.SaveChanges();
+                return View(model);
+            }
+            return RedirectToAction("Index", "Register");
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int id) {
+            Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
+            _db.Registers.Remove(register);
+            _db.SaveChanges();
+            return RedirectToAction("Index", "Register");
         }
 
         [HttpGet]
@@ -124,6 +187,10 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public IActionResult DeleteRegisterLevel(int id) {
+            if (_db.Registers.Count(r => r.RegisterLevelId == id) > 0) {
+                ModelState.AddModelError("", "It still has binded elements");
+                return RedirectToAction("RegisterLevels", "Register");
+            }
             RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.Id == id);
             _db.RegisterLevels.Remove(registerLevel);
             _db.SaveChanges();

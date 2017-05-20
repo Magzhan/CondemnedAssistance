@@ -3,6 +3,7 @@ using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -54,7 +55,11 @@ namespace CondemnedAssistance.Controllers {
                         Login = model.Login,
                         Email = model.Email,
                         PasswordHash = model.Password,
-                        PhoneNumber = model.PhoneNumber
+                        PhoneNumber = model.PhoneNumber,
+                        ModifiedUserDate = DateTime.Now,
+                        ModifiedUserId = Convert.ToInt32(HttpContext.User.Identity.Name),
+                        RegistratedUserId = Convert.ToInt32(HttpContext.User.Identity.Name),
+                        RegistrationDate = DateTime.Now
                     });
 
                     await _db.SaveChangesAsync();

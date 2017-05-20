@@ -14,7 +14,11 @@ namespace CondemnedAssistance.ViewModels {
 
         public int RegisterLevelId { get; set; }
 
-        public RegisterLevel RegisterLevel { get; set; }
+        public List<RegisterLevelModel> RegisterLevels { get; set; }
+
+        public RegisterModel() {
+            RegisterLevels = new List<RegisterLevelModel>();
+        }
     }
 
     public class RegisterLevelModel {

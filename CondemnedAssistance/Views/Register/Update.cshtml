@@ -2,7 +2,10 @@
 @{
     Layout = "_Layout";
 }
-<form asp-controller="Register" asp-action="Create">
+<form asp-controller="Register" asp-action="Update">
+    <div>
+        <input type="hidden" asp-for="Id" />
+    </div>
     <div>
         <input type="text" asp-for="Name" />
     </div>
@@ -17,6 +20,6 @@
         </select>
     </div>
     <div>
-        <input type="submit" value="Save" />
+        <input type="submit" />
     </div>
 </form>
