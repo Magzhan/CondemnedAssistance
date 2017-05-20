@@ -46,7 +46,7 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterModel model) {
+        public async Task<IActionResult> Register(RegistrationModel model) {
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login);
                 if(user == null) {
@@ -69,8 +69,7 @@ namespace CondemnedAssistance.Controllers {
         }
 
         private async Task Authenticate(int userId) {
-            var claims = new List<Claim>
-            {
+            var claims = new List<Claim> {
                 new Claim("UserId", userId.ToString())
             };
 

@@ -1,25 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CondemnedAssistance.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CondemnedAssistance.ViewModels {
     public class RegisterModel {
+        public int Id { get; set; }
 
-        [Required(ErrorMessage = "Не указан логин")]
-        public string Login { get; set; }
+        public string Name { get; set; }
 
-        [Required(ErrorMessage = ("Не указан Email"))]
-        //[DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
+        public string Description { get; set; }
 
-        [Required(ErrorMessage = "Не указан пароль")]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public int RegisterLevelId { get; set; }
 
-        [Compare("Password", ErrorMessage = "Пароль введен неверно")]
-        [DataType(DataType.Password)]
-        public string ConfirmPassword { get; set; }
+        public RegisterLevel RegisterLevel { get; set; }
+    }
 
-        [Required(ErrorMessage = "Не указан телефон")]
-        //[DataType(DataType.PhoneNumber)]
-        public int PhoneNumber { get; set; }
+    public class RegisterLevelModel {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
     }
 }
