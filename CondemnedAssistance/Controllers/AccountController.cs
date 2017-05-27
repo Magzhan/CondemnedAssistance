@@ -75,10 +75,12 @@ namespace CondemnedAssistance.Controllers {
 
         private async Task Authenticate(int userId) {
             var claims = new List<Claim> {
-                new Claim("UserId", userId.ToString())
+                new Claim(ClaimsIdentity.DefaultNameClaimType, userId.ToString()),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, _db.UserRoles.FirstOrDefault(r => r.UserId == userId).RoleId.ToString()),
+                new Claim("RegisterId", _db.UserRegisters.FirstOrDefault(r => r.UserId == userId).RegisterId.ToString())
             };
 
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", "UserId", ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
             await HttpContext.Authentication.SignInAsync("Cookies", new ClaimsPrincipal(id));
         }
