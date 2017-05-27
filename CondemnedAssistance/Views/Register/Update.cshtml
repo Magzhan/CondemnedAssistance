@@ -13,12 +13,20 @@
         <textarea asp-for="Description"></textarea>
     </div>
     <div>
-        <select asp-for="RegisterLevelId">
-            @foreach(var r in Model.RegisterLevels) {
-                <option value="@r.Id">@r.Name</option>
-            }
+        <input type="hidden" asp-for="RegisterLevelId" />
+    </div>
+    <div>
+        <select disabled>
+            <option>@Model.RegisterLevels.FirstOrDefault(r => r.Id == Model.RegisterLevelId).Name</option>
         </select>
     </div>
+    @if (Model.RegisterParent != null) {
+        <div>
+            <select disabled>
+                <option>@Model.RegisterParent.Name</option>
+            </select>
+        </div>
+    }
     <div>
         <input type="submit" />
     </div>

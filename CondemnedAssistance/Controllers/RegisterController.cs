@@ -29,13 +29,20 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult Create() {
+        public IActionResult Create(int levelId, int parentId, int childId) {
+            Register parentRegister = _db.Registers.FirstOrDefault(r => r.Id == parentId);
+            Register childRegister = _db.Registers.FirstOrDefault(r => r.Id == childId);
             RegisterModel model = new RegisterModel();
             List<RegisterLevelModel> registerLevels = new List<RegisterLevelModel>();
             _db.RegisterLevels.ToList().ForEach(row => {
                 registerLevels.Add(new RegisterLevelModel { Id = row.Id, Name = row.Name, Description = row.Description });
             });
             model.RegisterLevels.AddRange(registerLevels);
+            model.RegisterLevelId = levelId;
+            if (parentId > 0 && parentRegister != null){
+                model.RegisterParentId = parentId;
+                model.RegisterParent = parentRegister;
+            }
             return View(model);
         }
 
@@ -54,6 +61,15 @@ namespace CondemnedAssistance.Controllers {
                     register.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
                     _db.Registers.Add(register);
                     _db.SaveChanges();
+
+                    switch (model.RegisterParentId) {
+                        case 0:
+                            break;
+                        default:
+                            _db.RegisterHierarchies.Add(new RegisterHierarchy { ChildRegister = register.Id, ParentRegister = model.RegisterParentId });
+                            _db.SaveChanges();
+                            break;
+                    }
                 } else {
                     ModelState.AddModelError("", "Such address already exists");
                 }
