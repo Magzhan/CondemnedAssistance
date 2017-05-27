@@ -38,6 +38,9 @@
         <select asp-for="UserTypeId" asp-items="@(new SelectList(Model.UserTypes, "Id", "Name"))"></select>
     </div>
     <div>
+        <select asp-for="UserRegisterId" asp-items="@(new SelectList(Model.UserRegisters, "Id", "Name"))"></select>
+    </div>
+    <div>
         <input type="submit" value="Save" />
     </div>
 </form>

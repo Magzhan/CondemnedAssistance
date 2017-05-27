@@ -8,9 +8,10 @@ using CondemnedAssistance.Models;
 namespace CondemnedAssistance.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20170527103111_SomeStructureChanges")]
+    partial class SomeStructureChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.1")

@@ -13,6 +13,9 @@ namespace CondemnedAssistance.ViewModels {
 
         public int UserTypeId { get; set; }
         public string UserTypeName { get; set; }
+
+        public int UserRegisterId { get; set; }
+        public int UserRegister { get; set; }
     }
 
     public class UserModelModify : UserModelTemplate {
@@ -22,6 +25,8 @@ namespace CondemnedAssistance.ViewModels {
         public IEnumerable<UserStatus> UserStatuses { get; set; }
         public int UserTypeId { get; set; }
         public IEnumerable<UserType> UserTypes { get; set; }
+        public int UserRegisterId { get; set; }
+        public IEnumerable<Register> UserRegisters { get; set; }
     }
 
     public class UserModelTemplate {

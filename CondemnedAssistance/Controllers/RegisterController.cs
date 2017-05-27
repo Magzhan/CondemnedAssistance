@@ -102,7 +102,6 @@ namespace CondemnedAssistance.Controllers {
                 register.Name = model.Name;
                 register.Description = model.Description;
                 register.NormalizedName = model.Name.ToUpper();
-                register.RegisterLevelId = model.RegisterLevelId;
                 register.RequestDate = DateTime.Now;
                 register.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
 
@@ -118,6 +117,12 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public IActionResult Delete(int id) {
+            RegisterHierarchy children = _db.RegisterHierarchies.FirstOrDefault(h => h.ParentRegister == id);
+
+            if (children != null) {
+                ModelState.AddModelError("", "Register has children so it cannot be deleted");
+                return RedirectToAction("Index", "Register");
+            }
             Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
             _db.Registers.Remove(register);
             _db.SaveChanges();

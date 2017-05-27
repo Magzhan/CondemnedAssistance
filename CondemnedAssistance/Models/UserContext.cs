@@ -11,6 +11,7 @@ namespace CondemnedAssistance.Models {
         public DbSet<RegisterHierarchy> RegisterHierarchies { get; set; }
         public DbSet<RegisterLevel> RegisterLevels { get; set; }
         public DbSet<UserRegister> UserRegisters { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Help> Helps { get; set; }
         public UserContext(DbContextOptions options) : base(options) {
 

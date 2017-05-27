@@ -23,12 +23,6 @@ namespace CondemnedAssistance.Models
         public DateTime ModifiedUserDate { get; set; }
         public int RegistratedUserId { get; set; }
         public DateTime RegistrationDate { get; set; }
-
-        public ICollection<UserRole> UserRoles { get; set; }
-
-        public User() {
-            UserRoles = new List<UserRole>();
-        }
     }
 
     public class TemplateHelperTable {
