@@ -74,11 +74,18 @@ namespace CondemnedAssistance.Controllers {
         }
 
         private async Task Authenticate(int userId) {
+            int roleId = _db.UserRoles.FirstOrDefault(r => r.UserId == userId).RoleId;
+            int registerId = _db.UserRegisters.FirstOrDefault(r => r.UserId == userId).RegisterId;
+            Role role = _db.Roles.FirstOrDefault(r => r.Id == roleId);
+            Register register = _db.Registers.FirstOrDefault(r => r.Id == registerId);
             var claims = new List<Claim> {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, userId.ToString()),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, _db.UserRoles.FirstOrDefault(r => r.UserId == userId).RoleId.ToString()),
-                new Claim("RegisterId", _db.UserRegisters.FirstOrDefault(r => r.UserId == userId).RegisterId.ToString())
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Id.ToString()),
+                new Claim("RegisterId", register.Id.ToString()),
+                new Claim("RegisterLevelId", register.RegisterLevelId.ToString())
             };
+
+            int[] children = await getRegisterChildren(register.Id, new int[] { });
 
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
@@ -88,6 +95,20 @@ namespace CondemnedAssistance.Controllers {
         public async Task<IActionResult> Logout() {
             await HttpContext.Authentication.SignOutAsync("Cookies");
             return RedirectToAction("Login", "Account");
+        }
+
+        private async Task<int[]> getRegisterChildren(int parentId, int[] children) {
+            if (!_db.RegisterHierarchies.Any(r => r.ParentRegister == parentId)) {
+                return children;
+            } else {
+                List<int> allChildren = new List<int>();
+                int[] tempChildren = _db.RegisterHierarchies.Where(r => r.ParentRegister == parentId).Select(r => r.ChildRegister).ToArray();
+                
+                foreach (int child in tempChildren) {
+                    allChildren.AddRange(await getRegisterChildren(child, tempChildren));
+                }
+                return allChildren.Distinct().ToArray();
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CondemnedAssistance.Models;
 using CondemnedAssistance.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,11 @@ using System.Threading.Tasks;
 namespace CondemnedAssistance.Controllers {
     public class RegisterController : Controller {
         private UserContext _db;
+        private IAuthorizationService _authorizationService;
 
-        public RegisterController(UserContext context) {
+        public RegisterController(UserContext context, IAuthorizationService authorizationService) {
             _db = context;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
@@ -29,7 +32,15 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult Create(int levelId, int parentId, int childId) {
+        public async Task<IActionResult> Create(int levelId, int parentId, int childId) {
+            Dictionary<string, int> registerActions = new Dictionary<string, int>();
+            registerActions.Add("levelId", levelId);
+            registerActions.Add("parentId", parentId);
+            registerActions.Add("childId", childId);
+            if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
+                return new ChallengeResult();
+            }
+
             Register parentRegister = _db.Registers.FirstOrDefault(r => r.Id == parentId);
             Register childRegister = _db.Registers.FirstOrDefault(r => r.Id == childId);
             RegisterModel model = new RegisterModel();
@@ -48,7 +59,13 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(RegisterModel model) {
+        public async Task<IActionResult> Create(RegisterModel model) {
+            Dictionary<string, int> registerActions = new Dictionary<string, int>();
+            registerActions.Add("levelId", model.RegisterLevelId);
+            registerActions.Add("parentId", model.RegisterParentId);
+            if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
+                return new ChallengeResult();
+            }
             if (ModelState.IsValid) {
                 Register register = _db.Registers.FirstOrDefault(a => a.NormalizedName == model.Name.ToUpper());
                 if (register == null) {
@@ -80,6 +97,7 @@ namespace CondemnedAssistance.Controllers {
         [HttpGet]
         public IActionResult Update(int id) {
             Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
+                        
             RegisterModel model = new RegisterModel();
             List<RegisterLevel> registerLevels = _db.RegisterLevels.ToList();
             List<RegisterLevelModel> registerModels = new List<RegisterLevelModel>();
@@ -96,8 +114,16 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpPost]
-        public IActionResult Update(int id, RegisterModel model) {
+        public async Task<IActionResult> Update(int id, RegisterModel model) {
             Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
+
+            Dictionary<string, int> registerActions = new Dictionary<string, int>();
+            registerActions.Add("levelId", register.RegisterLevelId);
+            registerActions.Add("parentId", model.RegisterParentId);
+            if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
+                return new ChallengeResult();
+            }
+
             if (ModelState.IsValid) {
                 register.Name = model.Name;
                 register.Description = model.Description;
@@ -116,14 +142,21 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult Delete(int id) {
+        public async Task<IActionResult> Delete(int id) {
             RegisterHierarchy children = _db.RegisterHierarchies.FirstOrDefault(h => h.ParentRegister == id);
+            Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
+
+            Dictionary<string, int> registerActions = new Dictionary<string, int>();
+            registerActions.Add("levelId", register.RegisterLevelId);
+            if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
+                return new ChallengeResult();
+            }
 
             if (children != null) {
                 ModelState.AddModelError("", "Register has children so it cannot be deleted");
                 return RedirectToAction("Index", "Register");
             }
-            Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
+            
             _db.Registers.Remove(register);
             _db.SaveChanges();
             return RedirectToAction("Index", "Register");
@@ -148,7 +181,7 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpPost]
-        public IActionResult CreateRegisterLevel(RegisterLevelModel model) {
+        public async Task<IActionResult> CreateRegisterLevel(RegisterLevelModel model) {
             if (ModelState.IsValid) {
                 RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.NormalizedName.Equals(model.Name.ToUpper()));
                 if (registerLevel == null) {

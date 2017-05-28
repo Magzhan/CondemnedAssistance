@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using CondemnedAssistance.Services.Requirements;
+using CondemnedAssistance.Services.Resources;
 
 namespace CondemnedAssistance
 {
@@ -34,6 +36,12 @@ namespace CondemnedAssistance
             {
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
+
+            services.AddAuthorization(options => {
+                options.AddPolicy("resource-register-actions-policy", x => { x.AddRequirements(new ResourceRegisterBasedRequirement()); });
+            });
+
+            services.AddSingleton<IAuthorizationHandler, ResourceRegisterHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
