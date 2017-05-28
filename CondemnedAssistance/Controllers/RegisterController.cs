@@ -1,4 +1,5 @@
 ﻿using CondemnedAssistance.Models;
+using CondemnedAssistance.Services.Requirements;
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,13 +37,11 @@ namespace CondemnedAssistance.Controllers {
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", levelId);
             registerActions.Add("parentId", parentId);
-            registerActions.Add("childId", childId);
             if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
                 return new ChallengeResult();
             }
 
             Register parentRegister = _db.Registers.FirstOrDefault(r => r.Id == parentId);
-            Register childRegister = _db.Registers.FirstOrDefault(r => r.Id == childId);
             RegisterModel model = new RegisterModel();
             List<RegisterLevelModel> registerLevels = new List<RegisterLevelModel>();
             _db.RegisterLevels.ToList().ForEach(row => {
@@ -87,6 +86,8 @@ namespace CondemnedAssistance.Controllers {
                             _db.SaveChanges();
                             break;
                     }
+
+                    
                 } else {
                     ModelState.AddModelError("", "Such address already exists");
                 }
@@ -95,9 +96,19 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult Update(int id) {
+        public async Task<IActionResult> Update(int id) {
             Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
-                        
+            RegisterHierarchy registerHierarchy = _db.RegisterHierarchies.FirstOrDefault(r => r.ChildRegister == id);
+            Register registerParent = null;
+            if (registerHierarchy != null) {
+                registerParent = _db.Registers.FirstOrDefault(r => r.Id == registerHierarchy.ParentRegister);
+            }
+            Dictionary<string, int> registerActions = new Dictionary<string, int>();
+            registerActions.Add("levelId", register.RegisterLevelId);
+            if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
+                return new ChallengeResult();
+            }
+
             RegisterModel model = new RegisterModel();
             List<RegisterLevel> registerLevels = _db.RegisterLevels.ToList();
             List<RegisterLevelModel> registerModels = new List<RegisterLevelModel>();
@@ -108,6 +119,7 @@ namespace CondemnedAssistance.Controllers {
                 model.RegisterLevelId = register.RegisterLevelId;
                 registerLevels.ForEach(row => registerModels.Add(new RegisterLevelModel { Id = row.Id, Name = row.Name, Description = row.Description }));
                 model.RegisterLevels = registerModels;
+                model.RegisterParent = registerParent;
                 return View(model);
             }
             return RedirectToAction("Index", "Register");
@@ -116,9 +128,8 @@ namespace CondemnedAssistance.Controllers {
         [HttpPost]
         public async Task<IActionResult> Update(int id, RegisterModel model) {
             Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
-
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
-            registerActions.Add("levelId", register.RegisterLevelId);
+            registerActions.Add("levelId", model.RegisterLevelId);
             registerActions.Add("parentId", model.RegisterParentId);
             if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
                 return new ChallengeResult();
@@ -143,19 +154,20 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id) {
-            RegisterHierarchy children = _db.RegisterHierarchies.FirstOrDefault(h => h.ParentRegister == id);
+            RegisterHierarchy child = _db.RegisterHierarchies.FirstOrDefault(h => h.ParentRegister == id);
             Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
 
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", register.RegisterLevelId);
+            //int[] children = getRegisterChildren(id, new int[] { });
             if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
                 return new ChallengeResult();
             }
 
-            if (children != null) {
-                ModelState.AddModelError("", "Register has children so it cannot be deleted");
-                return RedirectToAction("Index", "Register");
-            }
+            //if (children != null) {
+            //    ModelState.AddModelError("", "Register has children so it cannot be deleted");
+            //    return RedirectToAction("Index", "Register");
+            //}
             
             _db.Registers.Remove(register);
             _db.SaveChanges();
@@ -181,7 +193,7 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateRegisterLevel(RegisterLevelModel model) {
+        public IActionResult CreateRegisterLevel(RegisterLevelModel model) {
             if (ModelState.IsValid) {
                 RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.NormalizedName.Equals(model.Name.ToUpper()));
                 if (registerLevel == null) {
@@ -200,7 +212,7 @@ namespace CondemnedAssistance.Controllers {
                     ModelState.AddModelError("", "Already exists");
                 }
             }
-            return View(model);
+            return  View(model);
         }
 
         [HttpGet]
@@ -250,6 +262,6 @@ namespace CondemnedAssistance.Controllers {
             _db.SaveChanges();
             
             return RedirectToAction("RegisterLevels", "Register");
-        }
+        }        
     }
 }

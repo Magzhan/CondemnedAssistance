@@ -85,7 +85,11 @@ namespace CondemnedAssistance.Controllers {
                 new Claim("RegisterLevelId", register.RegisterLevelId.ToString())
             };
 
-            int[] children = await getRegisterChildren(register.Id, new int[] { });
+            int[] children = await getRegisterChildren(registerId, new int[] { });
+
+            foreach(int child in children) {
+                claims.Add(new Claim("RegisterChildId", child.ToString()));
+            }
 
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
