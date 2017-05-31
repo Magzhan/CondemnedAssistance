@@ -1,4 +1,5 @@
-﻿using CondemnedAssistance.Models;
+﻿using CondemnedAssistance.Helpers;
+using CondemnedAssistance.Models;
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,11 @@ namespace CondemnedAssistance.Controllers {
     public class AccountController : Controller {
 
         private UserContext _db;
+        private RegisterHelper registerHelper;
 
         public AccountController(UserContext context) {
             this._db = context;
+            registerHelper = new RegisterHelper(context);
         }
 
         [HttpGet]
@@ -85,7 +88,7 @@ namespace CondemnedAssistance.Controllers {
                 new Claim("RegisterLevelId", register.RegisterLevelId.ToString())
             };
 
-            int[] children = await getRegisterChildren(registerId, new int[] { });
+            int[] children = registerHelper.GetRegisterChildren(new int[] { }, registerId);
 
             foreach(int child in children) {
                 claims.Add(new Claim("RegisterChildId", child.ToString()));
@@ -99,20 +102,6 @@ namespace CondemnedAssistance.Controllers {
         public async Task<IActionResult> Logout() {
             await HttpContext.Authentication.SignOutAsync("Cookies");
             return RedirectToAction("Login", "Account");
-        }
-
-        private async Task<int[]> getRegisterChildren(int parentId, int[] children) {
-            if (!_db.RegisterHierarchies.Any(r => r.ParentRegister == parentId)) {
-                return children;
-            } else {
-                List<int> allChildren = new List<int>();
-                int[] tempChildren = _db.RegisterHierarchies.Where(r => r.ParentRegister == parentId).Select(r => r.ChildRegister).ToArray();
-                
-                foreach (int child in tempChildren) {
-                    allChildren.AddRange(await getRegisterChildren(child, tempChildren));
-                }
-                return allChildren.Distinct().ToArray();
-            }
         }
     }
 }

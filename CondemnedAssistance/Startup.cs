@@ -13,6 +13,7 @@ using CondemnedAssistance.Services.Resources;
 namespace CondemnedAssistance
 {
     public class Startup {
+
         public Startup(IHostingEnvironment env) {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -28,6 +29,7 @@ namespace CondemnedAssistance
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services){
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+
             services.AddDbContext<UserContext>(options => options.UseSqlServer(connectionString));
 
             var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();

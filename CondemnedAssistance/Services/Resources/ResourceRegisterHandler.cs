@@ -1,24 +1,27 @@
-﻿using CondemnedAssistance.Models;
+﻿using CondemnedAssistance.Helpers;
+using CondemnedAssistance.Models;
 using CondemnedAssistance.Services.Requirements;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace CondemnedAssistance.Services.Resources {
+namespace CondemnedAssistance.Services.Resources
+{
     public class ResourceRegisterHandler : AuthorizationHandler<ResourceRegisterBasedRequirement, Dictionary<string, int>> {
 
         private UserContext _db;
+        private RegisterHelper registerHelper;
 
         public ResourceRegisterHandler(UserContext context) {
             _db = context;
+            registerHelper = new RegisterHelper(context);
         }
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceRegisterBasedRequirement requirement, Dictionary<string, int> resource) {
 
-            int[] currentChildren = getRegisterChildren(new int[] { }, Convert.ToInt32(context.User.FindFirst(c => c.Type == "RegisterId").Value));
+            int[] currentChildren = registerHelper.GetRegisterChildren(new int[] { }, Convert.ToInt32(context.User.FindFirst(c => c.Type == "RegisterId").Value));
 
             int registerId = Convert.ToInt32(context.User.FindFirst(c => c.Type == "RegisterId").Value);
             
@@ -66,20 +69,6 @@ namespace CondemnedAssistance.Services.Resources {
             }
             
             return Task.CompletedTask;
-        }
-
-        private int[] getRegisterChildren(int[] children, int parentId) {
-            if (!_db.RegisterHierarchies.Any(r => r.ParentRegister == parentId)) {
-                return children;
-            } else {
-                List<int> allChildren = new List<int>();
-                int[] tempChildren = _db.RegisterHierarchies.Where(r => r.ParentRegister == parentId).Select(r => r.ChildRegister).ToArray();
-                
-                foreach (int child in tempChildren) {
-                    allChildren.AddRange(getRegisterChildren(tempChildren, child));
-                }
-                return allChildren.Distinct().ToArray();
-            }
         }
     }
 }
