@@ -29,7 +29,7 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model) {
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login && u.PasswordHash == model.Password);
@@ -49,11 +49,11 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegistrationModel model) {
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login);
-                if(user == null) {
+                if (user == null) {
                     _db.Users.Add(new User {
                         Login = model.Login,
                         Email = model.Email,
@@ -73,6 +73,16 @@ namespace CondemnedAssistance.Controllers {
                     ModelState.AddModelError("", "Пользователь с данным логином существует");
                 }
             }
+            else {
+                var message = "" + ModelState.ErrorCount;
+                foreach(var i in ModelState.Values) {
+                    if(i.Errors.Count > 0) {
+                        message = message + i.Errors[0].ErrorMessage + " " + i.Errors[0].Exception + "\n";
+                    }
+                }
+                throw new Exception(message);
+            }
+                
             return View(model);
         }
 

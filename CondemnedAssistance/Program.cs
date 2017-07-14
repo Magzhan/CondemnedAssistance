@@ -7,6 +7,7 @@ namespace CondemnedAssistance {
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseUrls()
                 .UseIISIntegration()
                 .UseStartup<Startup>()
                 .UseApplicationInsights()

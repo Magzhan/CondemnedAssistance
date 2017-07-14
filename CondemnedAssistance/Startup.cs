@@ -10,8 +10,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using CondemnedAssistance.Services.Requirements;
 using CondemnedAssistance.Services.Resources;
 
-namespace CondemnedAssistance
-{
+namespace CondemnedAssistance {
     public class Startup {
 
         public Startup(IHostingEnvironment env) {
@@ -34,8 +33,7 @@ namespace CondemnedAssistance
 
             var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 
-            services.AddMvc(options =>
-            {
+            services.AddMvc(options => {
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
 
@@ -50,6 +48,11 @@ namespace CondemnedAssistance
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
             loggerFactory.AddConsole();
 
+            //using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())             {
+            //    var context = serviceScope.ServiceProvider.GetRequiredService<UserContext>();
+            //    context.Database.Migrate();
+            //}
+
             app.UseCookieAuthentication(new CookieAuthenticationOptions {
                 AuthenticationScheme = "Cookies",
                 LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login"),
@@ -57,9 +60,10 @@ namespace CondemnedAssistance
                 AutomaticChallenge = true
             });
 
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseDeveloperExceptionPage();
+            //if (env.IsDevelopment()) {
+                
+            //}
 
             app.UseMvc(routes => {
                 routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");

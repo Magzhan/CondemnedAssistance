@@ -4,13 +4,17 @@
     
 </head>
 <body>
-    <div class="navigation">
+    <div id="header"></div>
+    <div id="navigation">
         <div>Main</div>
         <div>Help</div>
     </div>
     <div>
         @await Component.InvokeAsync("LoginStatus");
     </div>
-    @RenderBody()
+    <div id="main">
+        @RenderBody()
+    </div>
+    <div id="footer"></div>
 </body>
 </html>
