@@ -29,7 +29,7 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         [AllowAnonymous]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model) {
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login && u.PasswordHash == model.Password);
@@ -49,7 +49,7 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegistrationModel model) {
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login);
@@ -87,11 +87,13 @@ namespace CondemnedAssistance.Controllers {
         }
 
         private async Task Authenticate(int userId) {
+            List<Claim> claims;
+                        
             int roleId = _db.UserRoles.FirstOrDefault(r => r.UserId == userId).RoleId;
             int registerId = _db.UserRegisters.FirstOrDefault(r => r.UserId == userId).RegisterId;
             Role role = _db.Roles.FirstOrDefault(r => r.Id == roleId);
             Register register = _db.Registers.FirstOrDefault(r => r.Id == registerId);
-            var claims = new List<Claim> {
+            claims = new List<Claim> {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, userId.ToString()),
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Id.ToString()),
                 new Claim("RegisterId", register.Id.ToString()),
@@ -100,9 +102,9 @@ namespace CondemnedAssistance.Controllers {
 
             int[] children = registerHelper.GetRegisterChildren(new int[] { }, registerId);
 
-            foreach(int child in children) {
+            foreach (int child in children) {
                 claims.Add(new Claim("RegisterChildId", child.ToString()));
-            }
+            }            
 
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 

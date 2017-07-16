@@ -27,7 +27,7 @@ namespace CondemnedAssistance.Services.Resources
             
             if (context.User.IsInRole("3")) {
                 context.Succeed(requirement);
-                //return Task.CompletedTask;
+                return Task.CompletedTask;
             }
 
             if (resource.ContainsKey("levelId")) {
