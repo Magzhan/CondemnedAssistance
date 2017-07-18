@@ -1,5 +1,6 @@
 ﻿using CondemnedAssistance.Models;
 using CondemnedAssistance.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,17 +9,31 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
+    [Authorize(Roles = "2, 3")]
     public class UserController : Controller {
 
         private UserContext _db;
+        private IAuthorizationService _authorizationService;
 
-        public UserController(UserContext context) {
+        public UserController(UserContext context, IAuthorizationService authorizationService) {
             this._db = context;
+            this._authorizationService = authorizationService;
         }
 
         [HttpGet]
         public IActionResult Index() {
-            ICollection<User> users = _db.Users.ToList();
+            ICollection<User> users = new List<User>();
+            if (User.IsInRole("3")) {
+                users = _db.Users.ToList();
+            }
+            else {
+                users = (from u in _db.Users
+                         join ur in _db.UserRoles on u.Id equals ur.UserId into j
+                         from user in j.DefaultIfEmpty()
+                         where user.RoleId != 3 || user == null
+                         orderby u.Id descending
+                         select u).ToList();
+            }
             return View(users);
         }
 
@@ -56,13 +71,21 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult Update(int id) {
+        public async Task<IActionResult> Update(int id) {
+
+            Dictionary<string, int> actions = new Dictionary<string, int>();
+            actions.Add("userId", id);
+
+            if(!await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy")) {
+                return new ChallengeResult();
+            }
+
             User user = _db.Users.FirstOrDefault(u => u.Id == id);
             UserStaticInfo userStaticInfo = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == id);
             UserRole myRole = _db.UserRoles.FirstOrDefault(u => u.UserId == id);
             ICollection<UserStatus> userStatuses = _db.UserStatuses.ToList();
             ICollection<UserType> userTypes = _db.UserTypes.ToList();
-            ICollection<Role> roles = _db.Roles.ToList();
+            ICollection<Role> roles = (User.IsInRole("3")) ? _db.Roles.ToList() : _db.Roles.Where(r => r.Id != 3).ToList();
             ICollection<Register> registers = _db.Registers.ToList();
             UserStatus userStatus = null;
             UserType userType = null;
@@ -96,6 +119,7 @@ namespace CondemnedAssistance.Controllers {
             else {
                 model.Gender = true;
             }
+            
             model.Roles = roles;
             model.UserStatuses = userStatuses;
             model.UserTypes = userTypes;
@@ -118,7 +142,14 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpPost]
-        public IActionResult Update(int id, UserModelModify model) {
+        public async Task<IActionResult> Update(int id, UserModelModify model) {
+
+            Dictionary<string, int> actions = new Dictionary<string, int>();
+            actions.Add("userId", id);
+
+            if (!await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy")) {
+                return new ChallengeResult();
+            }
 
             if (ModelState.IsValid) {
                 using(var t = _db.Database.BeginTransaction()){

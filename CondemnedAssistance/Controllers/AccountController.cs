@@ -44,12 +44,14 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
+        [Authorize(Roles = "3, 2")]
         public IActionResult Register() {
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "3, 2")]
         public async Task<IActionResult> Register(RegistrationModel model) {
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login);
@@ -57,6 +59,7 @@ namespace CondemnedAssistance.Controllers {
                     _db.Users.Add(new User {
                         Login = model.Login,
                         Email = model.Email,
+                        NormalizedEmail = model.Email.ToUpper(),
                         PasswordHash = model.Password,
                         PhoneNumber = model.PhoneNumber,
                         ModifiedUserDate = DateTime.Now,
