@@ -6,8 +6,7 @@
 <body>
     <div id="header"></div>
     <div id="navigation">
-        <div>Main</div>
-        <div>Help</div>
+        @await Component.InvokeAsync("NavigationMenu");
     </div>
     <div>
         @await Component.InvokeAsync("LoginStatus");
