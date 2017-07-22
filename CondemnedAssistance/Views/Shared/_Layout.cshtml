@@ -19,34 +19,23 @@
     <div id="header"></div>
     <a href="#"><img id="header1" src="/Components/img/logo.png" /></a>
         <h1 id="header2"> оказание социально - правовой помощи осужденным</h1>
-
+    <!-- id=header  id=navigation екеуінің арасында ештеңе болмауы керек -->
     <div id="navigation">
         <nav id="nav">
             <ul>
-                <li class="current"><a href="#" ">Главная</a></li>
-                <li>
-                    <a href="#">Помощь </a>
-                    <ul>
-                        <li><a href="#">Психологическая помощь</a></li>
-                        <li><a href="#">Правовая помощь</a></li>
-                        <li><a href="#">Медицинская помощь</a></li>
-                        <li><a href="#">Получение Образования </a></li>
-                        <li><a href="#">Защита Прав</a></li>
-                        <li><a href="#">Трудоустройство</a></li>
-                        <li><a href="#">Правовые акты</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <div>
-                        @await Component.InvokeAsync("LoginStatus")
-                    </div>
-                </li>
+                <li class="current"><a href="#" >Главная</a></li>
+                
+                @await Component.InvokeAsync("NavigationMenu")
+
+                @await Component.InvokeAsync("LoginStatus")
                 
             </ul>
-        </nav>
-
-       
+        </nav>       
     </div>
+    
+    <!--Астыдағыларды қолданбауға тырыс по возможности (br) -->
+    <!-- Footer жасай бер если че, онда бізге Айбек бірдеңе қойсын деп еді помнишь??-->
+
     <br />
     <br />
     <br />

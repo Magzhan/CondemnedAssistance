@@ -7,8 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CondemnedAssistance.Services.Resources
-{
+namespace CondemnedAssistance.Services.Resources {
     public class ResourceRegisterHandler : AuthorizationHandler<ResourceRegisterBasedRequirement, Dictionary<string, int>> {
 
         private UserContext _db;
