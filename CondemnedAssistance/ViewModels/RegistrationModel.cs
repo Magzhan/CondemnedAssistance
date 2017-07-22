@@ -4,6 +4,7 @@ namespace CondemnedAssistance.ViewModels {
     public class RegistrationModel {
 
         [Required(ErrorMessage = "Не указан логин")]
+        [StringLength(12, ErrorMessage = "Длина символов не должна превышать 12", MinimumLength = 12)]
         public string Login { get; set; }
 
         [Required(ErrorMessage = ("Не указан Email"))]
