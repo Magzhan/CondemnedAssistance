@@ -7,38 +7,59 @@
         <input type="hidden" asp-for="UserId" />
     </div>
     <div>
+        <label asp-for="Login"></label>
         <input type="text" asp-for="Login" disabled="disabled" />
+        <span asp-validation-for="Login"/>
     </div>
     <div>
+        <label asp-for="LastName"></label>
         <input type="text" asp-for="LastName"  />
+        <span asp-validation-for="LastName"/>
     </div>
     <div>
+        <label asp-for="FirstName"></label>
         <input type="text" asp-for="FirstName" />
+        <span asp-validation-for="FirstName"></span>
     </div>
     <div>
+        <label asp-for="MiddleName"></label>
         <input type="text" asp-for="MiddleName" />
+        <span asp-validation-for="MiddleName"></span>
     </div>
     <div>
+        <label asp-for="Xin"></label>
         <input type="text" asp-for="Xin" />
+        <span asp-validation-for="Xin"></span>
     </div>
     <div>
+        <label asp-for="Birthdate"></label>
         <input type="date" asp-for="Birthdate" />
+        <span asp-validation-for="Birthdate"></span>
     </div>
     <div>
+        <label asp-for="Gender"></label>
         Male <input type="radio" asp-for="Gender" value="true"/>
         Female <input type="radio" asp-for="Gender" value="false"/>
     </div>
     <div>
+        <label asp-for="RoleId"></label>
         <select asp-for="RoleId" asp-items="@(new SelectList(Model.Roles, "Id", "Name"))"></select>
+        <span asp-validation-for="RoleId"></span>
     </div>
     <div>
+        <label asp-for="UserStatusId"></label>
         <select asp-for="UserStatusId" asp-items="@(new SelectList(Model.UserStatuses, "Id", "Name"))"></select>
+        <span asp-validation-for="UserStatusId"></span>
     </div>
     <div>
+        <label asp-for="UserTypeId"></label>
         <select asp-for="UserTypeId" asp-items="@(new SelectList(Model.UserTypes, "Id", "Name"))"></select>
+        <span asp-validation-for="UserTypeId"></span>
     </div>
     <div>
+        <label asp-for="UserRegisterId"></label>
         <select asp-for="UserRegisterId" asp-items="@(new SelectList(Model.UserRegisters, "Id", "Name"))"></select>
+        <span asp-validation-for="UserRegisterId"></span>
     </div>
     <div>
         <input type="submit" value="Save" />
