@@ -1,0 +1,125 @@
+﻿body {
+    background-image: url("/Components/img/banner.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+ol, ul {
+    list-style: none;
+}
+
+
+#main{
+   
+}
+#header {
+    float: left;
+    
+}
+
+
+#header1{
+    float: left;
+}
+#header2 {
+    color: white;
+    text-transform: uppercase;
+    padding-top: 4%;
+}
+#navigation{
+     clear: both;
+ }
+
+#nav {
+				position: absolute;
+				display: block;
+				top: 9.5em;
+				left: 0;
+				width: 100%;
+				text-align: center;
+			}
+
+				#nav > ul {
+					display: inline-block;
+					border-radius: 0.35em;
+					box-shadow: inset 0px 0px 1px 1px black;
+					padding: 0 1.5em 0 1.5em;
+				}
+
+					#nav > ul > li {
+						display: inline-block;
+						text-align: center;
+						padding: 0 1.5em 0 1.5em;
+					}
+
+						#nav > ul > li > ul {
+							display: none;
+						}
+
+						#nav > ul > li > a, #nav > ul > li > span {
+							display: block;
+							color: #eee;
+							color: black;
+							text-transform: uppercase;
+							text-decoration: none;
+							font-size: 0.7em;
+							letter-spacing: 0.25em;
+							height: 5em;
+							line-height: 5em;
+							-moz-transition: all .25s ease-in-out;
+							-webkit-transition: all .25s ease-in-out;
+							-o-transition: all .25s ease-in-out;
+							-ms-transition: all .25s ease-in-out;
+							transition: all .25s ease-in-out;
+							outline: 0;
+						}
+
+						#nav > ul > li:hover > a {
+							color: #fff;
+						}
+
+						#nav > ul > li.active > a, #nav > ul > li.active > span {
+							color: #fff;
+						}
+/* List */
+
+ul.default {
+    list-style: disc;
+    padding-left: 1em;
+}
+
+    ul.default li {
+        padding-left: 0.5em;
+    }
+
+ul.style2 li {
+    border-top: solid 1px #eee;
+    padding: 1.5em 0 0 0;
+    margin: 1.5em 0 0 0;
+}
+
+    ul.style2 li:first-child {
+        border-top: 0;
+        padding-top: 0;
+        margin-top: 0;
+    }
+
+ul.style3 li {
+    border-top: solid 1px #eee;
+    padding: 0.5em 0 0 0;
+    margin: 0.5em 0 0 0;
+}
+
+    ul.style3 li:first-child {
+        border-top: 0;
+        padding-top: 0;
+        margin-top: 0;
+    }
+
+ol.default {
+    list-style: decimal;
+    padding-left: 1.25em;
+}
+
+    ol.default li {
+        padding-left: 0.25em;
+    }

@@ -1,16 +1,55 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    
+    <environment names="Development">
+        <link rel="stylesheet" href="/Components/css/Style.css" />
+        <link rel="shortcut icon" href="/Components/img/logo.png" />
+    </environment>
+
+    <environment names="Production">
+        <link rel="stylesheet" href="/Components/css/Style.css" />
+        <link rel="shortcut icon" href="/Components/img/logo.png" />
+
+    </environment>
 </head>
 <body>
     <div id="header"></div>
+    <a href="#"><img id="header1" src="/Components/img/logo.png" /></a>
+        <h1 id="header2"> оказание социально - правовой помощи осужденным</h1>
+
     <div id="navigation">
-        @await Component.InvokeAsync("NavigationMenu");
+        <nav id="nav">
+            <ul>
+                <li class="current"><a href="#" ">Главная</a></li>
+                <li>
+                    <a href="#">Помощь </a>
+                    <ul>
+                        <li><a href="#">Психологическая помощь</a></li>
+                        <li><a href="#">Правовая помощь</a></li>
+                        <li><a href="#">Медицинская помощь</a></li>
+                        <li><a href="#">Получение Образования </a></li>
+                        <li><a href="#">Защита Прав</a></li>
+                        <li><a href="#">Трудоустройство</a></li>
+                        <li><a href="#">Правовые акты</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <div>
+                        @await Component.InvokeAsync("LoginStatus")
+                    </div>
+                </li>
+                
+            </ul>
+        </nav>
+
+       
     </div>
-    <div>
-        @await Component.InvokeAsync("LoginStatus");
-    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    
     <div id="main">
         @RenderBody()
     </div>
