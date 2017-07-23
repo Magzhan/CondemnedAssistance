@@ -13,6 +13,11 @@ namespace CondemnedAssistance.Models {
         public DbSet<UserRegister> UserRegisters { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Help> Helps { get; set; }
+        public DbSet<Profession> Professions { get; set; }
+        public DbSet<UserProfession> UserProfessions { get; set; }
+        public DbSet<Education> Educations { get; set; }
+        public DbSet<EducationLevel> EducationLevels { get; set; }
+        public DbSet<UserEducation> UserEducations { get; set; }
         public UserContext(DbContextOptions options) : base(options) {
 
         }

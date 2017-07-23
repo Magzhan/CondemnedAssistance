@@ -22,6 +22,11 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
+        public IActionResult Profile() {
+            return View();
+        }
+
+        [HttpGet]
         [AllowAnonymous]
         public IActionResult Login() {
             return View();

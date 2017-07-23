@@ -1,8 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace CondemnedAssistance.Models
-{
+namespace CondemnedAssistance.Models {
     public class UserStaticInfo {
         public int Id { get; set; }
         public string LastName { get; set; }
