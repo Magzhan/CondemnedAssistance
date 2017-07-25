@@ -1,125 +1,130 @@
 ﻿body {
-    background-image: url("/Components/img/banner.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
+   
 }
-ol, ul {
-    list-style: none;
-}
+
 
 
 #main{
    
 }
+
 #header {
     float: left;
-    
+    background-image: url("/Components/img/banner.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 100%;
 }
 
 
 #header1{
     float: left;
+    margin-left: 2%;
 }
 #header2 {
     color: white;
     text-transform: uppercase;
     padding-top: 4%;
+    font: normal 23px/22px 'PT Serif Caption';
+    letter-spacing: -0.06em;
+}
+#header3 {
+    font: normal 10px/10px Arial;
+    color: #21538E;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    padding: 10px 0px;
 }
 #navigation{
      clear: both;
  }
 
 #nav {
-				position: absolute;
-				display: block;
-				top: 9.5em;
-				left: 0;
-				width: 100%;
-				text-align: center;
-			}
-
-				#nav > ul {
-					display: inline-block;
-					border-radius: 0.35em;
-					box-shadow: inset 0px 0px 1px 1px black;
-					padding: 0 1.5em 0 1.5em;
-				}
-
-					#nav > ul > li {
-						display: inline-block;
-						text-align: center;
-						padding: 0 1.5em 0 1.5em;
-					}
-
-						#nav > ul > li > ul {
-							display: none;
-						}
-
-						#nav > ul > li > a, #nav > ul > li > span {
-							display: block;
-							color: #eee;
-							color: black;
-							text-transform: uppercase;
-							text-decoration: none;
-							font-size: 0.7em;
-							letter-spacing: 0.25em;
-							height: 5em;
-							line-height: 5em;
-							-moz-transition: all .25s ease-in-out;
-							-webkit-transition: all .25s ease-in-out;
-							-o-transition: all .25s ease-in-out;
-							-ms-transition: all .25s ease-in-out;
-							transition: all .25s ease-in-out;
-							outline: 0;
-						}
-
-						#nav > ul > li:hover > a {
-							color: #fff;
-						}
-
-						#nav > ul > li.active > a, #nav > ul > li.active > span {
-							color: #fff;
-						}
-/* List */
-
-ul.default {
-    list-style: disc;
-    padding-left: 1em;
+	display: block;
+	left: 0;
+	width: 100%;
+	text-align: center;
 }
 
-    ul.default li {
-        padding-left: 0.5em;
+	#nav > ul {
+		display: inline-block;
+		border-radius: 0.35em;
+		box-shadow: inset 0px 0px 1px 1px black;
+		padding: 0 1.5em 0 1.5em;
+	}
+
+	#nav > ul > li {
+		display: inline-block;
+		text-align: center;
+		padding: 0 1.5em 0 1.5em;
+	}
+
+	#nav > ul > li > ul {
+		display: none;
+	}
+
+    #nav > ul > li > a, #nav > ul > li > span {
+    display: block;
+    color: #eee;
+    color: black;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: 0.7em;
+    letter-spacing: 0.25em;
+    height: 5em;
+    line-height: 5em;
+    -moz-transition: all .25s ease-in-out;
+    -webkit-transition: all .25s ease-in-out;
+    -o-transition: all .25s ease-in-out;
+    -ms-transition: all .25s ease-in-out;
+    transition: all .25s ease-in-out;
+    outline: 0;
     }
 
-ul.style2 li {
-    border-top: solid 1px #eee;
-    padding: 1.5em 0 0 0;
-    margin: 1.5em 0 0 0;
+	#nav > ul > li:hover > a {
+		color: #fff;
+	}
+
+    #nav > ul > li.active > a, #nav > ul > li.active > span {
+	    color: #fff;
+    }
+
+
+
+    .dropbtn {
+        display: inline-block;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+    }
+
+        
+
+    .dropdown {
+        display: inline-block;
+    }
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
 }
 
-    ul.style2 li:first-child {
-        border-top: 0;
-        padding-top: 0;
-        margin-top: 0;
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
     }
 
-ul.style3 li {
-    border-top: solid 1px #eee;
-    padding: 0.5em 0 0 0;
-    margin: 0.5em 0 0 0;
+        .dropdown-content a:hover {
+            background-color: #f1f1f1
+        }
+
+.dropdown:hover .dropdown-content {
+    display: block;
 }
-
-    ul.style3 li:first-child {
-        border-top: 0;
-        padding-top: 0;
-        margin-top: 0;
-    }
-
-ol.default {
-    list-style: decimal;
-    padding-left: 1.25em;
-}
-
-    ol.default li {
-        padding-left: 0.25em;
-    }

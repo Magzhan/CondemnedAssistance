@@ -16,31 +16,31 @@
     </environment>
 </head>
 <body>
-    <div id="header"></div>
-    <a href="#"><img id="header1" src="/Components/img/logo.png" /></a>
-        <h1 id="header2"> оказание социально - правовой помощи осужденным</h1>
-    <!-- id=header  id=navigation екеуінің арасында ештеңе болмауы керек -->
-    <div id="navigation">
-        <nav id="nav">
-            <ul>
-                <li class="current"><a href="#" >Главная</a></li>
-                
-                @await Component.InvokeAsync("NavigationMenu")
-
-                @await Component.InvokeAsync("LoginStatus")
-                
-            </ul>
-        </nav>       
-    </div>
     
-    <!--Астыдағыларды қолданбауға тырыс по возможности (br) -->
+    <div id="header">
+        <a href="#"><img id="header1" src="/Components/img/logo.png" /></a>
+        <h1 id="header2"> оказание социально - правовой помощи осужденным</h1>
+        <div id="header3"> официальный сайт</div>
+        <div id="navigation">
+            <nav id="nav">
+                <ul>
+                    <li class="current"><a href="#">Главная</a></li>
+
+                    @await Component.InvokeAsync("NavigationMenu")
+
+                    @await Component.InvokeAsync("LoginStatus")
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+        
+    
+  
     <!-- Footer жасай бер если че, онда бізге Айбек бірдеңе қойсын деп еді помнишь??-->
 
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
+
     
     <div id="main">
         @RenderBody()
