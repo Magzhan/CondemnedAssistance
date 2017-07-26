@@ -16,9 +16,10 @@
     </environment>
 </head>
 <body>
-    <div id="header"></div>
-    <a href="#"><img id="header1" src="/Components/img/logo.png" /></a>
+    <div id="header">
+        <a href="#"><img id="header1" src="/Components/img/logo.png" /></a>
         <h1 id="header2"> оказание социально - правовой помощи осужденным</h1>
+    </div>
     <!-- id=header  id=navigation екеуінің арасында ештеңе болмауы керек -->
     <div id="left-sidebar">
         @await Component.InvokeAsync("SideBar")
@@ -36,14 +37,10 @@
         </nav>       
     </div>
     
-    <!--Астыдағыларды қолданбауға тырыс по возможности (br) -->
+  
     <!-- Footer жасай бер если че, онда бізге Айбек бірдеңе қойсын деп еді помнишь??-->
 
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
+
     
     <div id="main">
         @RenderBody()

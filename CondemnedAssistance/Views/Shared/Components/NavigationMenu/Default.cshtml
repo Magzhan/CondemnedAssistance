@@ -1,12 +1,24 @@
-﻿<li>
-    <a href="#">Помощь </a>
-    <ul>
-        <li><a href="#">Психологическая помощь</a></li>
-        <li><a href="#">Правовая помощь</a></li>
-        <li><a href="#">Медицинская помощь</a></li>
-        <li><a href="#">Получение Образования </a></li>
-        <li><a href="#">Защита Прав</a></li>
-        <li><a href="#">Трудоустройство</a></li>
-        <li><a href="#">Правовые акты</a></li>
-    </ul>
-</li>
+﻿<environment names="Development">
+    <link rel="stylesheet" href="/Components/css/Style.css" />
+    <link rel="shortcut icon" href="/Components/img/logo.png" />
+</environment>
+
+<environment names="Production">
+    <link rel="stylesheet" href="/Components/css/Style.css" />
+    <link rel="shortcut icon" href="/Components/img/logo.png" />
+
+</environment>
+<li class="dropdown">
+    <a href="javascript:void(0)" class="dropbtn">Помощь </a>
+    <div class="dropdown-content">
+       <a href="#">Психологическая помощь</a>
+       <a href="#">Правовая помощь</a>
+       <a href="#">Медицинская помощь</a>
+       <a href="#">Получение Образования </a>
+       <a href="#">Защита Прав</a>
+       <a href="#">Трудоустройство</a>
+       <a href="#">Правовые акты</a>
+    </div>
+  </li>
+
+
