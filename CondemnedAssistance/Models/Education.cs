@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Models {
     public class Education : TemplateHelperTable{
-        public int EducationId { get; set; }
+        public int EducationLevelId { get; set; }
 
         public EducationLevel EducationLevel { get; set; }
     }

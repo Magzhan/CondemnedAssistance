@@ -39,4 +39,20 @@ namespace CondemnedAssistance.ViewModels {
         public DateTime Birthdate { get; set; }
         public bool Gender { get; set; }
     }
+
+    public class UserProfileModel : UserModelTemplate{
+        public string MobilePhone { get; set; }
+        public bool IsMobileConfirmed { get; set; }
+        public string IsMobileConfirmedText { get => (IsMobileConfirmed) ? "Yes" : "No"; }
+        public string Email { get; set; }
+        public bool IsEmailConfirmed { get; set; }
+        public string IsEmailConfirmedText { get => (IsEmailConfirmed) ? "Yes" : "No"; }
+        public string Role { get; set; }
+        public string Status { get; set; }
+        public string Address { get; set; }
+        public string GenderText { get { return (base.Gender) ? "Male" : "Female"; } }
+        public string Registration { get; set; }
+        public IEnumerable<Profession> Professeions { get; set; }
+        public IEnumerable<Education> Educations { get; set; }
+    }
 }

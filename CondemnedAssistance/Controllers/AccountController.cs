@@ -23,7 +23,37 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public IActionResult Profile() {
-            return View();
+            var userProfileModel = new UserProfileModel();
+            var userId = Convert.ToInt32(HttpContext.User.Identity.Name);
+            var user = _db.Users.First(u => u.Id == userId);
+            var userStaticData = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == userId);
+            var userRegister = _db.UserRegisters.FirstOrDefault(r => r.UserId == userId).RegisterId;
+            var register = _db.Registers.FirstOrDefault(r => r.Id == userRegister);
+            var userRole = _db.UserRoles.FirstOrDefault(r => r.UserId == userId).RoleId;
+            var role = _db.Roles.FirstOrDefault(r => r.Id == userRole);
+            var status = _db.UserStatuses.FirstOrDefault(s => s.Id == userStaticData.UserStatusId);
+
+            userProfileModel.Login = user.Login;
+            userProfileModel.Role = role.Name;
+            userProfileModel.Status = status.Name;
+            userProfileModel.LastName = userStaticData.LastName;
+            userProfileModel.FirstName = userStaticData.FirstName;
+            userProfileModel.MiddleName = userStaticData.MiddleName;
+            userProfileModel.Birthdate = userStaticData.Birthdate;
+            userProfileModel.Gender = userStaticData.Gender;
+            userProfileModel.Xin = userStaticData.Xin;
+            userProfileModel.Email = user.Email;
+            userProfileModel.IsEmailConfirmed = user.EmailConfirmed;
+            userProfileModel.MobilePhone = user.PhoneNumber.ToString();
+            userProfileModel.IsMobileConfirmed = user.PhoneNumberConfirmed;
+            userProfileModel.Registration = register.Name;
+            userProfileModel.Educations = new List<Education> {
+                new Education{ Name = "Some school", Description = "Some description", EducationLevel = new EducationLevel{ Id = 0, Name = "Middle" } }
+            };
+            userProfileModel.Professeions = new List<Profession> {
+                new Profession{ Name = "Some profession", Description = "Some desc"}
+            };
+            return View(userProfileModel);
         }
 
         [HttpGet]
