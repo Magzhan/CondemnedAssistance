@@ -2,18 +2,13 @@
    
 }
 
-
-
-#main{
-   
-}
-
 #header {
     float: left;
     background-image: url("/Components/img/banner.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     width: 100%;
+    margin-bottom: 2%;
 }
 
 
@@ -44,6 +39,7 @@
 	left: 0;
 	width: 100%;
 	text-align: center;
+    
 }
 
 	#nav > ul {
@@ -128,3 +124,34 @@
 .dropdown:hover .dropdown-content {
     display: block;
 }
+.mySlides {
+    display: none;
+   
+}
+#main{
+   
+}
+    #main1 {
+
+        max-width: 700px;
+        margin: auto;
+    }
+#footer{
+    background-color:#1F3F69;
+    min-height: 200px;
+    color:white;
+}
+#footer1 {
+    padding: 16px 50px;
+    font-size: 12px;
+    color: #8094A7;
+    background-color: #00294f;
+    height: 50px;
+}
+#footer2 {
+    font-size: 21px;
+    color: white;
+    margin-bottom: 20px;
+    line-height: 24px;
+}
+    

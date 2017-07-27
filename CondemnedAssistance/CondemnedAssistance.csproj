@@ -5,9 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\Components\img\1.jpg" />
+    <Content Include="wwwroot\Components\img\2.jpg" />
+    <Content Include="wwwroot\Components\img\3.jpg" />
+    <Content Include="wwwroot\Components\img\4.jpg" />
+    <Content Include="wwwroot\Components\img\5.jpg" />
+    <Content Include="wwwroot\Components\img\6.jpg" />
     <Content Include="wwwroot\Components\img\banner.jpg" />
     <Content Include="wwwroot\Components\img\logo.png" />
     <Content Include="wwwroot\Components\img\overlay.png" />
+    <Content Include="wwwroot\Components\js\slider.js" />
   </ItemGroup>
 
   <ItemGroup>
