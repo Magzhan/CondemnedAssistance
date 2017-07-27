@@ -1,0 +1,30 @@
+﻿#header {
+    float: left;
+    background-image: url("/Components/img/banner.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 100%;
+}
+
+#navigation {
+    float:left;
+    width:100%;
+}
+
+#left-sidebar {
+    float:left;
+    width:20%;
+}
+
+#main {
+    float:left;
+    min-height:500px;
+}
+
+#footer {
+    float:left;
+    background-color: #1F3F69;
+    min-height: 200px;
+    color: white;
+    width:100%;
+}

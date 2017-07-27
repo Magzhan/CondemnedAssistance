@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\Components\css\footer.css" />
+    <Content Include="wwwroot\Components\css\header.css" />
+    <Content Include="wwwroot\Components\css\layout.css" />
+    <Content Include="wwwroot\Components\css\left-sidebar.css" />
+    <Content Include="wwwroot\Components\css\main.css" />
+    <Content Include="wwwroot\Components\css\navigation.css" />
+    <Content Include="wwwroot\Components\css\style.css" />
     <Content Include="wwwroot\Components\img\1.jpg" />
     <Content Include="wwwroot\Components\img\2.jpg" />
     <Content Include="wwwroot\Components\img\3.jpg" />

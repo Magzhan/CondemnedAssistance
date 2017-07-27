@@ -6,11 +6,23 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <environment names="Development">
         <link rel="stylesheet" href="/Components/css/Style.css" />
+        <link rel="stylesheet" href="~/Components/css/layout.css" />
+        <link rel="stylesheet" href="~/Components/css/header.css" />
+        <link rel="stylesheet" href="~/Components/css/navigation.css" />
+        <link rel="stylesheet" href="~/Components/css/left-sidebar.css" />
+        <link rel="stylesheet" href="~/Components/css/main.css" />
+        <link rel="stylesheet" href="~/Components/css/footer.css" />
         <link rel="shortcut icon" href="/Components/img/logo.png" />
     </environment>
 
     <environment names="Production">
         <link rel="stylesheet" href="/Components/css/Style.css" />
+        <link rel="stylesheet" href="~/Components/css/layout.css" />
+        <link rel="stylesheet" href="~/Components/css/header.css" />
+        <link rel="stylesheet" href="~/Components/css/navigation.css" />
+        <link rel="stylesheet" href="~/Components/css/left-sidebar.css" />
+        <link rel="stylesheet" href="~/Components/css/main.css" />
+        <link rel="stylesheet" href="~/Components/css/footer.css" />
         <link rel="shortcut icon" href="/Components/img/logo.png" />
 
     </environment>
@@ -19,10 +31,6 @@
     <div id="header">
         <a href="#"><img id="header1" src="/Components/img/logo.png" /></a>
         <h1 id="header2"> оказание социально - правовой помощи осужденным</h1>
-    </div>
-    <!-- id=header  id=navigation екеуінің арасында ештеңе болмауы керек -->
-    <div id="left-sidebar">
-        @await Component.InvokeAsync("SideBar")
     </div>
     <div id="navigation">
         <nav id="nav">
@@ -36,12 +44,9 @@
             </ul>
         </nav>       
     </div>
-    
-  
-    <!-- Footer жасай бер если че, онда бізге Айбек бірдеңе қойсын деп еді помнишь??-->
-
-
-    
+    <div id="left-sidebar">
+        @await Component.InvokeAsync("SideBar")
+    </div>
     <div id="main">
         @RenderBody()
     </div>

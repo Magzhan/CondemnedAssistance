@@ -5,112 +5,99 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <environment names="Development">
-        <link rel="stylesheet" href="/Components/css/Style.css" />
-        
+        <link rel="stylesheet" href="~/Components/css/style.css" />
+        <link rel="stylesheet" href="~/Components/css/layout.css" />
+        <link rel="stylesheet" href="~/Components/css/header.css" />
+        <link rel="stylesheet" href="~/Components/css/navigation.css" />
+        <link rel="stylesheet" href="~/Components/css/main.css" />
+        <link rel="stylesheet" href="~/Components/css/footer.css" />
         <link rel="shortcut icon" href="/Components/img/logo.png" />
     </environment>
-
     <environment names="Production">
         <link rel="stylesheet" href="/Components/css/Style.css" />
-       
+        <link rel="stylesheet" href="~/Components/css/layout.css" />
+        <link rel="stylesheet" href="~/Components/css/header.css" />
+        <link rel="stylesheet" href="~/Components/css/navigation.css" />
+        <link rel="stylesheet" href="~/Components/css/main.css" />
+        <link rel="stylesheet" href="~/Components/css/footer.css" />
         <link rel="shortcut icon" href="/Components/img/logo.png" />
-
     </environment>
 </head>
-<body>
-    
-    <div id="header">
-        <a href="#"><img id="header1" src="/Components/img/logo.png" /></a>
-        <h1 id="header2"> оказание социально - правовой помощи осужденным</h1>
-        <div id="header3"> официальный сайт</div>
-        <div id="navigation">
-            <nav id="nav">
-                <ul>
-                    <li class="current"><a href="#">Главная</a></li>
+<body>    
+<div id="header">
+    <a href="#"><img id="header1" src="/Components/img/logo.png" /></a>
+    <h1 id="header2"> оказание социально - правовой помощи осужденным</h1>
+    <div id="header3"> официальный сайт</div>
+</div>
+<div id="navigation">
+    <nav id="nav">
+        <ul>
+            <li class="current"><a href="#">Главная</a></li>
 
-                    @await Component.InvokeAsync("NavigationMenu")
+            @await Component.InvokeAsync("NavigationMenu")
 
-                    @await Component.InvokeAsync("LoginStatus")
+            @await Component.InvokeAsync("LoginStatus")
 
-                </ul>
-            </nav>
-        </div>
-    </div>
+        </ul>
+    </nav>
+</div>
+<div id="main">      
+    @*<div id ="main1">
+        <img class="mySlides" src="~/Components/img/1.jpg" style="width:100%">
+        <img class="mySlides" src="~/Components/img/2.jpg" style="width:100%">
+        <img class="mySlides" src="~/Components/img/3.jpg" style="width:100%">
+        <img class="mySlides" src="~/Components/img/4.jpg" style="width:100%">
+        <img class="mySlides" src="~/Components/img/5.jpg" style="width:100%">
+        <img class="mySlides" src="~/Components/img/6.jpg" style="width:100%">
 
-        
-    
-  
-    <!-- Footer жасай бер если че, онда бізге Айбек бірдеңе қойсын деп еді помнишь??-->
+        <script>
+            var myIndex = 0;
+            carousel();
 
-
-    
-    <div id="main">
-      
-        <div id ="main1">
-            <img class="mySlides" src="~/Components/img/1.jpg" style="width:100%">
-            <img class="mySlides" src="~/Components/img/2.jpg" style="width:100%">
-            <img class="mySlides" src="~/Components/img/3.jpg" style="width:100%">
-            <img class="mySlides" src="~/Components/img/4.jpg" style="width:100%">
-            <img class="mySlides" src="~/Components/img/5.jpg" style="width:100%">
-            <img class="mySlides" src="~/Components/img/6.jpg" style="width:100%">
-
-            <script>
-                var myIndex = 0;
-                carousel();
-
-                function carousel() {
-                    var i;
-                    var x = document.getElementsByClassName("mySlides");
-                    for (i = 0; i < x.length; i++) {
-                        x[i].style.display = "none";
-                    }
-                    myIndex++;
-                    if (myIndex > x.length) { myIndex = 1 }
-                    x[myIndex - 1].style.display = "block";
-                    setTimeout(carousel, 5000); // Change image every 5 seconds
+            function carousel() {
+                var i;
+                var x = document.getElementsByClassName("mySlides");
+                for (i = 0; i < x.length; i++) {
+                    x[i].style.display = "none";
                 }
-            </script>
-        </div>
-    </div>
+                myIndex++;
+                if (myIndex > x.length) { myIndex = 1 }
+                x[myIndex - 1].style.display = "block";
+                setTimeout(carousel, 5000); // Change image every 5 seconds
+            }
+        </script>
+    </div>*@
+    @RenderBody()    
+</div>
+<div id="footer">
     <div>
-        @RenderBody()   
-    </div>
-    <div id="footer">
+        <h2 id="footer2">Контакты</h2>
         <div>
-
-            <h2 id="footer2">Контакты</h2>
-
-            <div>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td><strong>Адрес:</strong></td>
-                            <td>--</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Call-центр:</strong></td>
-                            <td>--</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Телефоны доверия:</strong></td>
-                            <td>--</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Канцелярия:</strong></td>
-                            <td>--</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-            </div>
-
+            <table>
+                <tbody>
+                    <tr>
+                        <td><strong>Адрес:</strong></td>
+                        <td>--</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Call-центр:</strong></td>
+                        <td>--</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Телефоны доверия:</strong></td>
+                        <td>--</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Канцелярия:</strong></td>
+                        <td>--</td>
+                    </tr>
+                </tbody>
+            </table>                
         </div>
-        <div id="footer1">
-            <div>&copy; Пробация Республики Казахстан&nbsp;2017</div>
-            
-        </div>
-
-
     </div>
+    <div id="footer1">
+        <div>&copy; Пробация Республики Казахстан&nbsp;2017</div>            
+    </div>
+</div>
 </body>
 </html>
