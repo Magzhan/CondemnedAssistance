@@ -1,5 +1,41 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model CondemnedAssistance.ViewModels.AddressModel
 @{
+    Layout = "_Layout";
 }
+<form asp-controller="Address" asp-action="Create" method="post">
+    <div>
+        <div>
+            <label asp-for="Name"></label>
+            <input type="text" asp-for="Name"/>
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div>
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description"></textarea>
+            <span asp-validation-for="Description"></span>
+        </div>
+        <div>
+            <input type="hidden" asp-for="AddressLevelId"/>
+        </div>
+        <div>
+            <input type="hidden" asp-for="AddressParentId"/>
+        </div>
+        <div>
+            <label asp-for="AddressLevelId"></label>
+            <select disabled>
+                <option selected>@Model.AddressLevels.First(a => a.Id == Model.AddressLevelId).Name</option>
+            </select>
+        </div>
+        @if (Model.AddressParent != null) {
+            <div>
+                <label asp-for="AddressParentId"></label>
+                <select disabled>
+                    <option selected>@Model.AddressParent.Name</option>
+                </select>
+            </div>
+        }
+        <div>
+            <input type="submit" value="Save"/>
+        </div>
+    </div>
+</form>

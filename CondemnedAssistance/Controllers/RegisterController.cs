@@ -41,7 +41,19 @@ namespace CondemnedAssistance.Controllers {
             } else {
                 int registerId = Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value);
                 int userId = Convert.ToInt32(HttpContext.User.Identity.Name);
+                Register register = _db.Registers.First(r => r.Id == registerId);
+                RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.Id == register.RegisterLevelId);
+                
                 registers = _registerHelper.GetUserRegisterModels(userId, registerId);
+                registers.Add(new RegisterModel {
+                    Id = register.Id,
+                    Name = register.Name,
+                    Description = register.Description,
+                    RegisterLevelId = register.RegisterLevelId,
+                    RegisterLevels = new List<RegisterLevelModel> { new RegisterLevelModel { Id = registerLevel.Id, Name = registerLevel.Name, Description = registerLevel.Description } }
+                });
+
+                registers = registers.OrderBy(r => r.RegisterLevelId).ToList();
             }            
             
             return View(registers);
@@ -56,7 +68,6 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            int[] registerChildren = _registerHelper.GetRegisterChildren(new int[] { }, Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value));
             Register parentRegister = _db.Registers.FirstOrDefault(r => r.Id == parentId);
             RegisterModel model = new RegisterModel();
             List<RegisterLevelModel> registerLevels = new List<RegisterLevelModel>();
@@ -106,7 +117,6 @@ namespace CondemnedAssistance.Controllers {
                             _db.SaveChanges();
                             break;
                     }
-
                     
                 } else {
                     ModelState.AddModelError("", "Such address already exists");
@@ -174,7 +184,6 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id) {
-            RegisterHierarchy child = _db.RegisterHierarchies.FirstOrDefault(h => h.ParentRegister == id);
             Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
 
             Dictionary<string, int> registerActions = new Dictionary<string, int>();

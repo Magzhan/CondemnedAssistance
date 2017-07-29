@@ -13,6 +13,8 @@ namespace CondemnedAssistance.Models {
         public string Xin { get; set; }
         public DateTime Birthdate { get; set; }
         public bool Gender { get; set; }
+        [MaxLength(2000)]
+        public string MainAddress { get; set; }
 
         public int UserId { get; set; }
         public User User { get; set; }

@@ -7,15 +7,20 @@
         <tr>
             <td>@r.Name</td>
             <td>@r.Description</td>
-            <td>@r.RegisterLevels[0].Name</td>
+            <td>@r.RegisterLevels.First().Name</td>
             <td><a asp-controller="Register" asp-action="Update" asp-route-id="@r.Id">Edit</a></td>
             <td><a asp-controller="Register" asp-action="Delete" asp-route-id="@r.Id">Delete</a></td>
-            @if (r.RegisterLevelId == 1) {
+            @{ var levelId = r.RegisterLevelId + 1;
+                if (r.RegisterLevelId != 3) {
+                    <td><a asp-controller="Register" asp-action="Create" asp-route-levelId="@levelId" asp-route-parentId="@r.Id" asp-route-childId="0">Add</a></td>
+                }
+            }
+            @*@if (r.RegisterLevelId == 1) {
                 <td><a asp-controller="Register" asp-action="Create" asp-route-levelId="2" asp-route-parentId="@r.Id" asp-route-childId="0">Add</a></td>
             }
             @if (r.RegisterLevelId == 2) {
                 <td><a asp-controller="Register" asp-action="Create" asp-route-levelId="3" asp-route-parentId="@r.Id" asp-route-childId="0">Add</a></td>
-            }
+            }*@
         </tr>
     }
 </table>

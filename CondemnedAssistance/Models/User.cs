@@ -7,6 +7,7 @@ namespace CondemnedAssistance.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        [MinLength(12)]
         [MaxLength(12)]
         public string Login { get; set; }
         public string Email { get; set; }

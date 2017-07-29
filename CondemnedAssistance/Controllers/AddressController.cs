@@ -19,32 +19,141 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public IActionResult Index() {
-            return View();
+            List<AddressModel> model = new List<AddressModel>();
+            _db.Addresses.ToList().ForEach(a => {
+                AddressLevel addressLevel = _db.AddressLevels.FirstOrDefault(l => l.Id ==a.AddressLevelId);
+                model.Add(new AddressModel {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Description = a.Description,
+                    AddressLevelId = a.AddressLevelId,
+                    AddressLevels = new List<AddressLevelModel> { new AddressLevelModel { Id = addressLevel.Id, Name = addressLevel.Name, Description = addressLevel.Description} }
+                });
+            });
+
+            model = model.OrderBy(a => a.AddressLevelId).ToList();
+            return View(model);
         }
 
         [HttpGet]
         public IActionResult Create(int levelId, int parentId, int childId) {
-            return View();
+            AddressModel model = new AddressModel();
+            Address parentAddress = _db.Addresses.FirstOrDefault(a => a.Id == parentId);
+            List<AddressLevelModel> addressLevels = new List<AddressLevelModel>();
+            _db.AddressLevels.ToList().ForEach(row => {
+                addressLevels.Add(new AddressLevelModel {
+                    Id = row.Id,
+                    Name = row.Name,
+                    Description = row.Description
+                });
+            });
+            model.AddressLevels.AddRange(addressLevels);
+            model.AddressLevelId = levelId;
+            if(parentId > 0 && parentAddress != null) {
+                model.AddressParent = parentAddress;
+                model.AddressParentId = parentId;
+            }
+            return View(model);
         }
 
         [HttpPost]
         public IActionResult Create(AddressModel model) {
-            return View();
+            if (ModelState.IsValid) {
+                if(!_db.Addresses.Any(a => a.NormalizedName == model.Name.ToUpper())) {
+                    Address address = new Address {
+                        Name = model.Name,
+                        NormalizedName = model.Name.ToUpper(),
+                        Description = model.Description,
+                        AddressLevelId = model.AddressLevelId,
+                        RequestDate = DateTime.Now,
+                        RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
+                    };
+
+                    _db.Addresses.Add(address);
+                    _db.SaveChanges();
+
+                    switch (model.AddressParentId) {
+                        case 0:
+                            break;
+                        default:
+                            _db.AddressHierarchies.Add(new AddressHierarchy { ParentAddressId = model.AddressParentId, ChildAddressId = address.Id });
+                            _db.SaveChanges();
+                            break;
+                    }
+                    return RedirectToAction("Index");
+                }
+                ModelState.AddModelError("", "Already exists");
+            }
+            return View(model);
         }
 
         [HttpGet]
         public IActionResult Update(int id) {
-            return View();
+            if (_db.Addresses.Any(a => a.Id == id)) {
+                Address address = _db.Addresses.First(a => a.Id == id);
+                Address addressParent = null;
+                AddressHierarchy parent = _db.AddressHierarchies.FirstOrDefault(h => h.ChildAddressId == id);
+                if(parent != null) {
+                    addressParent = _db.Addresses.First(a => a.Id == parent.ParentAddressId);
+                }
+
+                AddressModel model = new AddressModel {
+                    Id = address.Id,
+                    Name = address.Name,
+                    Description = address.Description,
+                    AddressLevelId = address.AddressLevelId,
+                    AddressLevels = _db.AddressLevels.ToList().Select(r => new AddressLevelModel { Id = r.Id, Name = r.Name, Description = r.Description}).ToList(),
+                    AddressParent = addressParent
+                };
+                return View(model);
+            }
+            ModelState.AddModelError("", "Not found");
+            
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult Update(int id, AddressModel model) {
-            return View();
+            if (ModelState.IsValid) {
+                if (!_db.Addresses.Any(a => a.Id != id && a.NormalizedName == model.Name.ToUpper())) {
+                    Address address = _db.Addresses.FirstOrDefault(a => a.Id == id);
+                    address.Name = model.Name;
+                    address.Description = model.Description;
+                    address.NormalizedName = model.Name.ToUpper();
+                    address.RequestDate = DateTime.Now;
+                    address.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
+
+                    _db.AddressLevels.ToList().ForEach(r => { model.AddressLevels.Add(new AddressLevelModel { Id = r.Id, Name = r.Name, Description = r.Description }); });
+
+                    _db.Addresses.Attach(address);
+                    _db.Entry(address).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    _db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                ModelState.AddModelError("", "Already exists");
+            }
+            return View(model);
         }
 
         [HttpGet]
         public IActionResult Delete(int id) {
-            return View();
+            if(_db.UserAddresses.Any(a => a.AddressId == id)) {
+                ModelState.AddModelError("", "Has users so cannot be deleted");
+                return RedirectToAction("Index");
+            }
+            if (_db.AddressHierarchies.Any(a => a.ParentAddressId == id)) {
+                ModelState.AddModelError("", "Has users so cannot be deleted");
+                return RedirectToAction("Index");
+            }
+
+            Address address = _db.Addresses.First(a => a.Id == id);
+            AddressHierarchy[] addressParents = _db.AddressHierarchies.Where(a => a.ChildAddressId == id).ToArray();
+            _db.AddressHierarchies.RemoveRange(addressParents);
+
+            _db.Addresses.Remove(address);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
