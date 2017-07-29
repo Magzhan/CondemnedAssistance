@@ -1,0 +1,22 @@
+﻿@model CondemnedAssistance.ViewModels.AddressLevelModel
+@{ 
+    Layout = "_Layout";
+}
+<form asp-controller="Address" asp-action="CreateLevel" method="post">
+    <div>
+        <div>
+            <label asp-for="Name"></label>
+            <input type="text" asp-for="Name"/>
+            <span asp-for="Name"></span>
+        </div>
+        <div>
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description"></textarea>
+            <span asp-for="Description"></span>
+        </div>
+        <div>
+            <label></label>
+            <input type="submit" value="Save" />
+        </div>
+    </div>
+</form>

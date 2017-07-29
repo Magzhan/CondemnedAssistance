@@ -1,0 +1,24 @@
+﻿@model IEnumerable<CondemnedAssistance.ViewModels.AddressLevelModel>
+@{
+    Layout = "_Layout";
+}
+<a asp-controller="Address" asp-action="CreateLevel" >Create</a>
+<table>
+    @foreach(var address in Model) {
+        <tr>
+            <td>
+                @address.Name
+            </td>
+            <td>
+                @address.Description
+            </td>
+            <td>
+                <a asp-controller="Address" asp-action="UpdateLevel" asp-route-id="@address.Id">Edit</a>
+            </td>
+            <td>
+                <a asp-controller="Address" asp-action="DeleteLevel" asp-route-id="@address.Id">Delete</a>
+            </td>
+        </tr>
+
+    }
+</table>
