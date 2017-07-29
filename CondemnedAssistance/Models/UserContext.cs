@@ -18,6 +18,10 @@ namespace CondemnedAssistance.Models {
         public DbSet<Education> Educations { get; set; }
         public DbSet<EducationLevel> EducationLevels { get; set; }
         public DbSet<UserEducation> UserEducations { get; set; }
+        public DbSet<Address> Addresses { get; set; }
+        public DbSet<AddressLevel> AddressLevels { get; set; }
+        public DbSet<AddressHierarchy> AddressHierarchies { get; set; }
+        public DbSet<UserAddress> UserAddresses { get; set; }
         public UserContext(DbContextOptions options) : base(options) {
 
         }
