@@ -238,5 +238,12 @@ namespace CondemnedAssistance.Controllers {
             _db.AddressLevels.Remove(addressLevel);
             return RedirectToAction("AddressLevels");
         }
+
+        [HttpGet]
+        public IActionResult GetAddressList(int id) {
+            int[] childrenIds = _db.AddressHierarchies.Where(a => a.ParentAddressId == id).Select(a => a.ChildAddressId).ToArray();
+            AddressModel[] children = _db.Addresses.Where(a => childrenIds.Contains(a.Id)).Select(a => new AddressModel { Id = a.Id, Name = a.Name, Description = a.Description }).ToArray();
+            return Json(children);
+        }
     }
 }

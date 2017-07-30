@@ -1,8 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace CondemnedAssistance.Models
-{
+namespace CondemnedAssistance.Models {
     public class User {
         [Key]
         public int Id { get; set; }
@@ -14,7 +13,9 @@ namespace CondemnedAssistance.Models
         public bool EmailConfirmed { get; set; }
         public string NormalizedEmail { get; set; }
         public string PasswordHash { get; set; }
-        public int PhoneNumber { get; set; }
+        [MaxLength(11)]
+        [MinLength(11)]
+        public string PhoneNumber { get; set; }
         public bool PhoneNumberConfirmed { get; set; }
         public bool LockoutEnabled { get; set; }
         public DateTime LockoutEnd { get; set; }

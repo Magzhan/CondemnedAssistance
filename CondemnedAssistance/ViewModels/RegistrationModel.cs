@@ -21,6 +21,6 @@ namespace CondemnedAssistance.ViewModels {
 
         [Required(ErrorMessage = "Не указан телефон")]
         [DataType(DataType.PhoneNumber)]
-        public int PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

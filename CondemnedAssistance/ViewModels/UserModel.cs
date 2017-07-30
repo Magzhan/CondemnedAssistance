@@ -29,6 +29,16 @@ namespace CondemnedAssistance.ViewModels {
         public IEnumerable<Register> UserRegisters { get; set; }
     }
 
+    public class UserModelCreate : UserModelModify {
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
+        public string MainAddress { get; set; }
+        public int AddressLevelOneId { get; set; }
+        public IEnumerable<Address> Addresses { get; set; }
+        public int AddressLevelTwoId { get; set; }
+        public int AddressLevelThreeId { get; set; }
+    }
+
     public class UserModelTemplate {
         public int UserId { get; set; }
         public string Login { get; set; }

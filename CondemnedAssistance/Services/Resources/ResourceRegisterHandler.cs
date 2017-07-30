@@ -29,10 +29,9 @@ namespace CondemnedAssistance.Services.Resources {
                 return Task.CompletedTask;
             }
 
-            if (resource.ContainsKey("userId")) {
-                int userId = resource["userId"];
-                int userRoleId = _db.UserRoles.FirstOrDefault(u => u.UserId == userId).RoleId;
-                if (userRoleId == 3) {
+            if (resource.ContainsKey("roleId")) {
+                int roleId = resource["roleId"];
+                if (roleId == 3) {
                     context.Fail();
                     return Task.CompletedTask;
                 }

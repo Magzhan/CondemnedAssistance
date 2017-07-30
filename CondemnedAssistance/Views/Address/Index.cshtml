@@ -15,15 +15,6 @@
                     <td> <a asp-controller="Address" asp-action="Create" asp-route-levelId="@levelId" asp-route-parentId="@a.Id" asp-route-childId="0">Add</a></td>
                 }
             }
-            @*@if (a.AddressLevelId != 3) {
-                <td> <a asp-controller="Address" asp-action="Create" asp-route-levelId="@levelId" asp-route-parentId="@a.Id" asp-route-childId="0">Add</a></td>
-            }*@
-            @*@if(a.AddressLevelId == 1) {
-                <td> <a asp-controller="Address" asp-action="Create" asp-route-levelId="2" asp-route-parentId="@a.Id" asp-route-childId="0">Add</a></td>
-            }
-            @if (a.AddressLevelId == 2) {
-                <td> <a asp-controller="Address" asp-action="Create" asp-route-levelId="3" asp-route-parentId="@a.Id" asp-route-childId="0">Add</a></td>
-            }*@
         </tr>
     }
 </table>

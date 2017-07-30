@@ -22,6 +22,7 @@
     <Content Include="wwwroot\Components\img\logo.png" />
     <Content Include="wwwroot\Components\img\overlay.png" />
     <Content Include="wwwroot\Components\js\slider.js" />
+    <Content Include="wwwroot\Components\js\user-controller-scripts.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +39,11 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot/Components\js\user-controller-scripts.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

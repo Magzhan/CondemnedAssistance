@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace CondemnedAssistance.ViewComponents {
     public class NavigationMenuViewComponent : ViewComponent {
 
-        public async Task<IViewComponentResult> InvokeAsync() {
+        public IViewComponentResult Invoke() {
             if (User.Identity.IsAuthenticated) {
                 string role = HttpContext.User.FindFirst(c => c.Type == ClaimsIdentity.DefaultRoleClaimType).Value;
                 string view = "UserView";
