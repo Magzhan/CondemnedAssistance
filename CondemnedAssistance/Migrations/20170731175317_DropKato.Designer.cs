@@ -8,9 +8,10 @@ using CondemnedAssistance.Models;
 namespace CondemnedAssistance.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20170731175317_DropKato")]
+    partial class DropKato
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -136,30 +137,6 @@ namespace CondemnedAssistance.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Helps");
-                });
-
-            modelBuilder.Entity("CondemnedAssistance.Models.Kato", b =>
-                {
-                    b.Property<int>("SystemId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("AreaType");
-
-                    b.Property<string>("Code");
-
-                    b.Property<int>("Id");
-
-                    b.Property<int>("Level");
-
-                    b.Property<string>("NameKaz");
-
-                    b.Property<string>("NameRus");
-
-                    b.Property<int?>("Parent");
-
-                    b.HasKey("SystemId");
-
-                    b.ToTable("Katos");
                 });
 
             modelBuilder.Entity("CondemnedAssistance.Models.Profession", b =>

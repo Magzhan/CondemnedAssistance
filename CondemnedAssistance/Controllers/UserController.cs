@@ -26,6 +26,7 @@ namespace CondemnedAssistance.Controllers {
         [HttpGet]
         public IActionResult Index() {
             ICollection<User> users = new List<User>();
+            ICollection<UserProfileModel> model = new List<UserProfileModel>();
             if (User.IsInRole("3")) {
                 users = _db.Users.ToList();
             }
@@ -179,6 +180,15 @@ namespace CondemnedAssistance.Controllers {
             UserStatus userStatus = null;
             UserType userType = null;
             UserRegister userRegister = _db.UserRegisters.FirstOrDefault(u => u.UserId == id);
+
+            UserModelModify model = new UserModelModify();
+
+            if (userRegister != null) {
+                model.UserRegisterId = userRegister.RegisterId;
+                if (User.IsInRole("3")) {
+                    registers.Add(_db.Registers.First(r => r.Id == userRegister.RegisterId));
+                }
+            }
             if (userStaticInfo != null) {
                 userStatus = _db.UserStatuses.FirstOrDefault(u => u.Id == userStaticInfo.UserStatusId);
                 userType = _db.UserTypes.FirstOrDefault(u => u.Id == userStaticInfo.UserTypeId);
@@ -192,8 +202,6 @@ namespace CondemnedAssistance.Controllers {
             if (user == null) {
                 return RedirectToAction("Index", "User");
             }
-
-            UserModelModify model = new UserModelModify();
 
             model.UserId = id;
             model.Login = user.Login;
@@ -222,10 +230,7 @@ namespace CondemnedAssistance.Controllers {
             }
             if(userType != null) {
                 model.UserTypeId = userType.Id;
-            }
-            if (userRegister != null) {
-                model.UserRegisterId = userRegister.RegisterId;
-            }
+            }           
 
             return View(model);
         }

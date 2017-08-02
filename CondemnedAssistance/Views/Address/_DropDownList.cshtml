@@ -1,0 +1,6 @@
+﻿@model IEnumerable<CondemnedAssistance.ViewModels.AddressModel>
+
+<option value="" selected></option>
+@foreach(var address in Model) {
+    <option value="@address.Id">@address.Name</option>
+}

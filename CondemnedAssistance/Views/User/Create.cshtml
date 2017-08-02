@@ -66,17 +66,20 @@
     </div>
     <div>
         <label asp-for="AddressLevelOneId"></label>
-        <select asp-for="AddressLevelOneId" asp-items="@(new SelectList(Model.Addresses.Where(a => a.AddressLevelId == 1).ToList(), "Id", "Name"))"></select>
+        <select asp-for="AddressLevelOneId">
+            <option value="" selected></option>
+            <option value="@Model.Addresses.FirstOrDefault(a => a.AddressLevelId == 1).Id">@Model.Addresses.FirstOrDefault(a => a.AddressLevelId == 1).Name</option>
+        </select>
         <span asp-validation-for="AddressLevelOneId"></span>
     </div>
     <div>
-        <label asp-for="AddressLevelOneId"></label>
-        <select asp-for="AddressLevelOneId" asp-items="@(new SelectList(Model.Addresses.Where(a => a.AddressLevelId == 2).ToList(), "Id", "Name"))"></select>
-        <span asp-validation-for="AddressLevelOneId"></span>
+        <label asp-for="AddressLevelTwoId"></label>
+        <select asp-for="AddressLevelTwoId"></select>
+        <span asp-validation-for="AddressLevelTwoId"></span>
     </div>
     <div>
-        <label asp-for="AddressLevelOneId"></label>
-        <select asp-for="AddressLevelTwoId" asp-items="@(new SelectList(Model.Addresses.Where(a => a.AddressLevelId == 3).ToList(), "Id", "Name"))"></select>
+        <label asp-for="AddressLevelThreeId"></label>
+        <select asp-for="AddressLevelThreeId"></select>
         <span asp-validation-for="AddressLevelThreeId"></span>
     </div>
     <div>

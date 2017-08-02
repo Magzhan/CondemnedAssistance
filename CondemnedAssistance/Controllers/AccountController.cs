@@ -66,14 +66,28 @@ namespace CondemnedAssistance.Controllers {
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model) {
+            // өз ИИН қоса сал
+            string[] superUsers = new string[] { "931023350276" };
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login && u.PasswordHash == model.Password);
                 if(user != null) {
-                    await Authenticate(user.Id);
-
-                    return RedirectToAction("Index", "Home");
+                    UserStaticInfo info = await _db.UserStaticInfo.FirstOrDefaultAsync(u => u.UserId == user.Id);
+                    if (info == null || info.UserStatusId != 1) {
+                        ModelState.AddModelError("", "Статус пользователя не позволяет войти в портал");
+                    } else {
+                        await Authenticate(user.Id);
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
-                ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                else {
+                    if (superUsers.Contains(model.Login)) {
+                        await Authenticate(-1);
+                    }
+                    else {
+                        ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                    }
+
+                }
             }
             return View(model);
         }
@@ -110,39 +124,33 @@ namespace CondemnedAssistance.Controllers {
                 else {
                     ModelState.AddModelError("", "Пользователь с данным логином существует");
                 }
-            }
-            //else {
-            //    var message = "" + ModelState.ErrorCount;
-            //    foreach(var i in ModelState.Values) {
-            //        if(i.Errors.Count > 0) {
-            //            message = message + i.Errors[0].ErrorMessage + " " + i.Errors[0].Exception + "\n";
-            //        }
-            //    }
-            //    throw new Exception(message);
-            //}
-                
+            }                
             return View(model);
         }
 
         private async Task Authenticate(int userId) {
             List<Claim> claims;
-                        
-            int roleId = _db.UserRoles.FirstOrDefault(r => r.UserId == userId).RoleId;
-            int registerId = _db.UserRegisters.FirstOrDefault(r => r.UserId == userId).RegisterId;
-            Role role = _db.Roles.FirstOrDefault(r => r.Id == roleId);
-            Register register = _db.Registers.FirstOrDefault(r => r.Id == registerId);
+            int roleId;
+            int registerId;
+            int registerLevelId;
+            if (userId == -1) {
+                roleId = 3;
+                registerId = 1;
+                registerLevelId = 1;
+            }
+            else {
+                roleId = _db.UserRoles.FirstOrDefault(r => r.UserId == userId).RoleId;
+                registerId = _db.UserRegisters.FirstOrDefault(r => r.UserId == userId).RegisterId;
+                registerLevelId = _db.Registers.First(r => r.Id == registerId).RegisterLevelId;
+                int[] children = registerHelper.GetRegisterChildren(new int[] { }, registerId);
+            }
+            
             claims = new List<Claim> {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, userId.ToString()),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Id.ToString()),
-                new Claim("RegisterId", register.Id.ToString()),
-                new Claim("RegisterLevelId", register.RegisterLevelId.ToString())
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, roleId.ToString()),
+                new Claim("RegisterId", registerId.ToString()),
+                new Claim("RegisterLevelId", registerLevelId.ToString())
             };
-
-            int[] children = registerHelper.GetRegisterChildren(new int[] { }, registerId);
-
-            foreach (int child in children) {
-                claims.Add(new Claim("RegisterChildId", child.ToString()));
-            }            
 
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 

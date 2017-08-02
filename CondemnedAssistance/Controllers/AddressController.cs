@@ -2,8 +2,12 @@
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -240,10 +244,10 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult GetAddressList(int id) {
-            int[] childrenIds = _db.AddressHierarchies.Where(a => a.ParentAddressId == id).Select(a => a.ChildAddressId).ToArray();
-            AddressModel[] children = _db.Addresses.Where(a => childrenIds.Contains(a.Id)).Select(a => new AddressModel { Id = a.Id, Name = a.Name, Description = a.Description }).ToArray();
-            return Json(children);
+        public IActionResult GetAddressList(int addressId) {            
+            int[] childrenIds = _db.AddressHierarchies.Where(a => a.ParentAddressId == addressId).Select(a => a.ChildAddressId).ToArray();
+            AddressModel[] children = _db.Addresses.Where(a => childrenIds.Contains(a.Id)).Select(a => new AddressModel { Id = a.Id, Name = a.Name, Description = a.Description }).ToArray();            
+            return PartialView("_DropDownList", children);
         }
-    }
+    }    
 }

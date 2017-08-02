@@ -22,6 +22,7 @@ namespace CondemnedAssistance.Models {
         public DbSet<AddressLevel> AddressLevels { get; set; }
         public DbSet<AddressHierarchy> AddressHierarchies { get; set; }
         public DbSet<UserAddress> UserAddresses { get; set; }
+        public DbSet<Kato> Katos { get; set; }
         public UserContext(DbContextOptions options) : base(options) {
 
         }

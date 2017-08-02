@@ -8,9 +8,10 @@ using CondemnedAssistance.Models;
 namespace CondemnedAssistance.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20170731164404_KatoTable")]
+    partial class KatoTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -140,14 +141,12 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.Kato", b =>
                 {
-                    b.Property<int>("SystemId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AreaType");
 
                     b.Property<string>("Code");
-
-                    b.Property<int>("Id");
 
                     b.Property<int>("Level");
 
@@ -155,9 +154,9 @@ namespace CondemnedAssistance.Migrations
 
                     b.Property<string>("NameRus");
 
-                    b.Property<int?>("Parent");
+                    b.Property<int>("Parent");
 
-                    b.HasKey("SystemId");
+                    b.HasKey("Id");
 
                     b.ToTable("Katos");
                 });
