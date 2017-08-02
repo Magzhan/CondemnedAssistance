@@ -50,7 +50,7 @@ namespace CondemnedAssistance.Controllers {
             userProfileModel.Educations = new List<Education> {
                 new Education{ Name = "Some school", Description = "Some description", EducationLevel = new EducationLevel{ Id = 0, Name = "Middle" } }
             };
-            userProfileModel.Professeions = new List<Profession> {
+            userProfileModel.Professions = new List<Profession> {
                 new Profession{ Name = "Some profession", Description = "Some desc"}
             };
             return View(userProfileModel);

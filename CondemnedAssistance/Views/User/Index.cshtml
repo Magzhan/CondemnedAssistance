@@ -1,16 +1,20 @@
-﻿@model ICollection<CondemnedAssistance.Models.User>
+﻿@model ICollection<CondemnedAssistance.ViewModels.UserProfileModel>
 @{
     Layout = "_Layout";
 }
 <table>
     @foreach (var user in Model) {
         <tr>
-            <td>@user.Id</td>
             <td>@user.Login</td>
-            <td>@user.Email</td>
-            <td><a asp-controller="User" asp-action="View" asp-route-id="@user.Id">View</a></td>
-            <td><a asp-controller="User" asp-action="Update" asp-route-id="@user.Id">Edit</a></td>
-            <td><a asp-controller="User" asp-action="Delete" asp-route-id="@user.Id">Delete</a></td>
+            <td>@user.LastName @user.FirstName @user.MiddleName</td>
+            <td>@user.Role</td>
+            <td>@user.Status</td>
+            <td>@user.Registration</td>
+            <td><a asp-controller="User" asp-action="View" asp-route-id="@user.UserId">View</a></td>
+            <td><a asp-controller="User" asp-action="Update" asp-route-id="@user.UserId">Edit</a></td>
+            @if (User.IsInRole("3")) {
+                <td><a asp-controller="User" asp-action="Delete" asp-route-id="@user.UserId">Delete</a></td>
+            }
         </tr>
     }
 </table>

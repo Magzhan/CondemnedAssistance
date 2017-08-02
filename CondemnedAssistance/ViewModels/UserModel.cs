@@ -62,7 +62,7 @@ namespace CondemnedAssistance.ViewModels {
         public string Address { get; set; }
         public string GenderText { get { return (base.Gender) ? "Male" : "Female"; } }
         public string Registration { get; set; }
-        public IEnumerable<Profession> Professeions { get; set; }
+        public IEnumerable<Profession> Professions { get; set; }
         public IEnumerable<Education> Educations { get; set; }
     }
 }

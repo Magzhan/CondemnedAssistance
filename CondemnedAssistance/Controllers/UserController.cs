@@ -38,7 +38,31 @@ namespace CondemnedAssistance.Controllers {
                          orderby u.Id descending
                          select u).ToList();
             }
-            return View(users);
+            foreach (User user in users) {
+                UserStaticInfo info = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == user.Id);
+                Role role = _db.Roles.FirstOrDefault(r => r.Id == _db.UserRoles.FirstOrDefault(u => u.UserId == user.Id).RoleId);
+                Register register = null;
+                UserStatus userStatus = null;
+                if (info != null) {
+                    userStatus = _db.UserStatuses.FirstOrDefault(s => s.Id == info.UserStatusId);
+                }
+                UserRegister userRegister = _db.UserRegisters.FirstOrDefault(u => u.UserId == user.Id);
+                if(userRegister != null) {
+                    register = _db.Registers.FirstOrDefault(r => r.Id == userRegister.RegisterId);
+                }
+                UserProfileModel userProf = new UserProfileModel();
+                userProf.UserId = user.Id;
+                userProf.Login = user.Login;
+                userProf.LastName = info?.LastName;
+                userProf.FirstName = info?.FirstName;
+                userProf.MiddleName = info?.MiddleName;
+                userProf.Role = role?.Name;
+                userProf.Status = userStatus?.Name;
+                userProf.Registration = register?.Name;
+
+                model.Add(userProf);
+            }
+            return View(model);
         }
 
         [HttpGet]
