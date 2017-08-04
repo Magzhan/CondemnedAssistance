@@ -173,7 +173,14 @@ namespace CondemnedAssistance.Controllers {
                     _db.SaveChanges();
                     return RedirectToAction("Index");
                 }
-                ModelState.AddModelError("", "Already exists");
+                ModelState.AddModelError("Login", "Already exists");
+                model.Roles = (User.IsInRole("3")) ? _db.Roles.ToList() : _db.Roles.Where(r => r.Id != 3).ToList();
+                model.UserStatuses = _db.UserStatuses.ToList();
+                model.UserTypes = _db.UserTypes.ToList();
+                int operatorRegisterId = Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value);
+                int[] registerChildren = registerHelper.GetRegisterChildren(new int[] { }, operatorRegisterId);
+                model.UserRegisters = _db.Registers.Where(r => registerChildren.Contains(r.Id)).ToList();
+                model.Addresses = _db.Addresses.ToList();
             }
             return View(model);
         }
@@ -199,13 +206,32 @@ namespace CondemnedAssistance.Controllers {
             ICollection<UserType> userTypes = _db.UserTypes.ToList();
             ICollection<Role> roles = (User.IsInRole("3")) ? _db.Roles.ToList() : _db.Roles.Where(r => r.Id != 3).ToList();
 
+            if (user == null) {
+                return RedirectToAction("Index", "User");
+            }
+
             int[] registerChildren = registerHelper.GetRegisterChildren(new int[] { }, operatorRegisterId);
             ICollection<Register> registers = _db.Registers.Where(r => registerChildren.Contains(r.Id)).ToList();
             UserStatus userStatus = null;
             UserType userType = null;
             UserRegister userRegister = _db.UserRegisters.FirstOrDefault(u => u.UserId == id);
+            int[] userAddresses = _db.UserAddresses.Where(a => a.UserId == id).Select(a => a.AddressId).ToArray();
 
-            UserModelModify model = new UserModelModify();
+            UserModelCreate model = new UserModelCreate();
+
+            foreach(int address in userAddresses){
+                switch(_db.Addresses.First(a => a.Id == address).AddressLevelId) {
+                    case 1:
+                        model.AddressLevelOneId = address;
+                        break;
+                    case 2:
+                        model.AddressLevelTwoId = address;
+                        break;
+                    case 3:
+                        model.AddressLevelThreeId = address;
+                        break;
+                }
+            }
 
             if (userRegister != null) {
                 model.UserRegisterId = userRegister.RegisterId;
@@ -223,12 +249,10 @@ namespace CondemnedAssistance.Controllers {
                 role = _db.Roles.FirstOrDefault(r => r.Id == myRole.RoleId);
             }
 
-            if (user == null) {
-                return RedirectToAction("Index", "User");
-            }
-
             model.UserId = id;
             model.Login = user.Login;
+            model.PhoneNumber = user.PhoneNumber;
+            model.Email = user.Email;
             if(userStaticInfo != null) {
                 model.LastName = userStaticInfo.LastName;
                 model.FirstName = userStaticInfo.FirstName;
@@ -236,6 +260,7 @@ namespace CondemnedAssistance.Controllers {
                 model.Xin = userStaticInfo.Xin;
                 model.Birthdate = userStaticInfo.Birthdate;
                 model.Gender = userStaticInfo.Gender;
+                model.MainAddress = userStaticInfo.MainAddress;
             }
             else {
                 model.Gender = true;
@@ -245,6 +270,7 @@ namespace CondemnedAssistance.Controllers {
             model.UserStatuses = userStatuses;
             model.UserTypes = userTypes;
             model.UserRegisters = registers;
+            model.Addresses = _db.Addresses.ToList();
 
             if (role != null) {
                 model.RoleId = role.Id;
@@ -260,7 +286,7 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int id, UserModelModify model) {
+        public async Task<IActionResult> Update(int id, UserModelCreate model) {
 
             Dictionary<string, int> actions = new Dictionary<string, int>();
             if (_db.UserRoles.Any(u => u.UserId == id)) {
@@ -283,6 +309,7 @@ namespace CondemnedAssistance.Controllers {
                         Role role = _db.Roles.FirstOrDefault(r => r.Id == model.RoleId);
                         User user = _db.Users.FirstOrDefault(u => u.Id == id);
                         UserRole myRole = _db.UserRoles.FirstOrDefault(u => u.UserId == id);
+                        UserAddress[] userAddress = _db.UserAddresses.Where(a => a.UserId == id).ToArray();
                         
                         if(userStaticInfo == null) {
                             userStaticInfo = new UserStaticInfo {
@@ -296,6 +323,7 @@ namespace CondemnedAssistance.Controllers {
                                 UserStatus = userStatus,
                                 UserType = userType,
                                 User = user,
+                                MainAddress = model.MainAddress,
                                 RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name),
                                 RequestDate = DateTime.Now
                             };
@@ -310,6 +338,7 @@ namespace CondemnedAssistance.Controllers {
                             userStaticInfo.Gender = model.Gender;
                             userStaticInfo.UserStatus = userStatus;
                             userStaticInfo.UserType = userType;
+                            userStaticInfo.MainAddress = model.MainAddress;
                             userStaticInfo.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
                             userStaticInfo.RequestDate = DateTime.Now;
 
@@ -346,6 +375,24 @@ namespace CondemnedAssistance.Controllers {
 
                             _db.UserRegisters.Attach(userRegister);
                             _db.Entry(userRegister).State = EntityState.Modified;
+                        }
+
+                        if (userAddress.Length > 0) {
+                            foreach(UserAddress address in userAddress) {
+                                switch(_db.Addresses.First(a => a.Id == address.AddressId).AddressLevelId) {
+                                    case 1:
+                                        address.AddressId = model.AddressLevelOneId;
+                                        break;
+                                    case 2:
+                                        address.AddressId = model.AddressLevelTwoId;
+                                        break;
+                                    case 3:
+                                        address.AddressId = model.AddressLevelThreeId;
+                                        break;
+                                }
+                                _db.UserAddresses.Attach(address);
+                                _db.Entry(address).State = EntityState.Modified;
+                            }
                         }
                         _db.SaveChanges();
                         t.Commit();

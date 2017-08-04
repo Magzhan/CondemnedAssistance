@@ -2,7 +2,16 @@
 @{
     Layout = "_Layout";
 }
+<a asp-action="Create">Добавить пользователя</a>
 <table>
+    <tr>
+        <th>Логин</th>
+        <th>Ф.И.О.</th>
+        <th>Роль</th>
+        <th>Статус</th>
+        <th>Регистр</th>
+        <th colspan="2">Действия</th>
+    </tr>
     @foreach (var user in Model) {
         <tr>
             <td>@user.Login</td>

@@ -7,7 +7,7 @@
     <div>
         <label asp-for="Login"></label>
         <input type="text" asp-for="Login" />
-        <span asp-validation-for="Login"/>
+        <span asp-validation-for="Login"></span>
     </div>
     <div>
         <label asp-for="RoleId"></label>
@@ -74,12 +74,20 @@
     </div>
     <div>
         <label asp-for="AddressLevelTwoId"></label>
-        <select asp-for="AddressLevelTwoId"></select>
+        <select asp-for="AddressLevelTwoId">
+            @if(Model.AddressLevelTwoId > 0) {
+                <option value="@Model.AddressLevelTwoId">@Model.Addresses.First(a => a.Id == Model.AddressLevelTwoId).Name</option>
+            }
+        </select>
         <span asp-validation-for="AddressLevelTwoId"></span>
     </div>
     <div>
         <label asp-for="AddressLevelThreeId"></label>
-        <select asp-for="AddressLevelThreeId"></select>
+        <select asp-for="AddressLevelThreeId">
+            @if (Model.AddressLevelThreeId > 0) {
+                <option value="@Model.AddressLevelThreeId">@Model.Addresses.First(a => a.Id == Model.AddressLevelThreeId).Name</option>
+            }
+        </select>
         <span asp-validation-for="AddressLevelThreeId"></span>
     </div>
     <div>
