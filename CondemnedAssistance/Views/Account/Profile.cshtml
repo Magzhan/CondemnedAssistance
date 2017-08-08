@@ -6,52 +6,52 @@
 <div id="profile">
     <table>
         <tr>
-            <td>Login</td>
+            <td><label asp-for="Login"></label></td>
             <td>@Model.Login</td>
         </tr>
         <tr>
-            <td>Role</td>
+            <td><label asp-for="Role"></label></td>
             <td>@Model.Role</td>
         </tr>
         <tr>
-            <td>Status</td>
+            <td><label asp-for="Status"></label></td>
             <td>@Model.Status</td>
         </tr>
     </table>
     <table>
         <tr>
             @{ var a = Model.LastName + " " + Model.FirstName + " " + Model.MiddleName;}
-            <td>F.I.O.</td>
+            <td><label asp-for="Role"></label></td>
             <td>@a</td>
         </tr>
         <tr>
-            <td>Birthdate</td>
+            <td><label asp-for="Birthdate"></label></td>
             <td>@Model.Birthdate</td>
         </tr>
         <tr>
-            <td>Gender</td>
+            <td><label asp-for="GenderText"></label></td>
             <td>@Model.GenderText</td>
         </tr>
     </table>
     <table>
         <tr>
-            <td>Xin</td>
+            <td><label asp-for="Xin"></label></td>
             <td>@Model.Xin</td>
         </tr>
         <tr>
-            <td>Email</td>
+            <td><label asp-for="Email"></label></td>
             <td>@Model.Email</td>
-            <td>Confirmed?</td>
+            <td><label asp-for="IsEmailConfirmedText"></label></td>
             <td>@Model.IsEmailConfirmedText</td>
         </tr>
         <tr>
-            <td>Phone</td>
+            <td><label asp-for="MobilePhone"></label></td>
             <td>@Model.MobilePhone</td>
-            <td>Confirmed?</td>
+            <td><label asp-for="IsMobileConfirmedText"></label></td>
             <td>@Model.IsMobileConfirmedText</td>
         </tr>
         <tr>
-            <td>Registration</td>
+            <td><label asp-for="Registration"></label></td>
             <td>@Model.Registration</td>
         </tr>
     </table>
@@ -71,7 +71,7 @@
         }
     </table>
     <table>
-        @foreach (CondemnedAssistance.Models.Profession prof in Model.Professeions) {
+        @foreach (CondemnedAssistance.Models.Profession prof in Model.Professions) {
             <tr>
                 <td>
                     @prof.Name

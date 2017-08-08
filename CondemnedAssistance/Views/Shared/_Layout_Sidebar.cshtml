@@ -45,7 +45,7 @@
         </nav>       
     </div>
     <div id="left-sidebar">
-        @Component.InvokeAsync("SideBar")
+        @await Component.InvokeAsync("SideBar", (CondemnedAssistance.Helpers.LinkClass[])ViewData["sidebar"])
     </div>
     <div id="main">
         @RenderBody()

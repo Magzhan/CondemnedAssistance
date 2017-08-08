@@ -15,10 +15,12 @@ namespace CondemnedAssistance.Controllers {
 
         private UserContext _db;
         private RegisterHelper registerHelper;
+        private LinkHelper linkHelper;
 
         public AccountController(UserContext context) {
             this._db = context;
             registerHelper = new RegisterHelper(context);
+            linkHelper = new LinkHelper(context, "userProfile");
         }
 
         [HttpGet]
@@ -53,6 +55,7 @@ namespace CondemnedAssistance.Controllers {
             userProfileModel.Professions = new List<Profession> {
                 new Profession{ Name = "Some profession", Description = "Some desc"}
             };
+            ViewData["sidebar"] = linkHelper.GetLinks("Account", "Profile");
             return View(userProfileModel);
         }
 
@@ -160,6 +163,25 @@ namespace CondemnedAssistance.Controllers {
         public async Task<IActionResult> Logout() {
             await HttpContext.Authentication.SignOutAsync("Cookies");
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword() {
+            ViewData["sidebar"] = linkHelper.GetLinks("Account", "ChangePassword");
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ChangePassword(ChangePasswordModel model) {
+            if (ModelState.IsValid) {
+                User user = _db.Users.First(u => u.Id == Convert.ToInt32(HttpContext.User.Identity.Name));
+                user.PasswordHash = model.NewPassword;
+                _db.Users.Attach(user);
+                _db.Entry(user).State = EntityState.Modified;
+                _db.SaveChanges();
+            }
+            ViewData["sidebar"] = linkHelper.GetLinks("Account", "ChangePassword");
+            return View();
         }
     }
 }

@@ -52,8 +52,9 @@ namespace CondemnedAssistance.ViewModels {
 
     public class UserModelTemplate {
         public int UserId { get; set; }
-        [StringLength(12, ErrorMessage = "Длина символов не может превышать 12", MinimumLength = 12)]
+        [StringLength(12, ErrorMessage = "Длина символов не может превышать или быть меньше чем 12", MinimumLength = 12)]
         [Display(Name = "Логин")]
+        [RegularExpression(@"^[0-9]*$", ErrorMessage = "Только числа могут быть логином")]
         public string Login { get; set; }
         [Display(Name = "Фамилия")]
         public string LastName { get; set; }
@@ -84,11 +85,19 @@ namespace CondemnedAssistance.ViewModels {
         public string Status { get; set; }
         [Display(Name = "Адрес")]
         public string Address { get; set; }
-        [Display(Name = "")]
+        [Display(Name = "Пол")]
         public string GenderText { get { return (base.Gender) ? "Male" : "Female"; } }
         [Display(Name = "Регистр")]
         public string Registration { get; set; }
         public IEnumerable<Profession> Professions { get; set; }
         public IEnumerable<Education> Educations { get; set; }
+    }
+
+    public class ChangePasswordModel {
+        public string OldPassword { get; set; }
+
+        public string NewPassword { get; set; }
+
+        public string ConfirmNewPassword { get; set; }
     }
 }

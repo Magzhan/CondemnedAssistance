@@ -17,11 +17,12 @@
     <a href="#">Управление</a>
     <ul>
         <li><a asp-controller="User" asp-action="Index">Пользователи</a></li>
-        <li><a href="#">Регистрации</a></li>
+        <li><a asp-controller="Register" asp-action="Index">Регистрации</a></li>
+        <li><a asp-controller="Address" asp-action="Index">Адреса</a></li>
         <li><a href="#">Рассылки</a></li>
-        <li><a href="#">Роли</a></li>
-        <li><a href="#">Статус пользователей</a></li>
-        <li><a href="#">Типы пользователей</a></li>
-        <li><a href="#">Помощь</a></li>
+        <li><a asp-controller="Role" asp-action="Index">Роли</a></li>
+        <li><a asp-controller="UserStatus" asp-action="Index">Статус пользователей</a></li>
+        <li><a asp-controller="UserType" asp-action="Index">Типы пользователей</a></li>
+        <li><a asp-controller="Help" asp-action="Index">Помощь</a></li>
     </ul>
 </li>
