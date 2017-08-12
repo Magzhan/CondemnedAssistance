@@ -19,6 +19,8 @@ namespace CondemnedAssistance.ViewComponents {
             if (User.Identity.IsAuthenticated) {
                 int currentUser = Convert.ToInt32(HttpContext.User.Identity.Name);
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Id == currentUser);
+                if (currentUser == -1)
+                    user = new Models.User { Login = "SUPERUSER" };
                 return View("LoggedIn", user);
             } else {
                 return View();

@@ -69,8 +69,7 @@ namespace CondemnedAssistance.Controllers {
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model) {
-            // өз ИИН қоса сал
-            string[] superUsers = new string[] { "931023350276" };
+            string[] superUsers = new string[] { "931023350276", "930615350539" };
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login && u.PasswordHash == model.Password);
                 if(user != null) {

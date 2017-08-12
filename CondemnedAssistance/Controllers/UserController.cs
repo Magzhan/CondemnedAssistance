@@ -108,6 +108,11 @@ namespace CondemnedAssistance.Controllers {
             int[] registerChildren = registerHelper.GetRegisterChildren(new int[] { }, operatorRegisterId);
             ICollection<Register> registers = _db.Registers.Where(r => registerChildren.Contains(r.Id)).ToList();
             ICollection<Address> addresses = _db.Addresses.ToList();
+
+            if (User.IsInRole("3")) {
+                _db.Registers.ForEachAsync(r => registers.Add(r));
+            }
+
             model.Roles = roles;
             model.UserStatuses = userStatuses;
             model.UserTypes = userTypes;
@@ -237,6 +242,10 @@ namespace CondemnedAssistance.Controllers {
                 model.UserRegisterId = userRegister.RegisterId;
                 if (User.IsInRole("3")) {
                     registers.Add(_db.Registers.First(r => r.Id == userRegister.RegisterId));
+                }
+            } else {
+                if (User.IsInRole("3")) {
+                    await _db.Registers.ForEachAsync(r => registers.Add(r));
                 }
             }
             if (userStaticInfo != null) {

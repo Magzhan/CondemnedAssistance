@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using CondemnedAssistance.Services.Requirements;
 using CondemnedAssistance.Services.Resources;
+using System.Threading.Tasks;
+using System;
 
 namespace CondemnedAssistance {
     public class Startup {
@@ -51,10 +53,12 @@ namespace CondemnedAssistance {
 
             loggerFactory.AddConsole();
 
-            //using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())             {
-            //    var context = serviceScope.ServiceProvider.GetRequiredService<UserContext>();
-            //    context.Database.Migrate();
-            //}
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope()) {
+                var context = serviceScope.ServiceProvider.GetRequiredService<UserContext>();
+                context.Database.Migrate();
+            }
+
+            app.ApplicationServices.GetRequiredService<UserContext>().SeedAsync();
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions {
                 AuthenticationScheme = "Cookies",
@@ -71,6 +75,66 @@ namespace CondemnedAssistance {
             app.UseMvc(routes => {
                 routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+    }
+
+    public static class DbContextExtensions {
+        public static async void SeedAsync(this UserContext context) {
+            await AddData(context);
+        }
+
+        private static async Task AddData(UserContext context) {
+            if (!await context.AddressLevels.AnyAsync()) {
+                await context.AddressLevels.AddRangeAsync(
+                    new AddressLevel { Name = "Республика", NormalizedName = "Республика".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1 },
+                    new AddressLevel { Name = "Облыс", NormalizedName = "Облыс".ToUpper(), Description = "2", RequestDate = DateTime.Now, RequestUser = -1 },
+                    new AddressLevel { Name = "Район", NormalizedName = "Район".ToUpper(), Description = "3", RequestDate = DateTime.Now, RequestUser = -1 }
+                );
+                await context.SaveChangesAsync();
+            }
+
+            if (!await context.Addresses.AnyAsync()) {
+                await context.Addresses.AddAsync(
+                    new Address { Name = "Қазақстан", NormalizedName = "Қазақстан".ToUpper(), Description = "1", AddressLevelId = 1, RequestDate = DateTime.Now, RequestUser = -1 }
+                );
+                await context.SaveChangesAsync();
+            }
+
+            if (!await context.UserTypes.AnyAsync()) {
+                await context.UserTypes.AddAsync(new UserType { Name = "Пользователь", NormalizedName = "Пользователь".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1});
+                await context.SaveChangesAsync();
+            }
+
+            if (!await context.RegisterLevels.AnyAsync()) {
+                await context.RegisterLevels.AddRangeAsync(
+                    new RegisterLevel { Name = "Республика", NormalizedName = "Республика".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1},
+                    new RegisterLevel { Name = "Облыс", NormalizedName = "Облыс".ToUpper(), Description = "2", RequestDate = DateTime.Now, RequestUser = -1 },
+                    new RegisterLevel { Name = "Район", NormalizedName = "Район".ToUpper(), Description = "3", RequestDate = DateTime.Now, RequestUser = -1 }
+                );
+                await context.SaveChangesAsync();
+            }
+
+            if (!await context.Registers.AnyAsync()) {
+                await context.Registers.AddAsync(
+                    new Register { Name = "Қазақстан", NormalizedName = "Қазақстан".ToUpper(), Description = "1", RegisterLevelId = 1, RequestDate = DateTime.Now, RequestUser = -1 }
+                );
+                await context.SaveChangesAsync();
+            }
+
+            if (!await context.UserStatuses.AnyAsync()) {
+                await context.UserStatuses.AddAsync(new UserStatus { Name = "Активный", NormalizedName = "Активный".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1 });
+                await context.SaveChangesAsync();
+            }
+
+            if (!await context.Roles.AnyAsync()) {
+                await context.Roles.AddRangeAsync(
+                    new Role { Name = "Пользователь", NormalizedName = "Пользователь".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1 },
+                    new Role { Name = "Пробация", NormalizedName = "Пробация".ToUpper(), Description = "2", RequestDate = DateTime.Now, RequestUser = -1 },
+                    new Role { Name = "Администратор", NormalizedName = "Администратор".ToUpper(), Description = "3", RequestDate = DateTime.Now, RequestUser = -1 }
+                );
+                await context.SaveChangesAsync();
+            }
+            await context.SaveChangesAsync();
         }
     }
 }
