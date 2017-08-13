@@ -1,0 +1,21 @@
+﻿@model CondemnedAssistance.Models.Profession
+@{
+    Layout = "_Layout";
+}
+<form asp-controller="Profession" asp-action="Create" method="post">
+    <div>
+        <div>
+            <label asp-for="Name"></label>
+            <input type="text" asp-for="Name" />
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div>
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description"></textarea>
+            <span asp-validation-for="Description"></span>
+        </div>
+        <div>
+            <input type="submit" value="Save"/>
+        </div>
+    </div>
+</form>

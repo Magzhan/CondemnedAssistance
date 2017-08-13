@@ -8,8 +8,8 @@ using CondemnedAssistance.Models;
 namespace CondemnedAssistance.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20170731164404_KatoTable")]
-    partial class KatoTable
+    [Migration("20170813003416_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,7 +43,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.AddressHierarchy", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ChildAddressId");
@@ -141,12 +141,14 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.Kato", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("SystemId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AreaType");
 
                     b.Property<string>("Code");
+
+                    b.Property<int>("Id");
 
                     b.Property<int>("Level");
 
@@ -154,9 +156,9 @@ namespace CondemnedAssistance.Migrations
 
                     b.Property<string>("NameRus");
 
-                    b.Property<int>("Parent");
+                    b.Property<int?>("Parent");
 
-                    b.HasKey("Id");
+                    b.HasKey("SystemId");
 
                     b.ToTable("Katos");
                 });
@@ -207,7 +209,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.RegisterHierarchy", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ChildRegister");
@@ -291,10 +293,6 @@ namespace CondemnedAssistance.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
-                    b.Property<int>("RegistratedUserId");
-
-                    b.Property<DateTime>("RegistrationDate");
-
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -302,7 +300,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserAddress", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AddressId");
@@ -338,7 +336,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserProfession", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ProfessionId");
@@ -356,7 +354,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserRegister", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("RegisterId");
@@ -374,7 +372,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserRole", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("RoleId");
@@ -551,7 +549,7 @@ namespace CondemnedAssistance.Migrations
             modelBuilder.Entity("CondemnedAssistance.Models.UserRole", b =>
                 {
                     b.HasOne("CondemnedAssistance.Models.Role", "Role")
-                        .WithMany("UserRoles")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 

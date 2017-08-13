@@ -42,7 +42,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.AddressHierarchy", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ChildAddressId");
@@ -208,7 +208,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.RegisterHierarchy", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ChildRegister");
@@ -292,10 +292,6 @@ namespace CondemnedAssistance.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
-                    b.Property<int>("RegistratedUserId");
-
-                    b.Property<DateTime>("RegistrationDate");
-
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -303,7 +299,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserAddress", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AddressId");
@@ -339,7 +335,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserProfession", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("ProfessionId");
@@ -357,7 +353,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserRegister", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("RegisterId");
@@ -375,7 +371,7 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserRole", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("RoleId");
@@ -552,7 +548,7 @@ namespace CondemnedAssistance.Migrations
             modelBuilder.Entity("CondemnedAssistance.Models.UserRole", b =>
                 {
                     b.HasOne("CondemnedAssistance.Models.Role", "Role")
-                        .WithMany("UserRoles")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 

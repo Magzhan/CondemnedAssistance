@@ -10,7 +10,7 @@ namespace CondemnedAssistance.Models {
     }
 
     public class RegisterHierarchy {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public int ParentRegister { get; set; }
 

@@ -48,6 +48,12 @@ namespace CondemnedAssistance.ViewModels {
         public int AddressLevelTwoId { get; set; }
         [Display(Name = "Район")]
         public int AddressLevelThreeId { get; set; }
+        [Display(Name = "Профессии")]
+        public int[] ProfessionIds { get; set; }
+        public IEnumerable<Profession> Professions { get; set; }
+        [Display(Name = "Образования")]
+        public int[] EducationIds { get; set; }
+        public IEnumerable<Education> Educations { get; set; }
     }
 
     public class UserModelTemplate {

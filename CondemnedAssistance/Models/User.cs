@@ -22,8 +22,6 @@ namespace CondemnedAssistance.Models {
         public int AccessFailedCount { get; set; }
         public int ModifiedUserId { get; set; }
         public DateTime ModifiedUserDate { get; set; }
-        public int RegistratedUserId { get; set; }
-        public DateTime RegistrationDate { get; set; }
     }
 
     public class TemplateHelperTable {
@@ -45,7 +43,7 @@ namespace CondemnedAssistance.Models {
     }
 
     public class UserRegister {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public int UserId { get; set; }
         public User User { get; set; }
@@ -55,12 +53,34 @@ namespace CondemnedAssistance.Models {
     }
 
     public class UserAddress {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public int UserId { get; set; }
         public User User { get; set; }
 
         public int AddressId { get; set; }
         public Address Address { get; set; }
+    }
+
+    public class UserProfession {
+        [Key]
+        public long Id { get; set; }
+
+        public int ProfessionId { get; set; }
+        public Profession Profession { get; set; }
+
+        public int UserId { get; set; }
+        public User User { get; set; }
+    }
+
+    public class UserRole {
+        [Key]
+        public long Id { get; set; }
+        
+        public int UserId { get; set; }
+        public User User { get; set; }
+                
+        public int RoleId { get; set; }
+        public Role Role { get; set; }
     }
 }

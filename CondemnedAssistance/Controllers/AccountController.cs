@@ -84,6 +84,7 @@ namespace CondemnedAssistance.Controllers {
                 else {
                     if (superUsers.Contains(model.Login)) {
                         await Authenticate(-1);
+                        return RedirectToAction("Index", "Home");
                     }
                     else {
                         ModelState.AddModelError("", "Некорректные логин и(или) пароль");
@@ -114,9 +115,7 @@ namespace CondemnedAssistance.Controllers {
                         PasswordHash = model.Password,
                         PhoneNumber = model.PhoneNumber,
                         ModifiedUserDate = DateTime.Now,
-                        ModifiedUserId = Convert.ToInt32(HttpContext.User.Identity.Name),
-                        RegistratedUserId = Convert.ToInt32(HttpContext.User.Identity.Name),
-                        RegistrationDate = DateTime.Now
+                        ModifiedUserId = Convert.ToInt32(HttpContext.User.Identity.Name)
                     });
 
                     await _db.SaveChangesAsync();

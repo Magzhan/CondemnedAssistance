@@ -11,7 +11,7 @@ namespace CondemnedAssistance.Models {
     }
 
     public class AddressHierarchy {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public int ParentAddressId { get; set; }
         public int ChildAddressId { get; set; }
     }
