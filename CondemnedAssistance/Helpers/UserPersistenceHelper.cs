@@ -50,22 +50,21 @@ namespace CondemnedAssistance.Helpers {
                     _userProfessions = _db.UserProfessions.Where(u => u.UserId == model.UserId).ToList();
                     break;
             }
-
+            loadForUserStaticInfo();
+            loadForUserRegisters();
+            loadForUserRoles();
+            loadForUserAddresses();
+            loadForUserProfessions();
             switch (_mode) {
                 case UserPersistenceHelperMode.Read:
-                    loadForUserStaticInfo();
-                    loadForUserRegisters();
-                    loadForUserRoles();
-                    loadForUserAddresses();
-                    loadForUserProfessions();
                     break;
                 case UserPersistenceHelperMode.Write:
-                    loadUser();
-                    loadUserStaticData();
-                    loadUserRole();
-                    loadUserRegister();
-                    loadUserAddress();
-                    loadUserProfessions();
+                    //loadUser();
+                    //loadUserStaticData();
+                    //loadUserRole();
+                    //loadUserRegister();
+                    //loadUserAddress();
+                    //loadUserProfessions();
                     break;
             }
         }
@@ -100,9 +99,14 @@ namespace CondemnedAssistance.Helpers {
 
             switch (_state) {
                 case UserPersistenceState.Create:
-                    _db.SaveChanges();
+                    _db.Users.Add(_user);
+                    break;
+                case UserPersistenceState.Update:
+                    _db.Users.Attach(_user);
+                    _db.Entry(_user).State = EntityState.Modified;
                     break;
             }
+            _db.SaveChanges();
         }
 
         private void loadUserStaticData() {
@@ -124,6 +128,17 @@ namespace CondemnedAssistance.Helpers {
             _userStaticInfo.MainAddress = _model.MainAddress;
             _userStaticInfo.RequestUser = Convert.ToInt32(_identity.Identity.Name);
             _userStaticInfo.RequestDate = DateTime.Now;
+
+            switch (_state) {
+                case UserPersistenceState.Create:
+                    _db.UserStaticInfo.Add(_userStaticInfo);
+                    break;
+                case UserPersistenceState.Update:
+                    _db.UserStaticInfo.Attach(_userStaticInfo);
+                    _db.Entry(_userStaticInfo).State = EntityState.Modified;
+                    break;
+            }
+            _db.SaveChanges();
         }
 
         private void loadUserRole() {
@@ -133,6 +148,17 @@ namespace CondemnedAssistance.Helpers {
                     break;
             }
             _userRole.RoleId = _model.RoleId;
+
+            switch (_state) {
+                case UserPersistenceState.Create:
+                    _db.UserRoles.Add(_userRole);
+                    break;
+                case UserPersistenceState.Update:
+                    _db.UserRoles.Attach(_userRole);
+                    _db.Entry(_userRole).State = EntityState.Modified;
+                    break;
+            }
+            _db.SaveChanges();
         }
 
         private void loadUserRegister() {
@@ -142,6 +168,17 @@ namespace CondemnedAssistance.Helpers {
                     break;
             }
             _userRegister.RegisterId = _model.UserRegisterId;
+
+            switch (_state) {
+                case UserPersistenceState.Create:
+                    _db.UserRegisters.Add(_userRegister);
+                    break;
+                case UserPersistenceState.Update:
+                    _db.UserRegisters.Attach(_userRegister);
+                    _db.Entry(_userRegister).State = EntityState.Modified;
+                    break;
+            }
+            _db.SaveChanges();
         }
 
         private void loadUserAddress() {
@@ -154,7 +191,7 @@ namespace CondemnedAssistance.Helpers {
                     });
                     break;
                 case UserPersistenceState.Update:
-                    foreach (UserAddress address in _userAddresses) {
+                    foreach (UserAddress address in _db.UserAddresses.Where(a => a.UserId == _user.Id)) {
                         switch (_db.Addresses.First(a => a.Id == address.AddressId).AddressLevelId) {
                             case 1:
                                 address.AddressId = _model.AddressLevelOneId;
@@ -171,6 +208,7 @@ namespace CondemnedAssistance.Helpers {
                     }
                     break;
             }
+            _db.SaveChanges();
         }
 
         private void loadUserProfessions() {
@@ -346,6 +384,12 @@ namespace CondemnedAssistance.Helpers {
 
         public bool Persist(out string message) {
             try {
+                loadUser();
+                loadUserStaticData();
+                loadUserRole();
+                loadUserRegister();
+                loadUserAddress();
+                loadUserProfessions();
                 _db.SaveChanges();
                 message = "Success.";
                 return true;

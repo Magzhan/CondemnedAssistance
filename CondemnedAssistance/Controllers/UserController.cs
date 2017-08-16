@@ -115,8 +115,10 @@ namespace CondemnedAssistance.Controllers {
             
             actions.Add("roleId", model.RoleId);
             actions.Add("childId", model.UserRegisterId);
-            
-            if(!await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy")) {
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) {
                 return new ChallengeResult();
             }
 
@@ -124,74 +126,14 @@ namespace CondemnedAssistance.Controllers {
                 UserPersistenceHelperMode.Write, _db, UserPersistenceState.Create, model);
 
             if (ModelState.IsValid) {
-                //if (!_db.Users.Any(u => u.Login == model.Login)) {
                 string message;
                 if (userPersistenceHelper.Validate(out message)) {
 
                     userPersistenceHelper.Persist(out message);
-                    //User user = new User {
-                    //    Login = model.Login,
-                    //    Email = model.Email,
-                    //    NormalizedEmail = model.Email.ToUpper(),
-                    //    EmailConfirmed = false,
-                    //    PhoneNumber = model.PhoneNumber,
-                    //    PhoneNumberConfirmed = false,
-                    //    AccessFailedCount = 0,
-                    //    LockoutEnabled = false,
-                    //    PasswordHash = "123456",
-                    //    ModifiedUserDate = DateTime.Now,
-                    //    ModifiedUserId = Convert.ToInt32(HttpContext.User.Identity.Name)
-                    //};
-                    //_db.Users.Add(user);
-                    //_db.SaveChanges();
-
-                    //UserStaticInfo userStaticInfo = new UserStaticInfo {
-                    //    UserId = user.Id,
-                    //    LastName = model.LastName,
-                    //    FirstName = model.FirstName,
-                    //    MiddleName = model.MiddleName,
-                    //    Birthdate = model.Birthdate,
-                    //    Gender = model.Gender,
-                    //    Xin = model.Login,
-                    //    MainAddress = model.MainAddress,
-                    //    RequestDate = DateTime.Now,
-                    //    RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name),
-                    //    UserTypeId = model.UserTypeId,
-                    //    UserStatusId = model.UserStatusId
-                    //};
-
-                    //_db.UserStaticInfo.Add(userStaticInfo);
-                    //_db.UserRoles.Add(new UserRole { RoleId = model.RoleId, UserId = user.Id});
-                    //_db.UserRegisters.Add(new UserRegister { RegisterId = model.UserRegisterId, UserId = user.Id});
-                    //_db.UserAddresses.AddRange(new UserAddress[] {
-                    //    new UserAddress { UserId = user.Id, AddressId = model.AddressLevelOneId},
-                    //    new UserAddress { UserId = user.Id, AddressId = model.AddressLevelTwoId},
-                    //    new UserAddress { UserId = user.Id, AddressId = model.AddressLevelThreeId}
-                    //});
-
-                    //if(model.RoleId != 2 && model.RoleId != 3) {
-                    //    List<UserProfession> professions = new List<UserProfession>();
-                    //    List<UserEducation> educations = new List<UserEducation>();
-                    //    foreach (int profId in model.ProfessionIds) {
-                    //        professions.Add(new UserProfession { ProfessionId = profId, UserId = user.Id});
-                    //    }
-                    //    if (professions.Count > 0) {
-                    //        _db.UserProfessions.AddRange(professions);
-                    //    }
-                    //}
-
-                    //_db.SaveChanges();
                     return RedirectToAction("Index");
                 }
 
                 ModelState.AddModelError("Login", message);
-                //model.Roles = (User.IsInRole("3")) ? _db.Roles.ToList() : _db.Roles.Where(r => r.Id != 3).ToList();
-                //model.UserStatuses = _db.UserStatuses.ToList();
-                //model.UserTypes = _db.UserTypes.ToList();
-                //int operatorRegisterId = Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value);
-                //int[] registerChildren = registerHelper.GetRegisterChildren(new int[] { }, operatorRegisterId);
-                //model.UserRegisters = _db.Registers.Where(r => registerChildren.Contains(r.Id)).ToList();
-                //model.Addresses = _db.Addresses.ToList();
                 model = userPersistenceHelper.GetModel();
             }
             return View(model);
@@ -207,7 +149,9 @@ namespace CondemnedAssistance.Controllers {
 
             int operatorRegisterId = Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value);
 
-            if (!await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy")) {
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) {
                 return new ChallengeResult();
             }
 
@@ -228,7 +172,9 @@ namespace CondemnedAssistance.Controllers {
             }
             actions.Add("childId", model.UserRegisterId);
 
-            if (!await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy")) {
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) {
                 return new ChallengeResult();
             }
 
