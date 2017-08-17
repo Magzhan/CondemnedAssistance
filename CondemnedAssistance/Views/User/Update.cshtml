@@ -98,16 +98,12 @@
         <textarea asp-for="MainAddress"></textarea>
         <span asp-validation-for="MainAddress"></span>
     </div>
-    <div>
-        <label asp-for="ProfessionIds"></label>
-        <select asp-for="ProfessionIds" multiple asp-items="@(new SelectList(Model.Professions, "Id", "Name"))">
-            @*@if(Model.ProfessionIds.Length > 0) {
-                @foreach (int professionId in Model.ProfessionIds) { 
-                    <option value="@professionId" selected>@Model.Professions.First(p => p.Id == professionId).Name</option>
-                }
-            }*@
-        </select>
-    </div>
+    @if (!User.IsInRole("3") && !User.IsInRole("2")) {
+        <div>
+            <label asp-for="ProfessionIds"></label>
+            <select asp-for="ProfessionIds" multiple asp-items="@(new SelectList(Model.Professions, "Id", "Name"))"></select>
+        </div>
+    }
     <div>
         <input type="submit" value="Save" />
     </div>

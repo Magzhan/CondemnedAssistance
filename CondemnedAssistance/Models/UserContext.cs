@@ -23,6 +23,14 @@ namespace CondemnedAssistance.Models {
         public DbSet<AddressHierarchy> AddressHierarchies { get; set; }
         public DbSet<UserAddress> UserAddresses { get; set; }
         public DbSet<Kato> Katos { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+
+        public DbSet<UserHistory> UserHistory { get; set; }
+        public DbSet<UserStaticInfoHistory> UserStaticInfoHistory { get; set; }
+        public DbSet<UserRoleHistory> UserRoleHistory { get; set; }
+        public DbSet<UserRegisterHistory> UserRegisterHistory { get; set; }
+        public DbSet<UserAddressHistory> UserAddressHistory { get; set; }
+        public DbSet<UserProfessionHistory> UserProfessionHistory { get; set; }
         public UserContext(DbContextOptions options) : base(options) {
 
         }

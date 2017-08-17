@@ -4,6 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Models {
-    public class Help : TemplateHelperTable {
+    public class Help : TemplateTable {
     }
 }

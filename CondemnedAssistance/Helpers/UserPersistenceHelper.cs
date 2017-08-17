@@ -1,6 +1,7 @@
 ﻿using CondemnedAssistance.Models;
 using CondemnedAssistance.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,12 +26,37 @@ namespace CondemnedAssistance.Helpers {
         private List<UserAddress> _userAddresses;
         private List<UserProfession> _userProfessions;
 
+        private IDbContextTransaction _transaction;
+        private Transaction currentSession;
+        private int currentUser;
+        private DatabaseActionTypes currentAction;
+
+        private UserHistory _userHist;
+        private UserStaticInfoHistory _userStaticInfoHist;
+        private UserRoleHistory _userRoleHist;
+        private UserRegisterHistory _userRegisterHist;
+
         public UserPersistenceHelper(ClaimsPrincipal User, UserPersistenceHelperMode mode, UserContext context, UserPersistenceState state, UserModelCreate model = null) {
             _identity = User;
             _db = context;
             _state = state;
             _mode = mode;
             _model = model;
+
+            currentUser = Convert.ToInt32(_identity.Identity.Name);
+
+            switch (_mode) {
+                case UserPersistenceHelperMode.Write:
+                    currentAction = (_state == UserPersistenceState.Create) ? DatabaseActionTypes.Insert : DatabaseActionTypes.Update;
+                    _db.Database.AutoTransactionsEnabled = false;
+                    _transaction = _db.Database.BeginTransaction();
+
+                    currentSession = new Transaction { TransactionGuid = _transaction.TransactionId };
+
+                    _db.Transactions.Add(currentSession);
+                    _db.SaveChanges();
+                    break;
+            }
 
             switch (state) {
                 case UserPersistenceState.Create:
@@ -50,84 +76,100 @@ namespace CondemnedAssistance.Helpers {
                     _userProfessions = _db.UserProfessions.Where(u => u.UserId == model.UserId).ToList();
                     break;
             }
+
+            switch (_mode) {
+                case UserPersistenceHelperMode.Read:
+                    break;
+                case UserPersistenceHelperMode.Write:
+                    _userHist = new UserHistory { TransactionId = currentSession.TransactionId, ActionType = currentAction };
+                    _userStaticInfoHist = new UserStaticInfoHistory { TransactionId = currentSession.TransactionId, ActionType = currentAction };
+                    _userRoleHist = new UserRoleHistory { TransactionId = currentSession.TransactionId, ActionType = currentAction };
+                    _userRegisterHist = new UserRegisterHistory { TransactionId = currentSession.TransactionId, ActionType = currentAction };
+                    break;
+            }
+        }
+
+        public void LoadModel() {
             loadForUserStaticInfo();
             loadForUserRegisters();
             loadForUserRoles();
             loadForUserAddresses();
             loadForUserProfessions();
-            switch (_mode) {
-                case UserPersistenceHelperMode.Read:
-                    break;
-                case UserPersistenceHelperMode.Write:
-                    //loadUser();
-                    //loadUserStaticData();
-                    //loadUserRole();
-                    //loadUserRegister();
-                    //loadUserAddress();
-                    //loadUserProfessions();
-                    break;
-            }
         }
 
         private void loadUser() {
             switch (_state) {
                 case UserPersistenceState.Create:
-                    _user.Login = _model.Login;
-                    _user.Email = _model.Email;
-                    _user.NormalizedEmail = _model.Email.ToUpper();
-                    _user.EmailConfirmed = false;
-                    _user.PhoneNumber = _model.PhoneNumber;
-                    _user.PhoneNumberConfirmed = false;
-                    _user.AccessFailedCount = 0;
-                    _user.LockoutEnabled = false;
-                    _user.PasswordHash = "123456";
+                    _userHist.Login = _user.Login = _model.Login;
+                    _userHist.Email = _user.Email = _model.Email;
+                    _userHist.EmailConfirmed = _user.EmailConfirmed = false;
+                    _userHist.NormalizedEmail = _user.NormalizedEmail = _model.Email.ToUpper();
+                    _userHist.PhoneNumber = _user.PhoneNumber = _model.PhoneNumber;
+                    _userHist.PhoneNumberConfirmed = _user.PhoneNumberConfirmed = false;
+                    _userHist.AccessFailedCount = _user.AccessFailedCount = 0;
+                    _userHist.LockoutEnabled = _user.LockoutEnabled = false;
+                    _userHist.PasswordHash = _user.PasswordHash = "123456";
                     break;
                 case UserPersistenceState.Update:
                     if(_user.Email != _model.Email) {
-                        _user.Email = _model.Email;
-                        _user.NormalizedEmail = _model.Email.ToUpper();
-                        _user.EmailConfirmed = false;
+                        _userHist.Email = _user.Email = _model.Email;
+                        _userHist.NormalizedEmail = _user.NormalizedEmail = _model.Email.ToUpper();
+                        _userHist.EmailConfirmed = _user.EmailConfirmed = false;
                     }
                     if(_user.PhoneNumber != _model.PhoneNumber) {
-                        _user.PhoneNumber = _model.PhoneNumber;
-                        _user.PhoneNumberConfirmed = false;
+                        _userHist.PhoneNumber = _user.PhoneNumber = _model.PhoneNumber;
+                        _userHist.PhoneNumberConfirmed = _user.PhoneNumberConfirmed = false;
                     }
                     break;
             }
-            _user.ModifiedUserDate = DateTime.Now;
-            _user.ModifiedUserId = Convert.ToInt32(_identity.Identity.Name);
+
+            _user.RequestDate = _user.RequestDate = DateTime.Now;
+            _user.RequestUser = _user.RequestUser = currentUser;
 
             switch (_state) {
                 case UserPersistenceState.Create:
                     _db.Users.Add(_user);
+                    _db.SaveChanges();
                     break;
                 case UserPersistenceState.Update:
                     _db.Users.Attach(_user);
                     _db.Entry(_user).State = EntityState.Modified;
                     break;
             }
-            _db.SaveChanges();
+            _userHist.Id = _user.Id;
+            _userHist.Login = _user.Login;
+            _userHist.Email = _user.Email;
+            _userHist.EmailConfirmed = _user.EmailConfirmed;
+            _userHist.NormalizedEmail = _user.NormalizedEmail;
+            _userHist.PhoneNumber = _user.PhoneNumber;
+            _userHist.PhoneNumberConfirmed = _user.PhoneNumberConfirmed;
+            _userHist.AccessFailedCount = _user.AccessFailedCount;
+            _userHist.LockoutEnabled = _user.LockoutEnabled;
+            _userHist.PasswordHash = _user.PasswordHash;
+            _db.UserHistory.Add(_userHist);
+            //_db.SaveChanges();
         }
 
         private void loadUserStaticData() {
             switch (_state) {
                 case UserPersistenceState.Create:
-                    _userStaticInfo.UserId = _user.Id;
+                    _userStaticInfoHist.UserId = _userStaticInfo.UserId = _user.Id;
                     break;
                 case UserPersistenceState.Update:
                     break;
             }
-            _userStaticInfo.LastName = _model.LastName;
-            _userStaticInfo.FirstName = _model.FirstName;
-            _userStaticInfo.MiddleName = _model.MiddleName;
-            _userStaticInfo.Xin = _model.Xin;
-            _userStaticInfo.Birthdate = _model.Birthdate;
-            _userStaticInfo.Gender = _model.Gender;
-            _userStaticInfo.UserStatusId = _model.UserStatusId;
-            _userStaticInfo.UserTypeId = _model.UserTypeId;
-            _userStaticInfo.MainAddress = _model.MainAddress;
-            _userStaticInfo.RequestUser = Convert.ToInt32(_identity.Identity.Name);
-            _userStaticInfo.RequestDate = DateTime.Now;
+            _userStaticInfoHist.LastName = _userStaticInfo.LastName = _model.LastName;
+            _userStaticInfoHist.FirstName = _userStaticInfo.FirstName = _model.FirstName;
+            _userStaticInfoHist.MiddleName = _userStaticInfo.MiddleName = _model.MiddleName;
+            _userStaticInfoHist.Xin = _userStaticInfo.Xin = _model.Xin;
+            _userStaticInfoHist.Birthdate = _userStaticInfo.Birthdate = _model.Birthdate;
+            _userStaticInfoHist.Gender = _userStaticInfo.Gender = _model.Gender;
+            _userStaticInfoHist.UserStatusId = _userStaticInfo.UserStatusId = _model.UserStatusId;
+            _userStaticInfoHist.UserTypeId = _userStaticInfo.UserTypeId = _model.UserTypeId;
+            _userStaticInfoHist.MainAddress = _userStaticInfo.MainAddress = _model.MainAddress;
+            _userStaticInfoHist.RequestUser = _userStaticInfo.RequestUser = Convert.ToInt32(_identity.Identity.Name);
+            _userStaticInfoHist.RequestDate = _userStaticInfo.RequestDate = DateTime.Now;
+            _userStaticInfoHist.UserId = _userStaticInfo.UserId; ;
 
             switch (_state) {
                 case UserPersistenceState.Create:
@@ -138,16 +180,17 @@ namespace CondemnedAssistance.Helpers {
                     _db.Entry(_userStaticInfo).State = EntityState.Modified;
                     break;
             }
-            _db.SaveChanges();
+            _db.UserStaticInfoHistory.Add(_userStaticInfoHist);
+            //_db.SaveChanges();
         }
 
         private void loadUserRole() {
             switch (_state) {
                 case UserPersistenceState.Create:
-                    _userRole.UserId = _user.Id;
+                    _userRoleHist.UserId = _userRole.UserId = _user.Id;
                     break;
             }
-            _userRole.RoleId = _model.RoleId;
+            _userRoleHist.RoleId = _userRole.RoleId = _model.RoleId;
 
             switch (_state) {
                 case UserPersistenceState.Create:
@@ -158,16 +201,17 @@ namespace CondemnedAssistance.Helpers {
                     _db.Entry(_userRole).State = EntityState.Modified;
                     break;
             }
-            _db.SaveChanges();
+            _db.UserRoleHistory.Add(_userRoleHist);
+            //_db.SaveChanges();
         }
 
         private void loadUserRegister() {
             switch (_state) {
                 case UserPersistenceState.Create:
-                    _userRegister.UserId = _user.Id;
+                    _userRegisterHist.UserId = _userRegister.UserId = _user.Id;
                     break;
             }
-            _userRegister.RegisterId = _model.UserRegisterId;
+            _userRegisterHist.RegisterId = _userRegister.RegisterId = _model.UserRegisterId;
 
             switch (_state) {
                 case UserPersistenceState.Create:
@@ -178,7 +222,8 @@ namespace CondemnedAssistance.Helpers {
                     _db.Entry(_userRegister).State = EntityState.Modified;
                     break;
             }
-            _db.SaveChanges();
+            _db.UserRegisterHistory.Add(_userRegisterHist);
+            //_db.SaveChanges();
         }
 
         private void loadUserAddress() {
@@ -188,6 +233,23 @@ namespace CondemnedAssistance.Helpers {
                         new UserAddress { UserId = _user.Id, AddressId = _model.AddressLevelOneId},
                         new UserAddress { UserId = _user.Id, AddressId = _model.AddressLevelTwoId},
                         new UserAddress { UserId = _user.Id, AddressId = _model.AddressLevelThreeId}
+                    });
+                    _db.UserAddressHistory.AddRange(new UserAddressHistory[] {
+                        new UserAddressHistory { UserId = _user.Id,
+                            RequestDate = DateTime.Now,
+                            RequestUser = currentUser,
+                            AddressId = _model.AddressLevelOneId,
+                            TransactionId = currentSession.TransactionId, ActionType = currentAction},
+                        new UserAddressHistory { UserId = _user.Id,
+                            RequestDate = DateTime.Now,
+                            RequestUser = currentUser,
+                            AddressId = _model.AddressLevelTwoId,
+                            TransactionId = currentSession.TransactionId, ActionType = currentAction},
+                        new UserAddressHistory { UserId = _user.Id,
+                            RequestDate = DateTime.Now,
+                            RequestUser = currentUser,
+                            AddressId = _model.AddressLevelThreeId,
+                            TransactionId = currentSession.TransactionId, ActionType = currentAction}
                     });
                     break;
                 case UserPersistenceState.Update:
@@ -205,16 +267,26 @@ namespace CondemnedAssistance.Helpers {
                         }
                         _db.UserAddresses.Attach(address);
                         _db.Entry(address).State = EntityState.Modified;
+
+                        _db.UserAddressHistory.Add(new UserAddressHistory {
+                            RequestDate = DateTime.Now,
+                            RequestUser = currentUser,
+                            UserId = address.UserId,
+                            AddressId = address.AddressId,
+                            TransactionId = currentSession.TransactionId,
+                            ActionType = currentAction
+                        });
                     }
                     break;
             }
-            _db.SaveChanges();
+            //_db.SaveChanges();
         }
 
         private void loadUserProfessions() {
             switch (_model.RoleId) {
                 case 2:
                 case 3:
+                    //throw new Exception("Just a test");
                     return;
             }
             switch (_state) {
@@ -265,16 +337,40 @@ namespace CondemnedAssistance.Helpers {
                 profession.ProfessionId = (EntityState.Deleted == entityState) ? firstQueue.Dequeue() : secondQueue.Dequeue();
                 _db.UserProfessions.Attach(profession);
                 _db.Entry(profession).State = EntityState.Modified;
+
+                _db.UserProfessionHistory.Add(new UserProfessionHistory { ProfessionId = profession.ProfessionId,
+                    RequestDate = DateTime.Now,
+                    RequestUser = currentUser,
+                    TransactionId = currentSession.TransactionId,
+                    ActionType = DatabaseActionTypes.Update,
+                    UserId = profession.UserId
+                });
             }
             while (secondQueue.Count > 0) {
                 int professionId = secondQueue.Dequeue();
                 switch (entityState) {
                     case EntityState.Added:
                         _db.UserProfessions.Add(new UserProfession { UserId = _user.Id, ProfessionId = professionId });
+                        _db.UserProfessionHistory.Add(new UserProfessionHistory {
+                            UserId = _user.Id,
+                            ProfessionId = professionId,
+                            RequestDate = DateTime.Now,
+                            RequestUser = currentUser,
+                            ActionType = DatabaseActionTypes.Insert,
+                            TransactionId = currentSession.TransactionId
+                        });
                         break;
                     case EntityState.Deleted:
                         UserProfession profession = _db.UserProfessions.First(p => p.ProfessionId == professionId && p.UserId == _user.Id);
                         _db.UserProfessions.Remove(profession);
+                        _db.UserProfessionHistory.Add(new UserProfessionHistory {
+                            UserId = profession.UserId,
+                            ProfessionId = profession.ProfessionId,
+                            RequestDate = DateTime.Now,
+                            RequestUser = currentUser,
+                            ActionType = DatabaseActionTypes.Delete,
+                            TransactionId = currentSession.TransactionId
+                        });
                         break;
                 }
             }
@@ -392,11 +488,15 @@ namespace CondemnedAssistance.Helpers {
                 loadUserProfessions();
                 _db.SaveChanges();
                 message = "Success.";
-                return true;
+                _transaction.Commit();
             } catch(Exception e) {
+                _transaction.Rollback();
+                _transaction.Dispose();
                 message = "Failed. " + e.Message;
                 return false;
             }
+            _transaction.Dispose();
+            return true;
         }
 
         public UserModelCreate GetModel() {

@@ -11,9 +11,10 @@ using System;
 namespace CondemnedAssistance.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20170817144022_RemoveRelationships")]
+    partial class RemoveRelationships
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -551,7 +552,11 @@ namespace CondemnedAssistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RoleId");
+
                     b.HasIndex("TransactionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserRoleHistory");
                 });
@@ -803,9 +808,19 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserRoleHistory", b =>
                 {
+                    b.HasOne("CondemnedAssistance.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("CondemnedAssistance.Models.Transaction", "Transaction")
                         .WithMany()
                         .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CondemnedAssistance.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -115,8 +115,8 @@ namespace CondemnedAssistance.Controllers {
                         NormalizedEmail = model.Email.ToUpper(),
                         PasswordHash = model.Password,
                         PhoneNumber = model.PhoneNumber,
-                        ModifiedUserDate = DateTime.Now,
-                        ModifiedUserId = Convert.ToInt32(HttpContext.User.Identity.Name)
+                        RequestDate = DateTime.Now,
+                        RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
                     });
 
                     await _db.SaveChangesAsync();

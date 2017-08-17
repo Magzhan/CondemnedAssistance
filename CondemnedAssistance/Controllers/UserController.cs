@@ -105,6 +105,8 @@ namespace CondemnedAssistance.Controllers {
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
                 UserPersistenceHelperMode.Read, _db, UserPersistenceState.Create, model);
 
+            userPersistenceHelper.LoadModel();
+
             model = userPersistenceHelper.GetModel();
             return View(model);
         }
@@ -134,6 +136,7 @@ namespace CondemnedAssistance.Controllers {
                 }
 
                 ModelState.AddModelError("Login", message);
+                userPersistenceHelper.LoadModel();
                 model = userPersistenceHelper.GetModel();
             }
             return View(model);
@@ -157,7 +160,8 @@ namespace CondemnedAssistance.Controllers {
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
                 UserPersistenceHelperMode.Read, _db, UserPersistenceState.Update, new UserModelCreate { UserId = id });
-                       
+
+            userPersistenceHelper.LoadModel();
             UserModelCreate model = userPersistenceHelper.GetModel();
 
             return View(model);
@@ -188,8 +192,9 @@ namespace CondemnedAssistance.Controllers {
                 }
                 ModelState.AddModelError("", message);
             }
-
-            return RedirectToAction("Index", "User");
+            userPersistenceHelper.LoadModel();
+            model = userPersistenceHelper.GetModel();
+            return View(model);
         }
     }
 }

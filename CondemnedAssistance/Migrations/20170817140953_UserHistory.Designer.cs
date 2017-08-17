@@ -11,9 +11,10 @@ using System;
 namespace CondemnedAssistance.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20170817140953_UserHistory")]
+    partial class UserHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -354,7 +355,11 @@ namespace CondemnedAssistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AddressId");
+
                     b.HasIndex("TransactionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserAddressHistory");
                 });
@@ -459,7 +464,11 @@ namespace CondemnedAssistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProfessionId");
+
                     b.HasIndex("TransactionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserProfessionHistory");
                 });
@@ -505,7 +514,11 @@ namespace CondemnedAssistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RegisterId");
+
                     b.HasIndex("TransactionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserRegisterHistory");
                 });
@@ -551,7 +564,11 @@ namespace CondemnedAssistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RoleId");
+
                     b.HasIndex("TransactionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserRoleHistory");
                 });
@@ -637,6 +654,12 @@ namespace CondemnedAssistance.Migrations
 
                     b.HasIndex("TransactionId");
 
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserStatusId");
+
+                    b.HasIndex("UserTypeId");
+
                     b.ToTable("UserStaticInfoHistory");
                 });
 
@@ -719,9 +742,19 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserAddressHistory", b =>
                 {
+                    b.HasOne("CondemnedAssistance.Models.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("CondemnedAssistance.Models.Transaction", "Transaction")
                         .WithMany()
                         .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CondemnedAssistance.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -761,9 +794,19 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserProfessionHistory", b =>
                 {
+                    b.HasOne("CondemnedAssistance.Models.Profession", "Profession")
+                        .WithMany()
+                        .HasForeignKey("ProfessionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("CondemnedAssistance.Models.Transaction", "Transaction")
                         .WithMany()
                         .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CondemnedAssistance.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -782,9 +825,19 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserRegisterHistory", b =>
                 {
+                    b.HasOne("CondemnedAssistance.Models.Register", "Register")
+                        .WithMany()
+                        .HasForeignKey("RegisterId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("CondemnedAssistance.Models.Transaction", "Transaction")
                         .WithMany()
                         .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CondemnedAssistance.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -803,9 +856,19 @@ namespace CondemnedAssistance.Migrations
 
             modelBuilder.Entity("CondemnedAssistance.Models.UserRoleHistory", b =>
                 {
+                    b.HasOne("CondemnedAssistance.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("CondemnedAssistance.Models.Transaction", "Transaction")
                         .WithMany()
                         .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CondemnedAssistance.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -832,6 +895,21 @@ namespace CondemnedAssistance.Migrations
                     b.HasOne("CondemnedAssistance.Models.Transaction", "Transaction")
                         .WithMany()
                         .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CondemnedAssistance.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CondemnedAssistance.Models.UserStatus", "UserStatus")
+                        .WithMany()
+                        .HasForeignKey("UserStatusId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CondemnedAssistance.Models.UserType", "UserType")
+                        .WithMany()
+                        .HasForeignKey("UserTypeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

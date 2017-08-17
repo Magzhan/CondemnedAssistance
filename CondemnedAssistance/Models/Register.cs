@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Models {
-    public class Register : TemplateHelperTable{
+    public class Register : TemplateTable{
         public int RegisterLevelId { get; set; }
         public RegisterLevel RegisterLevel { get; set; }
     }
@@ -17,6 +17,6 @@ namespace CondemnedAssistance.Models {
         public int ChildRegister { get; set; }
     }
 
-    public class RegisterLevel : TemplateHelperTable{        
+    public class RegisterLevel : TemplateTable{        
     }
 }

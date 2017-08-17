@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace CondemnedAssistance.Models {
-    public class User {
+    public class User : TrackingTemplate {
         [Key]
         public int Id { get; set; }
         [Required]
@@ -20,29 +20,16 @@ namespace CondemnedAssistance.Models {
         public bool LockoutEnabled { get; set; }
         public DateTime LockoutEnd { get; set; }
         public int AccessFailedCount { get; set; }
-        public int ModifiedUserId { get; set; }
-        public DateTime ModifiedUserDate { get; set; }
     }
 
-    public class TemplateHelperTable {
+    public class UserStatus : TemplateTable { 
+    }
+
+    public class UserType : TemplateTable {
+    }
+
+    public class UserRegister : TrackingTemplate {
         [Key]
-        public int Id { get; set; }
-        public string Description { get; set; }
-        public string Name { get; set; }
-        public string NormalizedName { get; set; }
-        public int RequestUser { get; set; }
-        public DateTime RequestDate { get; set; }
-    }
-
-    public class UserStatus : TemplateHelperTable {
-
-    }
-
-    public class UserType : TemplateHelperTable {
-
-    }
-
-    public class UserRegister {
         public long Id { get; set; }
 
         public int UserId { get; set; }
@@ -52,7 +39,8 @@ namespace CondemnedAssistance.Models {
         public Register Register { get; set; }
     }
 
-    public class UserAddress {
+    public class UserAddress  : TrackingTemplate {
+        [Key]
         public long Id { get; set; }
 
         public int UserId { get; set; }
@@ -62,7 +50,7 @@ namespace CondemnedAssistance.Models {
         public Address Address { get; set; }
     }
 
-    public class UserProfession {
+    public class UserProfession : TrackingTemplate {
         [Key]
         public long Id { get; set; }
 
@@ -73,7 +61,7 @@ namespace CondemnedAssistance.Models {
         public User User { get; set; }
     }
 
-    public class UserRole {
+    public class UserRole : TrackingTemplate {
         [Key]
         public long Id { get; set; }
         
@@ -82,5 +70,115 @@ namespace CondemnedAssistance.Models {
                 
         public int RoleId { get; set; }
         public Role Role { get; set; }
+    }
+
+    // ---------------- History tables ------------------------- //
+
+    public class UserHistory {
+        [Key]
+        public int RecordId { get; set; }
+        public int Id { get; set; }
+        [Required]
+        [MinLength(12)]
+        [MaxLength(12)]
+        public string Login { get; set; }
+        public string Email { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public string NormalizedEmail { get; set; }
+        public string PasswordHash { get; set; }
+        [MaxLength(11)]
+        [MinLength(11)]
+        public string PhoneNumber { get; set; }
+        public bool PhoneNumberConfirmed { get; set; }
+        public bool LockoutEnabled { get; set; }
+        public DateTime LockoutEnd { get; set; }
+        public int AccessFailedCount { get; set; }
+
+        public long TransactionId { get; set; }
+        public Transaction Transaction { get; set; }
+
+        public DatabaseActionTypes ActionType { get; set; }
+    }
+
+    public class UserStaticInfoHistory : TrackingTemplate {
+        public int Id { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public string MiddleName { get; set; }
+        [MaxLength(12)]
+        [MinLength(12)]
+        [StringLength(12, MinimumLength = 12, ErrorMessage = "")]
+        public string Xin { get; set; }
+        public DateTime Birthdate { get; set; }
+        public bool Gender { get; set; }
+        [MaxLength(2000)]
+        public string MainAddress { get; set; }
+
+        public int UserId { get; set; }
+
+        public int UserStatusId { get; set; }
+
+        public int UserTypeId { get; set; }
+
+        public long TransactionId { get; set; }
+        public Transaction Transaction { get; set; }
+
+        public DatabaseActionTypes ActionType { get; set; }
+    }
+
+    public class UserRoleHistory : TrackingTemplate {
+        [Key]
+        public long Id { get; set; }
+
+        public int UserId { get; set; }
+
+        public int RoleId { get; set; }
+
+        public long TransactionId { get; set; }
+        public Transaction Transaction { get; set; }
+
+        public DatabaseActionTypes ActionType { get; set; }
+    }
+
+    public class UserRegisterHistory : TrackingTemplate {
+        [Key]
+        public long Id { get; set; }
+
+        public int UserId { get; set; }
+
+        public int RegisterId { get; set; }
+
+        public long TransactionId { get; set; }
+        public Transaction Transaction { get; set; }
+
+        public DatabaseActionTypes ActionType { get; set; }
+    }
+
+    public class UserAddressHistory : TrackingTemplate {
+        [Key]
+        public long Id { get; set; }
+
+        public int UserId { get; set; }
+
+        public int AddressId { get; set; }
+
+        public long TransactionId { get; set; }
+        public Transaction Transaction { get; set; }
+
+        public DatabaseActionTypes ActionType { get; set; }
+    }
+
+    public class UserProfessionHistory : TrackingTemplate {
+        [Key]
+        public long Id { get; set; }
+
+        public int ProfessionId { get; set; }
+
+        public int UserId { get; set; }
+
+        public long TransactionId { get; set; }
+        public Transaction Transaction { get; set; }
+
+        public DatabaseActionTypes ActionType { get; set; }
     }
 }

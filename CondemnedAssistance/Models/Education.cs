@@ -5,13 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Models {
-    public class Education : TemplateHelperTable{
+    public class Education : TemplateTable{
         public int EducationLevelId { get; set; }
 
         public EducationLevel EducationLevel { get; set; }
     }
 
-    public class EducationLevel : TemplateHelperTable{
+    public class EducationLevel : TemplateTable{
         ICollection<Education> Educations { get; set; }
 
         public EducationLevel() {
