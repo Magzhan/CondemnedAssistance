@@ -123,8 +123,8 @@ namespace CondemnedAssistance.Helpers {
                     break;
             }
 
-            _user.RequestDate = _user.RequestDate = DateTime.Now;
-            _user.RequestUser = _user.RequestUser = currentUser;
+            _userHist.RequestDate = _user.RequestDate = DateTime.Now;
+            _userHist.RequestUser = _user.RequestUser = currentUser;
 
             switch (_state) {
                 case UserPersistenceState.Create:

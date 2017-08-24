@@ -106,4 +106,11 @@ namespace CondemnedAssistance.ViewModels {
 
         public string ConfirmNewPassword { get; set; }
     }
+
+    public class UserHistoryModel {
+        public long TransactionId { get; set; }
+        public int UserId { get; set; }
+        public string OperatorFullName { get; set; }
+        public DateTime OperationDate { get; set; }
+    }
 }

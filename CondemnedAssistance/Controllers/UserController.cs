@@ -16,11 +16,13 @@ namespace CondemnedAssistance.Controllers {
         private UserContext _db;
         private IAuthorizationService _authorizationService;
         private RegisterHelper registerHelper;
+        private LinkHelper linkHelper;
 
         public UserController(UserContext context, IAuthorizationService authorizationService) {
             this._db = context;
             this._authorizationService = authorizationService;
             this.registerHelper = new RegisterHelper(context);
+            this.linkHelper = new LinkHelper(context, "userEdit");
         }
 
         [HttpGet]
@@ -149,7 +151,9 @@ namespace CondemnedAssistance.Controllers {
             if(_db.UserRoles.Any(u => u.UserId == id)) {
                 actions.Add("roleId", _db.UserRoles.First(u => u.UserId == id).RoleId);
             }
-
+            if (_db.UserRegisters.Any(u => u.UserId == id)) {
+                actions.Add("childId", _db.UserRegisters.Single(u => u.UserId == id).RegisterId);
+            }
             int operatorRegisterId = Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value);
 
             AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
@@ -163,6 +167,42 @@ namespace CondemnedAssistance.Controllers {
 
             userPersistenceHelper.LoadModel();
             UserModelCreate model = userPersistenceHelper.GetModel();
+
+            Dictionary<string, string> routeVals = new Dictionary<string, string> { };
+            routeVals.Add("id", id.ToString());
+
+            List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
+            links.Add(new LinkClass {
+                Action = "Update",
+                Controller = "User",
+                IsSelected = true,
+                Text = "Персональные данные",
+                RouteValues = routeVals
+            });
+
+            Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
+            routeVals1.Add("userId", id.ToString());
+
+            links.Add(new LinkClass {
+                Controller = "User",
+                Action = "History",
+                IsSelected = false,
+                Text = "История",
+                RouteValues = routeVals1
+            });
+
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", id.ToString());
+
+            links.Add(new LinkClass {
+                Controller = "User",
+                Action = "History",
+                IsSelected = false,
+                Text = "История",
+                RouteValues = routeVals2
+            });
+
+            ViewData["sidebar"] = links.ToArray();
 
             return View(model);
         }
@@ -178,9 +218,13 @@ namespace CondemnedAssistance.Controllers {
 
             AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
 
-            if (!authResult.Succeeded) {
-                return new ChallengeResult();
-            }
+            if (!authResult.Succeeded)  return new ChallengeResult(); 
+
+            if (_db.UserRegisters.Any(u => u.UserId == id)) actions["childId"] = _db.UserRegisters.Single(u => u.UserId == id).RegisterId; 
+
+            authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) return new ChallengeResult();
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
                 UserPersistenceHelperMode.Write, _db, UserPersistenceState.Update, model);
@@ -195,6 +239,64 @@ namespace CondemnedAssistance.Controllers {
             userPersistenceHelper.LoadModel();
             model = userPersistenceHelper.GetModel();
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> History(int userId) {
+            Dictionary<string, int> actions = new Dictionary<string, int>();
+            if (_db.UserRoles.Any(u => u.UserId == userId))  actions.Add("roleId", _db.UserRoles.First(u => u.UserId == userId).RoleId); 
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (_db.UserRegisters.Any(u => u.UserId == userId)) actions["childId"] = _db.UserRegisters.Single(u => u.UserId == userId).RegisterId;
+
+            authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) return new ChallengeResult();
+
+            List<UserHistoryModel> model = _db.UserHistory.Where(h => h.Id == userId).Select(h => new UserHistoryModel { UserId = h.Id, OperationDate = h.RequestDate, OperatorFullName = _db.UserStaticInfo.Single(u => u.UserId == h.RequestUser).FirstName, TransactionId = h.TransactionId }).OrderByDescending(h => h.TransactionId).ToList();
+
+            Dictionary<string, string> routeVals = new Dictionary<string, string> { };
+            routeVals.Add("id", userId.ToString());
+
+            List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
+            links.Add(new LinkClass {
+                Action = "Update",
+                Controller = "User",
+                IsSelected = false,
+                Text = "Персональные данные",
+                RouteValues = routeVals
+            });
+            Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
+            routeVals1.Add("userId", userId.ToString());
+            links.Add(new LinkClass  {
+                Controller = "User",
+                Action = "History",
+                IsSelected = true,
+                Text = "История",
+                RouteValues = routeVals1
+            });
+
+            ViewData["sidebar"] = links.ToArray();
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> HistoryDetail(long transactionId, int userId) {
+            Dictionary<string, int> actions = new Dictionary<string, int>();
+            if (_db.UserRoles.Any(u => u.UserId == userId)) actions.Add("roleId", _db.UserRoles.First(u => u.UserId == userId).RoleId);
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (_db.UserRegisters.Any(u => u.UserId == userId)) actions["childId"] = _db.UserRegisters.Single(u => u.UserId == userId).RegisterId;
+
+            authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) return new ChallengeResult();
+
+
+
+            return View();
         }
     }
 }

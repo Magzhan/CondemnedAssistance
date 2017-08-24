@@ -1,0 +1,18 @@
+﻿@model IEnumerable<CondemnedAssistance.ViewModels.UserHistoryModel>
+@{
+    Layout = "_Layout_Sidebar";
+}
+<table>
+    <tr>
+        <th></th>
+    </tr>
+    @foreach(var history in Model) {
+        <tr>
+            <td>@history.OperatorFullName</td>
+            <td>@history.OperationDate</td>
+            <td><a asp-controller="User" asp-action="HistoryDetail" 
+                   asp-route-transactionId="@history.TransactionId" 
+                   asp-route-userId="@history.UserId">Детали</a></td>
+        </tr>
+    }
+</table>

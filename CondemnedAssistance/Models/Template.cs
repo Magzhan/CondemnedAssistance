@@ -21,6 +21,13 @@ namespace CondemnedAssistance.Models {
         public DateTime RequestDate { get; set; }
     }
 
+    public class HistoryTemplate : TrackingTemplate{
+        public long TransactionId { get; set; }
+        public Transaction Transaction { get; set; }
+
+        public DatabaseActionTypes ActionType { get; set; }
+    }
+
     public enum DatabaseActionTypes {
         Insert = 1, Update = 2, Delete = 3
     }

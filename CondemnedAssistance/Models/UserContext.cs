@@ -22,6 +22,9 @@ namespace CondemnedAssistance.Models {
         public DbSet<AddressLevel> AddressLevels { get; set; }
         public DbSet<AddressHierarchy> AddressHierarchies { get; set; }
         public DbSet<UserAddress> UserAddresses { get; set; }
+        public DbSet<UserEvent> UserEvents { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<EventStatus> EventStatuses { get; set; }
         public DbSet<Kato> Katos { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 

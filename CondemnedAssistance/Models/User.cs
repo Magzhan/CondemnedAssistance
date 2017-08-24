@@ -72,9 +72,20 @@ namespace CondemnedAssistance.Models {
         public Role Role { get; set; }
     }
 
+    public class UserEvent : TrackingTemplate{
+        [Key]
+        public int Id { get; set; }
+
+        public int EventId { get; set; }
+        public Event Event { get; set; }
+
+        public int UserId { get; set; }
+        public User User { get; set; }
+    }
+
     // ---------------- History tables ------------------------- //
 
-    public class UserHistory {
+    public class UserHistory : HistoryTemplate {
         [Key]
         public int RecordId { get; set; }
         public int Id { get; set; }
@@ -93,14 +104,9 @@ namespace CondemnedAssistance.Models {
         public bool LockoutEnabled { get; set; }
         public DateTime LockoutEnd { get; set; }
         public int AccessFailedCount { get; set; }
-
-        public long TransactionId { get; set; }
-        public Transaction Transaction { get; set; }
-
-        public DatabaseActionTypes ActionType { get; set; }
     }
 
-    public class UserStaticInfoHistory : TrackingTemplate {
+    public class UserStaticInfoHistory : HistoryTemplate {
         public int Id { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
@@ -119,66 +125,50 @@ namespace CondemnedAssistance.Models {
         public int UserStatusId { get; set; }
 
         public int UserTypeId { get; set; }
-
-        public long TransactionId { get; set; }
-        public Transaction Transaction { get; set; }
-
-        public DatabaseActionTypes ActionType { get; set; }
     }
 
-    public class UserRoleHistory : TrackingTemplate {
+    public class UserRoleHistory : HistoryTemplate {
         [Key]
         public long Id { get; set; }
 
         public int UserId { get; set; }
 
         public int RoleId { get; set; }
-
-        public long TransactionId { get; set; }
-        public Transaction Transaction { get; set; }
-
-        public DatabaseActionTypes ActionType { get; set; }
     }
 
-    public class UserRegisterHistory : TrackingTemplate {
+    public class UserRegisterHistory : HistoryTemplate {
         [Key]
         public long Id { get; set; }
 
         public int UserId { get; set; }
 
         public int RegisterId { get; set; }
-
-        public long TransactionId { get; set; }
-        public Transaction Transaction { get; set; }
-
-        public DatabaseActionTypes ActionType { get; set; }
     }
 
-    public class UserAddressHistory : TrackingTemplate {
+    public class UserAddressHistory : HistoryTemplate {
         [Key]
         public long Id { get; set; }
 
         public int UserId { get; set; }
 
         public int AddressId { get; set; }
-
-        public long TransactionId { get; set; }
-        public Transaction Transaction { get; set; }
-
-        public DatabaseActionTypes ActionType { get; set; }
     }
 
-    public class UserProfessionHistory : TrackingTemplate {
+    public class UserProfessionHistory : HistoryTemplate {
         [Key]
         public long Id { get; set; }
 
         public int ProfessionId { get; set; }
 
         public int UserId { get; set; }
+    }
 
-        public long TransactionId { get; set; }
-        public Transaction Transaction { get; set; }
+    public class UserEventHistory : HistoryTemplate{
+        [Key]
+        public int Id { get; set; }
 
-        public DatabaseActionTypes ActionType { get; set; }
+        public int EventId { get; set; }
+
+        public int UserId { get; set; }
     }
 }

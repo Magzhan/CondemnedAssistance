@@ -7,5 +7,10 @@ namespace CondemnedAssistance.Controllers {
         public IActionResult Index() {
             return View();
         }
+
+        [AllowAnonymous]
+        public IActionResult Error() {
+            return View();
+        }
     }
 }
