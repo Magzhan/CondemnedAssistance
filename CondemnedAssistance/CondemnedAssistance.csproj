@@ -81,7 +81,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Education\" />
-    <Folder Include="Views\Event\" />
   </ItemGroup>
 
 </Project>

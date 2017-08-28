@@ -191,17 +191,6 @@ namespace CondemnedAssistance.Controllers {
                 RouteValues = routeVals1
             });
 
-            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
-            routeVals2.Add("userId", id.ToString());
-
-            links.Add(new LinkClass {
-                Controller = "User",
-                Action = "History",
-                IsSelected = false,
-                Text = "История",
-                RouteValues = routeVals2
-            });
-
             ViewData["sidebar"] = links.ToArray();
 
             return View(model);
