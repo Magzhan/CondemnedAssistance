@@ -105,7 +105,7 @@ namespace CondemnedAssistance.Controllers
             UserModelCreate model = new UserModelCreate();
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
-                UserPersistenceHelperMode.Read, _db, UserPersistenceState.Create, model);
+                PersistenceHelperMode.Read, _db, PersistenceState.Create, model);
 
             userPersistenceHelper.LoadModel();
 
@@ -127,7 +127,7 @@ namespace CondemnedAssistance.Controllers
             }
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User, 
-                UserPersistenceHelperMode.Write, _db, UserPersistenceState.Create, model);
+                PersistenceHelperMode.Write, _db, PersistenceState.Create, model);
 
             if (ModelState.IsValid) {
                 string message;
@@ -163,7 +163,7 @@ namespace CondemnedAssistance.Controllers
             }
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
-                UserPersistenceHelperMode.Read, _db, UserPersistenceState.Update, new UserModelCreate { UserId = id });
+                PersistenceHelperMode.Read, _db, PersistenceState.Update, new UserModelCreate { UserId = id });
 
             userPersistenceHelper.LoadModel();
             UserModelCreate model = userPersistenceHelper.GetModel();
@@ -226,7 +226,7 @@ namespace CondemnedAssistance.Controllers
             if (!authResult.Succeeded) return new ChallengeResult();
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
-                UserPersistenceHelperMode.Write, _db, UserPersistenceState.Update, model);
+                PersistenceHelperMode.Write, _db, PersistenceState.Update, model);
 
             string message;
             if (ModelState.IsValid) {

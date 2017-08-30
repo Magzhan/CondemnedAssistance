@@ -191,6 +191,14 @@ namespace CondemnedAssistance.Controllers {
                                 ActionType = DatabaseActionTypes.Insert
                             });
                             await _db.SaveChangesAsync();
+
+                            UserPersistenceHelper persistenceHelper =
+                                new UserPersistenceHelper(_db, transaction, DatabaseActionTypes.Insert, userId);
+
+                            persistenceHelper.PersistHistory();
+
+                            await _db.SaveChangesAsync();
+
                             t.Commit();
                             return RedirectToAction("Index", new { userId = userId });
                         }
@@ -343,6 +351,9 @@ namespace CondemnedAssistance.Controllers {
                             });
 
                             await _db.SaveChangesAsync();
+
+                            UserPersistenceHelper persistenceHelper =
+                                new UserPersistenceHelper(_db, transaction, DatabaseActionTypes.Update, userId);
 
                             t.Commit();
                             return RedirectToAction("Index", new { userId = userId });
