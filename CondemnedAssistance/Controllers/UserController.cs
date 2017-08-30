@@ -3,13 +3,13 @@ using CondemnedAssistance.Models;
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CondemnedAssistance.Controllers {
+namespace CondemnedAssistance.Controllers
+{
     [Authorize(Roles = "2, 3")]
     public class UserController : Controller {
 
@@ -191,6 +191,16 @@ namespace CondemnedAssistance.Controllers {
                 RouteValues = routeVals1
             });
 
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", id.ToString()); 
+            links.Add(new LinkClass {
+                Controller = "Event",
+                Action = "Index",
+                IsSelected = false,
+                Text = "Пробация",
+                RouteValues = routeVals2
+            });
+
             ViewData["sidebar"] = links.ToArray();
 
             return View(model);
@@ -264,6 +274,16 @@ namespace CondemnedAssistance.Controllers {
                 IsSelected = true,
                 Text = "История",
                 RouteValues = routeVals1
+            });
+
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "Event",
+                Action = "Index",
+                IsSelected = false,
+                Text = "Пробация",
+                RouteValues = routeVals2
             });
 
             ViewData["sidebar"] = links.ToArray();

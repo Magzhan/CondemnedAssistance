@@ -8,6 +8,8 @@ namespace CondemnedAssistance.ViewModels {
     public class EventModel {
         public int UserId { get; set; }
 
+        public string CurrentUserStatus { get; set; }
+
         public List<Event> Events { get; set; }
 
         public EventModel() {
@@ -16,8 +18,6 @@ namespace CondemnedAssistance.ViewModels {
     }
 
     public class EventCreateModel : TemplateTable{
-
-        public int Id { get; set; }
 
         public int UserId { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using CondemnedAssistance.Models;
+﻿using CondemnedAssistance.Helpers;
+using CondemnedAssistance.Models;
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,12 @@ namespace CondemnedAssistance.Controllers {
 
         private UserContext _db;
         private IAuthorizationService _authService;
+        private LinkHelper linkHelper;
 
         public EventController(UserContext context, IAuthorizationService authService) {
             _db = context;
             _authService = authService;
+            linkHelper = new LinkHelper(context, "userEdit");
         }
 
         [HttpGet]
@@ -38,6 +41,52 @@ namespace CondemnedAssistance.Controllers {
                 model.Events.Add(_db.Events.Single(r => r.Id == row.EventId));
             });
 
+            model.Events = model.Events.OrderByDescending(e => e.Date).ToList();
+
+            model.Events.ForEach(row => {
+                row.EventStatus = _db.EventStatuses.Single(e => e.Id == row.EventStatusId);
+            });
+
+            DateTime today = DateTime.Now;
+            model.CurrentUserStatus = _db.EventStatuses.Single(e => e.Id == 1).Name;
+            model.Events.OrderBy(e => e.Date).ToList().ForEach(row => {
+                if (today > row.Date) {
+                    model.CurrentUserStatus = _db.EventStatuses.Single(e => e.Id == row.EventStatusId).Name;
+                }
+            });
+
+            Dictionary<string, string> routeVals = new Dictionary<string, string> { };
+            routeVals.Add("id", userId.ToString());            
+
+            List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
+            links.Add(new LinkClass {
+                Action = "Update",
+                Controller = "User",
+                IsSelected = false,
+                Text = "Персональные данные",
+                RouteValues = routeVals
+            });
+            Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
+            routeVals1.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "User",
+                Action = "History",
+                IsSelected = true,
+                Text = "История",
+                RouteValues = routeVals1
+            });
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "Event",
+                Action = "Index",
+                IsSelected = true,
+                Text = "Пробация",
+                RouteValues = routeVals2
+            });
+
+            ViewData["sidebar"] = links.ToArray();
+
             return View(model);
         }
 
@@ -54,6 +103,38 @@ namespace CondemnedAssistance.Controllers {
 
             EventCreateModel model = new EventCreateModel();
             model.EventStatuses = _db.EventStatuses.ToList();
+
+            Dictionary<string, string> routeVals = new Dictionary<string, string> { };
+            routeVals.Add("id", userId.ToString());            
+
+            List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
+            links.Add(new LinkClass {
+                Action = "Update",
+                Controller = "User",
+                IsSelected = false,
+                Text = "Персональные данные",
+                RouteValues = routeVals
+            });
+            Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
+            routeVals1.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "User",
+                Action = "History",
+                IsSelected = true,
+                Text = "История",
+                RouteValues = routeVals1
+            });
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "Event",
+                Action = "Index",
+                IsSelected = true,
+                Text = "Пробация",
+                RouteValues = routeVals2
+            });
+            
+            ViewData["sidebar"] = links.ToArray();
 
             return View(model);
         }
@@ -79,28 +160,29 @@ namespace CondemnedAssistance.Controllers {
 
                             Transaction transaction = new Transaction { TransactionGuid = transactionGuid };
 
-                            _db.Transactions.Add(transaction);
-                            _db.SaveChanges();
+                            await _db.Transactions.AddAsync(transaction);
+                            await _db.SaveChangesAsync();
 
                             Event myEvent = new Event {
                                 Name = model.Name,
                                 NormalizedName = model.Name.ToUpper(),
                                 Description = model.Description,
                                 Date = model.Date,
+                                EventStatusId = model.EventStatusId,
                                 RequestDate = DateTime.Now,
                                 RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
                             };
-                            _db.Events.Add(myEvent);
-                            _db.SaveChanges();
+                            await _db.Events.AddAsync(myEvent);
+                            await _db.SaveChangesAsync();
 
-                            _db.UserEvents.Add(new UserEvent {
+                            await _db.UserEvents.AddAsync(new UserEvent {
                                 EventId = myEvent.Id,
                                 UserId = userId,
                                 RequestDate = DateTime.Now,
                                 RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
                             });
 
-                            _db.UserEventHistory.Add(new UserEventHistory {
+                            await _db.UserEventHistory.AddAsync(new UserEventHistory {
                                 EventId = myEvent.Id,
                                 UserId = userId,
                                 TransactionId = transaction.TransactionId,
@@ -108,7 +190,7 @@ namespace CondemnedAssistance.Controllers {
                                 RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name),
                                 ActionType = DatabaseActionTypes.Insert
                             });
-                            _db.SaveChanges();
+                            await _db.SaveChangesAsync();
                             t.Commit();
                             return RedirectToAction("Index", new { userId = userId });
                         }
@@ -121,6 +203,38 @@ namespace CondemnedAssistance.Controllers {
                 ModelState.AddModelError("", "Events with same time for the same user cannot be added");
             }
 
+            model.EventStatuses = _db.EventStatuses.ToList();
+
+            Dictionary<string, string> routeVals = new Dictionary<string, string> { };
+            routeVals.Add("id", userId.ToString());
+
+            List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
+            links.Add(new LinkClass {
+                Action = "Update",
+                Controller = "User",
+                IsSelected = false,
+                Text = "Персональные данные",
+                RouteValues = routeVals
+            });
+            Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
+            routeVals1.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "User",
+                Action = "History",
+                IsSelected = true,
+                Text = "История",
+                RouteValues = routeVals1
+            });
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "Event",
+                Action = "Index",
+                IsSelected = true,
+                Text = "Пробация",
+                RouteValues = routeVals2
+            });
+            ViewData["sidebar"] = links.ToArray();
             return View(model);
         }
 
@@ -148,11 +262,43 @@ namespace CondemnedAssistance.Controllers {
                 EventStatuses = _db.EventStatuses.ToList()
             };
 
+            Dictionary<string, string> routeVals = new Dictionary<string, string> { };
+            routeVals.Add("id", userId.ToString());            
+
+            List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
+            links.Add(new LinkClass {
+                Action = "Update",
+                Controller = "User",
+                IsSelected = false,
+                Text = "Персональные данные",
+                RouteValues = routeVals
+            });
+            Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
+            routeVals1.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "User",
+                Action = "History",
+                IsSelected = true,
+                Text = "История",
+                RouteValues = routeVals1
+            });
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "Event",
+                Action = "Index",
+                IsSelected = true,
+                Text = "Пробация",
+                RouteValues = routeVals2
+            });
+
+            ViewData["sidebar"] = links.ToArray();
+
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int id, Event model) {
+        public async Task<IActionResult> Update(int id, EventCreateModel model) {
             int userId = _db.UserEvents.Single(e => e.EventId == id).UserId;
             Dictionary<string, int> actions = new Dictionary<string, int>();
             actions.Add("childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId);
@@ -172,8 +318,8 @@ namespace CondemnedAssistance.Controllers {
 
                             Transaction transaction = new Transaction { TransactionGuid = transactionGuid };
 
-                            _db.Transactions.Add(transaction);
-                            _db.SaveChanges();
+                            await _db.Transactions.AddAsync(transaction);
+                            await _db.SaveChangesAsync();
 
                             Event thisEvent = await _db.Events.SingleAsync(e => e.Id == id);
                             thisEvent.Name = model.Name;
@@ -199,6 +345,7 @@ namespace CondemnedAssistance.Controllers {
                             await _db.SaveChangesAsync();
 
                             t.Commit();
+                            return RedirectToAction("Index", new { userId = userId });
                         }
                         catch (Exception ex) {
                             ModelState.AddModelError("", ex.ToString());
@@ -208,6 +355,40 @@ namespace CondemnedAssistance.Controllers {
                 }
                 ModelState.AddModelError("", "Already has event with same date"); 
             }
+
+            model.EventStatuses = _db.EventStatuses.ToList();
+
+            Dictionary<string, string> routeVals = new Dictionary<string, string> { };
+            routeVals.Add("id", userId.ToString());
+
+            List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
+            links.Add(new LinkClass {
+                Action = "Update",
+                Controller = "User",
+                IsSelected = false,
+                Text = "Персональные данные",
+                RouteValues = routeVals
+            });
+            Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
+            routeVals1.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "User",
+                Action = "History",
+                IsSelected = false,
+                Text = "История",
+                RouteValues = routeVals1
+            });
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "Event",
+                Action = "Index",
+                IsSelected = true,
+                Text = "Пробация",
+                RouteValues = routeVals2
+            });
+
+            ViewData["sidebar"] = links.ToArray();
 
             return View(model);
         }
@@ -224,14 +405,45 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            
+            _db.Database.AutoTransactionsEnabled = false;
+
+            using(var t = _db.Database.BeginTransaction()) {
+                try {
+                    Guid transactionGuid = t.TransactionId;
+
+                    Transaction transaction = new Transaction { TransactionGuid = transactionGuid };
+
+                    await _db.Transactions.AddAsync(transaction);
+                    await _db.SaveChangesAsync();
+
+                    Event thisEvent = await _db.Events.SingleAsync(e => e.Id == id);
+                    UserEvent thisUserEvent = await _db.UserEvents.SingleAsync(e => e.EventId == id && e.UserId == userId);
+
+                    await _db.UserEventHistory.AddAsync(new UserEventHistory {
+                        EventId = thisEvent.Id,
+                        RequestDate = DateTime.Now,
+                        RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name),
+                        TransactionId = transaction.TransactionId,
+                        ActionType = DatabaseActionTypes.Delete,
+                        UserId = userId
+                    });
+
+                    await _db.SaveChangesAsync();
+
+                    t.Commit();
+                }catch(Exception ex) {
+                    ModelState.AddModelError("", ex.ToString());
+                    t.Rollback();
+                }
+            }
 
             return RedirectToAction("User", "Index");
         }
 
         [HttpGet]
         public IActionResult EventStatuses() {
-            return View();
+            List<EventStatus> model = _db.EventStatuses.ToList();
+            return View(model);
         }
 
         [HttpGet]
