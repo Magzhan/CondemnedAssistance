@@ -52,15 +52,16 @@ namespace CondemnedAssistance.Controllers
                 if(userRegister != null) {
                     register = _db.Registers.FirstOrDefault(r => r.Id == userRegister.RegisterId);
                 }
-                UserProfileModel userProf = new UserProfileModel();
-                userProf.UserId = user.Id;
-                userProf.Login = user.Login;
-                userProf.LastName = info?.LastName;
-                userProf.FirstName = info?.FirstName;
-                userProf.MiddleName = info?.MiddleName;
-                userProf.Role = role?.Name;
-                userProf.Status = userStatus?.Name;
-                userProf.Registration = register?.Name;
+                UserProfileModel userProf = new UserProfileModel {
+                    UserId = user.Id,
+                    Login = user.Login,
+                    LastName = info?.LastName,
+                    FirstName = info?.FirstName,
+                    MiddleName = info?.MiddleName,
+                    Role = role?.Name,
+                    Status = userStatus?.Name,
+                    Registration = register?.Name
+                };
 
                 model.Add(userProf);
             }
@@ -80,22 +81,22 @@ namespace CondemnedAssistance.Controllers
                 return RedirectToAction("Index", "User");
             }
 
-            UserModel model = new UserModel();
-
-            model.UserId = id;
-            model.Login = user.Login;
-            model.LastName = userStaticInfo.LastName;
-            model.FirstName = userStaticInfo.FirstName;
-            model.MiddleName = userStaticInfo.MiddleName;
-            model.Xin = userStaticInfo.Xin;
-            model.Birthdate = userStaticInfo.Birthdate;
-            model.Gender = userStaticInfo.Gender;
-            model.UserStatusId = userStatus.Id;
-            model.UserStatusName = userStatus.Name;
-            model.UserTypeId = userType.Id;
-            model.UserTypeName = userType.Name;
-            model.RoleId = role.Id;
-            model.RoleName = role.Name;
+            UserModel model = new UserModel {
+                UserId = id,
+                Login = user.Login,
+                LastName = userStaticInfo.LastName,
+                FirstName = userStaticInfo.FirstName,
+                MiddleName = userStaticInfo.MiddleName,
+                Xin = userStaticInfo.Xin,
+                Birthdate = userStaticInfo.Birthdate,
+                Gender = userStaticInfo.Gender,
+                UserStatusId = userStatus.Id,
+                UserStatusName = userStatus.Name,
+                UserTypeId = userType.Id,
+                UserTypeName = userType.Name,
+                RoleId = role.Id,
+                RoleName = role.Name
+            };
 
             return View(model);
         }
@@ -115,10 +116,10 @@ namespace CondemnedAssistance.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Create(UserModelCreate model) {
-            Dictionary<string, int> actions = new Dictionary<string, int>();
-            
-            actions.Add("roleId", model.RoleId);
-            actions.Add("childId", model.UserRegisterId);
+            Dictionary<string, int> actions = new Dictionary<string, int> {
+                { "roleId", model.RoleId },
+                { "childId", model.UserRegisterId }
+            };
 
             AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
 
@@ -130,8 +131,7 @@ namespace CondemnedAssistance.Controllers
                 PersistenceHelperMode.Write, _db, PersistenceState.Create, model);
 
             if (ModelState.IsValid) {
-                string message;
-                if (userPersistenceHelper.Validate(out message)) {
+                if (userPersistenceHelper.Validate(out string message)) {
 
                     userPersistenceHelper.Persist(out message);
                     return RedirectToAction("Index");
@@ -228,9 +228,8 @@ namespace CondemnedAssistance.Controllers
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
                 PersistenceHelperMode.Write, _db, PersistenceState.Update, model);
 
-            string message;
             if (ModelState.IsValid) {
-                if (userPersistenceHelper.Persist(out message)){
+                if (userPersistenceHelper.Persist(out string message)) {
                     return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("", message);

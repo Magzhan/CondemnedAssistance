@@ -25,8 +25,9 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Index(int userId) {
-            Dictionary<string, int> actions = new Dictionary<string, int>();
-            actions.Add("childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId);
+            Dictionary<string, int> actions = new Dictionary<string, int> {
+                { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
+            };
 
             AuthorizationResult authResult = await _authService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
 
@@ -34,8 +35,9 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            EventModel model = new EventModel();
-            model.UserId = userId;
+            EventModel model = new EventModel {
+                UserId = userId
+            };
 
             await _db.UserEvents.Where(e => e.UserId == userId).ForEachAsync(row => {
                 model.Events.Add(_db.Events.Single(r => r.Id == row.EventId));
@@ -92,8 +94,9 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Create(int userId) {
-            Dictionary<string, int> actions = new Dictionary<string, int>();
-            actions.Add("childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId);
+            Dictionary<string, int> actions = new Dictionary<string, int> {
+                { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
+            };
 
             AuthorizationResult authResult = await _authService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
 
@@ -101,8 +104,9 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            EventCreateModel model = new EventCreateModel();
-            model.EventStatuses = _db.EventStatuses.ToList();
+            EventCreateModel model = new EventCreateModel {
+                EventStatuses = _db.EventStatuses.ToList()
+            };
 
             Dictionary<string, string> routeVals = new Dictionary<string, string> { };
             routeVals.Add("id", userId.ToString());            
@@ -142,8 +146,9 @@ namespace CondemnedAssistance.Controllers {
         [HttpPost]
         public async Task<IActionResult> Create(int userId, EventCreateModel model) {
 
-            Dictionary<string, int> actions = new Dictionary<string, int>();
-            actions.Add("childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId);
+            Dictionary<string, int> actions = new Dictionary<string, int> {
+                { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
+            };
 
             AuthorizationResult authResult = await _authService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
 
@@ -249,8 +254,9 @@ namespace CondemnedAssistance.Controllers {
         [HttpGet]
         public async Task<IActionResult> Update(int id){
             int userId = _db.UserEvents.Single(e => e.EventId == id).UserId;
-            Dictionary<string, int> actions = new Dictionary<string, int>();
-            actions.Add("childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId);
+            Dictionary<string, int> actions = new Dictionary<string, int> {
+                { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
+            };
 
             AuthorizationResult authResult = await _authService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
 
@@ -308,8 +314,9 @@ namespace CondemnedAssistance.Controllers {
         [HttpPost]
         public async Task<IActionResult> Update(int id, EventCreateModel model) {
             int userId = _db.UserEvents.Single(e => e.EventId == id).UserId;
-            Dictionary<string, int> actions = new Dictionary<string, int>();
-            actions.Add("childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId);
+            Dictionary<string, int> actions = new Dictionary<string, int> {
+                { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
+            };
 
             AuthorizationResult authResult = await _authService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
 
@@ -407,8 +414,9 @@ namespace CondemnedAssistance.Controllers {
         [HttpGet]
         public async Task<IActionResult> Delete(int id) {
             int userId = _db.UserEvents.Single(e => e.EventId == id).UserId;
-            Dictionary<string, int> actions = new Dictionary<string, int>();
-            actions.Add("childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId);
+            Dictionary<string, int> actions = new Dictionary<string, int> {
+                { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
+            };
 
             AuthorizationResult authResult = await _authService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
 
