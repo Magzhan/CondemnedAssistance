@@ -11,6 +11,8 @@ using CondemnedAssistance.Services.Requirements;
 using CondemnedAssistance.Services.Resources;
 using System.Threading.Tasks;
 using System;
+using CondemnedAssistance.Services.WebSockets;
+using CondemnedAssistance.Hubs;
 
 namespace CondemnedAssistance {
     public class Startup {
@@ -50,14 +52,17 @@ namespace CondemnedAssistance {
             });
 
             services.AddSingleton<IAuthorizationHandler, ResourceRegisterHandler>();
+
+            services.AddWebSocketManager();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) {
             // Order
             //Exception / error handling
             //Static file server
             //Authentication
+            //Websockets
             //MVC
 
             if (env.IsDevelopment()) {
@@ -71,6 +76,8 @@ namespace CondemnedAssistance {
 
             app.UseAuthentication();
 
+            app.UseWebSockets();
+
             loggerFactory.AddConsole();
 
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope()) {
@@ -83,6 +90,8 @@ namespace CondemnedAssistance {
             app.UseMvc(routes => {
                 routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            app.MapWebSocketManager("/messageshub", serviceProvider.GetService<WebSocketMessageHandler>());
         }
     }
 
