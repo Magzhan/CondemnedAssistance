@@ -83,6 +83,16 @@ namespace CondemnedAssistance.Models {
         public User User { get; set; }
     }
 
+    public class UserHelp {
+        public int Id { get; set; }
+
+        public int HelpId { get; set; }
+        public Help Help { get; set; }
+
+        public int UserId { get; set; }
+        public User User { get; set; }
+    }
+
     // ---------------- History tables ------------------------- //
 
     public class UserHistory : HistoryTemplate {

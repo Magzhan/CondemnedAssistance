@@ -1,3 +1,19 @@
-﻿@{
+﻿@model IEnumerable<CondemnedAssistance.Models.Help>
+@{
     Layout = "_Layout";
 }
+<table>
+    @foreach(var h in Model) {
+        <tr>
+            <td>
+                @h.Name
+            </td>
+            <td>
+                <a asp-controller="Help" asp-action="Update" asp-route-id="@h.Id">Edit</a>
+            </td>
+            <td>
+                <a asp-controller="Help" asp-action="Delete" asp-route-id="@h.Id">Delete</a>
+            </td>
+        </tr>
+    }
+</table>

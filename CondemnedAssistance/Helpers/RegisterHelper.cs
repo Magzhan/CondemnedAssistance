@@ -27,6 +27,20 @@ namespace CondemnedAssistance.Helpers
             }
         }
 
+        public int[] GetRegisterParents(int[] parents, int childId) {
+            if (!_db.RegisterHierarchies.Any(r => r.ChildRegister == childId)) {
+                return parents;
+            } else {
+                List<int> allParents = new List<int>();
+                int tempParent = _db.RegisterHierarchies.Single(r => r.ChildRegister == childId).ParentRegister;
+                allParents.AddRange(parents);
+                allParents.Add(tempParent);
+                allParents.AddRange(GetRegisterParents(tempParents, parent));
+
+                return allParents.Distinct().ToArray();
+            }
+        }
+
         public List<RegisterModel> GetUserRegisterModels(int userId, int userRegisterId) {
             int[] registerChildren = GetRegisterChildren(new int[] { }, userRegisterId);
             List<RegisterModel> registers = new List<RegisterModel>();

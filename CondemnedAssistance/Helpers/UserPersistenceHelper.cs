@@ -484,7 +484,7 @@ namespace CondemnedAssistance.Helpers {
             } catch(Exception e) {
                 _transaction.Rollback();
                 _transaction.Dispose();
-                message = "Failed. " + e.Message;
+                message = "Failed. " + e.ToString();
                 return false;
             }
             _transaction.Dispose();

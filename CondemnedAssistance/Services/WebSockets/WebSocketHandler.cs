@@ -14,10 +14,6 @@ namespace CondemnedAssistance.Services.WebSockets {
             WebSocketConnectionManager = webSocketConnectionManager;
         }
 
-        public virtual async Task OnConnected(WebSocket socket) {
-            
-        }
-
         public virtual async Task OnConnected(int id, int registerId, int roleId, WebSocket socket) {
             WebSocketConnectionManager.AddSocket(id, new WebSocketResources { Socket = socket, RegisterId = registerId, RoleId = roleId });
         }
@@ -36,6 +32,10 @@ namespace CondemnedAssistance.Services.WebSockets {
                 messageType: WebSocketMessageType.Text,
                 endOfMessage: true,
                 cancellationToken: CancellationToken.None);
+        }
+
+        public async Task SendMessageAsync(int receiverId, int registerId, int roleId, string message) {
+            await SendMessageAsync(WebSocketConnectionManager.GetSocketByUserId(receiverId), message);
         }
 
         public abstract Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer);

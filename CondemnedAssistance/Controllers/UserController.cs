@@ -236,6 +236,42 @@ namespace CondemnedAssistance.Controllers
             }
             userPersistenceHelper.LoadModel();
             model = userPersistenceHelper.GetModel();
+
+            Dictionary<string, string> routeVals = new Dictionary<string, string> { };
+            routeVals.Add("id", id.ToString());
+
+            List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
+            links.Add(new LinkClass {
+                Action = "Update",
+                Controller = "User",
+                IsSelected = true,
+                Text = "Персональные данные",
+                RouteValues = routeVals
+            });
+
+            Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
+            routeVals1.Add("userId", id.ToString());
+
+            links.Add(new LinkClass {
+                Controller = "User",
+                Action = "History",
+                IsSelected = false,
+                Text = "История",
+                RouteValues = routeVals1
+            });
+
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", id.ToString()); 
+            links.Add(new LinkClass {
+                Controller = "Event",
+                Action = "Index",
+                IsSelected = false,
+                Text = "Пробация",
+                RouteValues = routeVals2
+            });
+
+            ViewData["sidebar"] = links.ToArray();
+
             return View(model);
         }
 

@@ -29,6 +29,7 @@ namespace CondemnedAssistance.Models {
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageExchange> MessageExchanges { get; set; }
+        public DbSet<UserHelp> UserHelps { get; set; }
 
         public DbSet<UserHistory> UserHistory { get; set; }
         public DbSet<UserStaticInfoHistory> UserStaticInfoHistory { get; set; }

@@ -1,0 +1,10 @@
+﻿@model IEnumerable<CondemnedAssistance.ViewModels.UserModelCreate>
+@foreach(var u in Model) {
+    <div>
+        <input type="hidden" id="receiver-id" value="@u.UserId" />
+        <input type="hidden" id="register-id" value="@u.UserRegisterId" />
+        <input type="hidden" id="role-id" value="@u.RoleId" />
+        <input type="hidden" id="is-selected" value="false" />
+        <span>@u.LastName @u.FirstName @u.MiddleName</span>
+    </div>
+}

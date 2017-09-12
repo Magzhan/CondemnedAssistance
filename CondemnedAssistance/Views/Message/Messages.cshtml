@@ -25,14 +25,68 @@
         }
 
         socket.onmessage = function (event) {
-
+            var item = document.createElement("li");
+            item.appendChild(document.createTextNode(event.data));
+            document.getElementById("message-exchange-container").appendChild(item);
         }
     }
 
     connect();
 </script>
 <div id="main-message-container">
-    <div id="help-container"></div>
-    <div id="receiver-user-container"></div>
+    <div id="help-container"> @await Component.InvokeAsync("MessageHelp")</div>
+    <div id="receiver-container"></div>
     <div id="message-exchange-container"></div>
+    <input type="hidden" id="selected-help-id" value="" />
+    <input type="hidden" id="selected-user-id" value=""/>
+    <input type="hidden" id="selected-user-register-id" value="" />
+    <input type="hidden" id="selected-user-role-id" value="" />
+    <textarea id="text-enter"></textarea>
+    <input type="button" id="send-text" />
 </div>
+<script>
+    $(document).ready(function ($) {
+
+        $(document).on("click", "#help-container div", LoadUsers);
+        $(document).on("click", "#receiver-container div", SetUserSelected);
+        $(document).on("click", "#send-text", SendMessage);
+
+        var helpId = $("#help-container").first().find("#help-id").val();
+        $("#receiver-container").load("message/loadusers?helpId=" + helpId);
+    });
+
+    function SetUserSelected() {
+        var receiverId = $(this).find("#receiver-id").val();
+        var registerId = $(this).find("#register-id").val();
+        var roleId = $(this).find("#role-id").val();
+
+        $("#selected-user-id").val(receiverId);
+        $("#selected-user-register-id").val(registerId);
+        $("#selected-user-role-id").val(roleId);
+    }
+
+    function LoadUsers() {
+        var helpId = $(this).find("help-id").val();
+        $("#receiver-container").load("message/loadusers?helpId=" + helpId);
+        var receiverId = $("#receiver-container").first("div").find("#receiver-id").val();
+        var registerId = $("#receiver-container").first("div").find("#register-id").val();
+        var roleId = $("#receiver-container").first("div").find("#role-id").val();
+
+        $("#selected-help-id").val(helpId);
+        $("#selected-user-id").val(receiverId);
+        $("#selected-user-register-id").val(registerId);
+        $("#selected-user-role-id").val(roleId);
+    }
+
+    function SendMessage(message) {
+        var message = $("#text-enter").val();
+        var receiverId = $("#selected-user-id").val();
+        var registerId = $("#selected-user-register-id").val();
+        var roleId = $("#selected-user-role-id").val();
+        $.ajax({
+            url: "http://" + window.location.host + "/message/send/?receiverId=" + receiverId + "&registerId=" + registerId + "&roleId=" + roleId + "&message=" + message,
+            method: 'GET'
+        });
+
+    }
+</script>

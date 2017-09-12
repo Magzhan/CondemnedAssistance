@@ -1,0 +1,19 @@
+﻿@model CondemnedAssistance.ViewModels.HelpModel
+@{
+    Layout = "_Layout_Sidebar";
+}
+<form asp-controller="Help" asp-action="AddUserHelp" method="post">
+    <div>
+        <div>
+            <input type="hidden" asp-for="UserId" />
+        </div>
+        <div>
+            <label asp-for="HelpIds"></label>
+            <select asp-for="HelpIds" asp-items="@(new MultiSelectList(Model.Helps, "Id", "Name"))"></select>
+            <span asp-validation-for="HelpIds"></span>
+        </div>
+        <div>
+            <input type="submit" value="Save" />
+        </div>
+    </div>
+</form>

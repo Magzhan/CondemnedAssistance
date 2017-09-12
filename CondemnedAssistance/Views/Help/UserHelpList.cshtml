@@ -1,0 +1,11 @@
+﻿@model IEnumerable<CondemnedAssistance.Models.Help>
+@{
+    Layout = "_Layout_Sidebar";
+}
+<table>
+    @foreach(var h in Model) {
+        <tr>
+            <td>@h.Name</td>
+        </tr>
+    }
+</table>

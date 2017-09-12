@@ -1,0 +1,7 @@
+﻿@model IEnumerable<CondemnedAssistance.Models.Help>
+@foreach(var h in Model) {
+    <div>
+        <label>@h.Name</label>
+        <input type="hidden" id="help-id" value="@h.Id" />
+    </div>
+}
