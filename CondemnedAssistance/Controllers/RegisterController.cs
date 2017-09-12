@@ -64,7 +64,10 @@ namespace CondemnedAssistance.Controllers {
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", levelId);
             registerActions.Add("parentId", parentId);
-            if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) {
                 return new ChallengeResult();
             }
 
@@ -93,7 +96,10 @@ namespace CondemnedAssistance.Controllers {
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", model.RegisterLevelId);
             registerActions.Add("parentId", model.RegisterParentId);
-            if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) {
                 return new ChallengeResult();
             }
             if (ModelState.IsValid) {
@@ -135,7 +141,10 @@ namespace CondemnedAssistance.Controllers {
             }
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", register.RegisterLevelId);
-            if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) {
                 return new ChallengeResult();
             }
 
@@ -161,7 +170,10 @@ namespace CondemnedAssistance.Controllers {
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", model.RegisterLevelId);
             registerActions.Add("parentId", model.RegisterParentId);
-            if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) {
                 return new ChallengeResult();
             }
 
@@ -189,7 +201,9 @@ namespace CondemnedAssistance.Controllers {
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", register.RegisterLevelId);
             int[] children = _registerHelper.GetRegisterChildren(new int[] { }, id);
-            if (!await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy")) {
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, registerActions, "resource-register-actions-policy");
+            if (!authResult.Succeeded) {
                 return new ChallengeResult();
             }
 

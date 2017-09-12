@@ -19,6 +19,11 @@ namespace CondemnedAssistance.Helpers {
                 new LinkClass { Controller = "Account", Action = "ChangePassword", IsSelected = false, Text = "Изменить пароль"},
                 new LinkClass { Controller = "", Action = "", Text = "Входящие", IsSelected = false}
             });
+            collection.Add("userEdit", new List<LinkClass> {
+                new LinkClass { Controller = "User", Action = "Update", IsSelected = false, Text = "Персональные данные" },
+                new LinkClass { Controller = "", Action = "", IsSelected = false, Text = "Пробация" },
+                new LinkClass { Controller = "", Action = "", IsSelected = false, Text = "История" }
+            });
         }
 
         public LinkClass[] GetLinks(string currentController, string currentAction) {

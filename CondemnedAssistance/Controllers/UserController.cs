@@ -3,24 +3,26 @@ using CondemnedAssistance.Models;
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CondemnedAssistance.Controllers {
+namespace CondemnedAssistance.Controllers
+{
     [Authorize(Roles = "2, 3")]
     public class UserController : Controller {
 
         private UserContext _db;
         private IAuthorizationService _authorizationService;
         private RegisterHelper registerHelper;
+        private LinkHelper linkHelper;
 
         public UserController(UserContext context, IAuthorizationService authorizationService) {
             this._db = context;
             this._authorizationService = authorizationService;
             this.registerHelper = new RegisterHelper(context);
+            this.linkHelper = new LinkHelper(context, "userEdit");
         }
 
         [HttpGet]
@@ -50,15 +52,16 @@ namespace CondemnedAssistance.Controllers {
                 if(userRegister != null) {
                     register = _db.Registers.FirstOrDefault(r => r.Id == userRegister.RegisterId);
                 }
-                UserProfileModel userProf = new UserProfileModel();
-                userProf.UserId = user.Id;
-                userProf.Login = user.Login;
-                userProf.LastName = info?.LastName;
-                userProf.FirstName = info?.FirstName;
-                userProf.MiddleName = info?.MiddleName;
-                userProf.Role = role?.Name;
-                userProf.Status = userStatus?.Name;
-                userProf.Registration = register?.Name;
+                UserProfileModel userProf = new UserProfileModel {
+                    UserId = user.Id,
+                    Login = user.Login,
+                    LastName = info?.LastName,
+                    FirstName = info?.FirstName,
+                    MiddleName = info?.MiddleName,
+                    Role = role?.Name,
+                    Status = userStatus?.Name,
+                    Registration = register?.Name
+                };
 
                 model.Add(userProf);
             }
@@ -78,22 +81,22 @@ namespace CondemnedAssistance.Controllers {
                 return RedirectToAction("Index", "User");
             }
 
-            UserModel model = new UserModel();
-
-            model.UserId = id;
-            model.Login = user.Login;
-            model.LastName = userStaticInfo.LastName;
-            model.FirstName = userStaticInfo.FirstName;
-            model.MiddleName = userStaticInfo.MiddleName;
-            model.Xin = userStaticInfo.Xin;
-            model.Birthdate = userStaticInfo.Birthdate;
-            model.Gender = userStaticInfo.Gender;
-            model.UserStatusId = userStatus.Id;
-            model.UserStatusName = userStatus.Name;
-            model.UserTypeId = userType.Id;
-            model.UserTypeName = userType.Name;
-            model.RoleId = role.Id;
-            model.RoleName = role.Name;
+            UserModel model = new UserModel {
+                UserId = id,
+                Login = user.Login,
+                LastName = userStaticInfo.LastName,
+                FirstName = userStaticInfo.FirstName,
+                MiddleName = userStaticInfo.MiddleName,
+                Xin = userStaticInfo.Xin,
+                Birthdate = userStaticInfo.Birthdate,
+                Gender = userStaticInfo.Gender,
+                UserStatusId = userStatus.Id,
+                UserStatusName = userStatus.Name,
+                UserTypeId = userType.Id,
+                UserTypeName = userType.Name,
+                RoleId = role.Id,
+                RoleName = role.Name
+            };
 
             return View(model);
         }
@@ -103,7 +106,9 @@ namespace CondemnedAssistance.Controllers {
             UserModelCreate model = new UserModelCreate();
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
-                UserPersistenceHelperMode.Read, _db, UserPersistenceState.Create, model);
+                PersistenceHelperMode.Read, _db, PersistenceState.Create, model);
+
+            userPersistenceHelper.LoadModel();
 
             model = userPersistenceHelper.GetModel();
             return View(model);
@@ -111,87 +116,29 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> Create(UserModelCreate model) {
-            Dictionary<string, int> actions = new Dictionary<string, int>();
-            
-            actions.Add("roleId", model.RoleId);
-            actions.Add("childId", model.UserRegisterId);
-            
-            if(!await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy")) {
+            Dictionary<string, int> actions = new Dictionary<string, int> {
+                { "roleId", model.RoleId },
+                { "childId", model.UserRegisterId }
+            };
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) {
                 return new ChallengeResult();
             }
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User, 
-                UserPersistenceHelperMode.Write, _db, UserPersistenceState.Create, model);
+                PersistenceHelperMode.Write, _db, PersistenceState.Create, model);
 
             if (ModelState.IsValid) {
-                //if (!_db.Users.Any(u => u.Login == model.Login)) {
-                string message;
-                if (userPersistenceHelper.Validate(out message)) {
+                if (userPersistenceHelper.Validate(out string message)) {
 
                     userPersistenceHelper.Persist(out message);
-                    //User user = new User {
-                    //    Login = model.Login,
-                    //    Email = model.Email,
-                    //    NormalizedEmail = model.Email.ToUpper(),
-                    //    EmailConfirmed = false,
-                    //    PhoneNumber = model.PhoneNumber,
-                    //    PhoneNumberConfirmed = false,
-                    //    AccessFailedCount = 0,
-                    //    LockoutEnabled = false,
-                    //    PasswordHash = "123456",
-                    //    ModifiedUserDate = DateTime.Now,
-                    //    ModifiedUserId = Convert.ToInt32(HttpContext.User.Identity.Name)
-                    //};
-                    //_db.Users.Add(user);
-                    //_db.SaveChanges();
-
-                    //UserStaticInfo userStaticInfo = new UserStaticInfo {
-                    //    UserId = user.Id,
-                    //    LastName = model.LastName,
-                    //    FirstName = model.FirstName,
-                    //    MiddleName = model.MiddleName,
-                    //    Birthdate = model.Birthdate,
-                    //    Gender = model.Gender,
-                    //    Xin = model.Login,
-                    //    MainAddress = model.MainAddress,
-                    //    RequestDate = DateTime.Now,
-                    //    RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name),
-                    //    UserTypeId = model.UserTypeId,
-                    //    UserStatusId = model.UserStatusId
-                    //};
-
-                    //_db.UserStaticInfo.Add(userStaticInfo);
-                    //_db.UserRoles.Add(new UserRole { RoleId = model.RoleId, UserId = user.Id});
-                    //_db.UserRegisters.Add(new UserRegister { RegisterId = model.UserRegisterId, UserId = user.Id});
-                    //_db.UserAddresses.AddRange(new UserAddress[] {
-                    //    new UserAddress { UserId = user.Id, AddressId = model.AddressLevelOneId},
-                    //    new UserAddress { UserId = user.Id, AddressId = model.AddressLevelTwoId},
-                    //    new UserAddress { UserId = user.Id, AddressId = model.AddressLevelThreeId}
-                    //});
-
-                    //if(model.RoleId != 2 && model.RoleId != 3) {
-                    //    List<UserProfession> professions = new List<UserProfession>();
-                    //    List<UserEducation> educations = new List<UserEducation>();
-                    //    foreach (int profId in model.ProfessionIds) {
-                    //        professions.Add(new UserProfession { ProfessionId = profId, UserId = user.Id});
-                    //    }
-                    //    if (professions.Count > 0) {
-                    //        _db.UserProfessions.AddRange(professions);
-                    //    }
-                    //}
-
-                    //_db.SaveChanges();
                     return RedirectToAction("Index");
                 }
 
                 ModelState.AddModelError("Login", message);
-                //model.Roles = (User.IsInRole("3")) ? _db.Roles.ToList() : _db.Roles.Where(r => r.Id != 3).ToList();
-                //model.UserStatuses = _db.UserStatuses.ToList();
-                //model.UserTypes = _db.UserTypes.ToList();
-                //int operatorRegisterId = Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value);
-                //int[] registerChildren = registerHelper.GetRegisterChildren(new int[] { }, operatorRegisterId);
-                //model.UserRegisters = _db.Registers.Where(r => registerChildren.Contains(r.Id)).ToList();
-                //model.Addresses = _db.Addresses.ToList();
+                userPersistenceHelper.LoadModel();
                 model = userPersistenceHelper.GetModel();
             }
             return View(model);
@@ -204,17 +151,57 @@ namespace CondemnedAssistance.Controllers {
             if(_db.UserRoles.Any(u => u.UserId == id)) {
                 actions.Add("roleId", _db.UserRoles.First(u => u.UserId == id).RoleId);
             }
-
+            if (_db.UserRegisters.Any(u => u.UserId == id)) {
+                actions.Add("childId", _db.UserRegisters.Single(u => u.UserId == id).RegisterId);
+            }
             int operatorRegisterId = Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value);
 
-            if (!await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy")) {
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) {
                 return new ChallengeResult();
             }
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
-                UserPersistenceHelperMode.Read, _db, UserPersistenceState.Update, new UserModelCreate { UserId = id });
-                       
+                PersistenceHelperMode.Read, _db, PersistenceState.Update, new UserModelCreate { UserId = id });
+
+            userPersistenceHelper.LoadModel();
             UserModelCreate model = userPersistenceHelper.GetModel();
+
+            Dictionary<string, string> routeVals = new Dictionary<string, string> { };
+            routeVals.Add("id", id.ToString());
+
+            List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
+            links.Add(new LinkClass {
+                Action = "Update",
+                Controller = "User",
+                IsSelected = true,
+                Text = "Персональные данные",
+                RouteValues = routeVals
+            });
+
+            Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
+            routeVals1.Add("userId", id.ToString());
+
+            links.Add(new LinkClass {
+                Controller = "User",
+                Action = "History",
+                IsSelected = false,
+                Text = "История",
+                RouteValues = routeVals1
+            });
+
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", id.ToString()); 
+            links.Add(new LinkClass {
+                Controller = "Event",
+                Action = "Index",
+                IsSelected = false,
+                Text = "Пробация",
+                RouteValues = routeVals2
+            });
+
+            ViewData["sidebar"] = links.ToArray();
 
             return View(model);
         }
@@ -228,22 +215,96 @@ namespace CondemnedAssistance.Controllers {
             }
             actions.Add("childId", model.UserRegisterId);
 
-            if (!await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy")) {
-                return new ChallengeResult();
-            }
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded)  return new ChallengeResult(); 
+
+            if (_db.UserRegisters.Any(u => u.UserId == id)) actions["childId"] = _db.UserRegisters.Single(u => u.UserId == id).RegisterId; 
+
+            authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) return new ChallengeResult();
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
-                UserPersistenceHelperMode.Write, _db, UserPersistenceState.Update, model);
+                PersistenceHelperMode.Write, _db, PersistenceState.Update, model);
 
-            string message;
             if (ModelState.IsValid) {
-                if (userPersistenceHelper.Persist(out message)){
+                if (userPersistenceHelper.Persist(out string message)) {
                     return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("", message);
             }
+            userPersistenceHelper.LoadModel();
+            model = userPersistenceHelper.GetModel();
+            return View(model);
+        }
 
-            return RedirectToAction("Index", "User");
+        [HttpGet]
+        public async Task<IActionResult> History(int userId) {
+            Dictionary<string, int> actions = new Dictionary<string, int>();
+            if (_db.UserRoles.Any(u => u.UserId == userId))  actions.Add("roleId", _db.UserRoles.First(u => u.UserId == userId).RoleId); 
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (_db.UserRegisters.Any(u => u.UserId == userId)) actions["childId"] = _db.UserRegisters.Single(u => u.UserId == userId).RegisterId;
+
+            authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) return new ChallengeResult();
+
+            List<UserHistoryModel> model = _db.UserHistory.Where(h => h.Id == userId).Select(h => new UserHistoryModel { UserId = h.Id, OperationDate = h.RequestDate, OperatorFullName = _db.UserStaticInfo.Single(u => u.UserId == h.RequestUser).FirstName, TransactionId = h.TransactionId }).OrderByDescending(h => h.TransactionId).ToList();
+
+            Dictionary<string, string> routeVals = new Dictionary<string, string> { };
+            routeVals.Add("id", userId.ToString());
+
+            List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
+            links.Add(new LinkClass {
+                Action = "Update",
+                Controller = "User",
+                IsSelected = false,
+                Text = "Персональные данные",
+                RouteValues = routeVals
+            });
+            Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
+            routeVals1.Add("userId", userId.ToString());
+            links.Add(new LinkClass  {
+                Controller = "User",
+                Action = "History",
+                IsSelected = true,
+                Text = "История",
+                RouteValues = routeVals1
+            });
+
+            Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
+            routeVals2.Add("userId", userId.ToString());
+            links.Add(new LinkClass {
+                Controller = "Event",
+                Action = "Index",
+                IsSelected = false,
+                Text = "Пробация",
+                RouteValues = routeVals2
+            });
+
+            ViewData["sidebar"] = links.ToArray();
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> HistoryDetail(long transactionId, int userId) {
+            Dictionary<string, int> actions = new Dictionary<string, int>();
+            if (_db.UserRoles.Any(u => u.UserId == userId)) actions.Add("roleId", _db.UserRoles.First(u => u.UserId == userId).RoleId);
+
+            AuthorizationResult authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (_db.UserRegisters.Any(u => u.UserId == userId)) actions["childId"] = _db.UserRegisters.Single(u => u.UserId == userId).RegisterId;
+
+            authResult = await _authorizationService.AuthorizeAsync(User, actions, "resource-register-actions-policy");
+
+            if (!authResult.Succeeded) return new ChallengeResult();
+
+
+
+            return View();
         }
     }
 }

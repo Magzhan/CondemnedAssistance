@@ -1,0 +1,35 @@
+﻿@model CondemnedAssistance.ViewModels.EventCreateModel
+@{
+    Layout = "_Layout_Sidebar";
+}
+<form asp-controller="Event" asp-action="Update" method="post">
+    <div>
+        <div>
+            <input type="hidden" asp-for="UserId"/>
+            <input type="hidden" asp-for="Id" />
+        </div>
+        <div>
+            <label asp-for="Name"></label>
+            <input type="text" asp-for="Name" />
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div>
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description"></textarea>
+            <span asp-validation-for="Description"></span>
+        </div>
+        <div>
+            <label asp-for="Date"></label>
+            <input type="datetime" asp-for="Date" />
+            <span asp-validation-for="Date"></span>
+        </div>
+        <div>
+            <label asp-for="EventStatusId"></label>
+            <select asp-for="EventStatusId" asp-items="@(new SelectList(Model.EventStatuses, "Id", "Name"))"></select>
+            <span asp-validation-for="EventStatusId"></span>
+        </div>
+        <div>
+            <input type="submit" />
+        </div>
+    </div>
+</form>

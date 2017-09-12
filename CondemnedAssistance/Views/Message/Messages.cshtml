@@ -1,0 +1,38 @@
+﻿@{
+    Layout = "_Layout";
+
+    var roleId = (User.IsInRole("3")) ? "3" : ((User.IsInRole("1") ? "1" : "2"));
+}
+<input type="hidden" id="userId" value="@Context.User.Identity.Name" />
+<input type="hidden" id="registerId" value="@Context.User.FindFirst(c => c.Type == "RegisterId").Value" />
+<input type="hidden" id="roleId" value="@roleId" />
+
+<script language="javascript" type="text/javascript">
+    var uri = "ws://" + window.location.host + "/messageshub/?userId=" +
+        $("#userId").val() + "&registerId=" + $("#registerId").val() + "&roleId=" + $("#roleId").val();
+
+    var uri2 = "ws://" + window.location.host + "/messageshub";
+
+    function connect() {
+        socket = new WebSocket(uri);
+
+        socket.onopen = function (event) {
+            console.log("opened connection to " + uri);
+        }
+
+        socket.onclose = function (event) {
+            console.log("closed connection from " + uri);
+        }
+
+        socket.onmessage = function (event) {
+
+        }
+    }
+
+    connect();
+</script>
+<div id="main-message-container">
+    <div id="help-container"></div>
+    <div id="receiver-user-container"></div>
+    <div id="message-exchange-container"></div>
+</div>

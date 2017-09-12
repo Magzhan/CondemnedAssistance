@@ -11,6 +11,8 @@ using CondemnedAssistance.Services.Requirements;
 using CondemnedAssistance.Services.Resources;
 using System.Threading.Tasks;
 using System;
+using CondemnedAssistance.Services.WebSockets;
+using CondemnedAssistance.Hubs;
 
 namespace CondemnedAssistance {
     public class Startup {
@@ -33,6 +35,12 @@ namespace CondemnedAssistance {
 
             services.AddDbContext<UserContext>(options => options.UseSqlServer(connectionString));
 
+            services.AddAuthentication("Cookies")
+                .AddCookie(options => {
+                    options.AccessDeniedPath = "/Home/Error";
+                    options.LoginPath = "/Account/Login";
+                });
+
             var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 
             services.AddMvc(options => {
@@ -44,12 +52,31 @@ namespace CondemnedAssistance {
             });
 
             services.AddSingleton<IAuthorizationHandler, ResourceRegisterHandler>();
+
+            services.AddWebSocketManager();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) {
+            // Order
+            //Exception / error handling
+            //Static file server
+            //Authentication
+            //Websockets
+            //MVC
+
+            if (env.IsDevelopment()) {
+                app.UseDeveloperExceptionPage();
+            }
+            else {
+                app.UseExceptionHandler("/error");
+            }
 
             app.UseStaticFiles();
+
+            app.UseAuthentication();
+
+            app.UseWebSockets();
 
             loggerFactory.AddConsole();
 
@@ -60,21 +87,11 @@ namespace CondemnedAssistance {
 
             app.ApplicationServices.GetRequiredService<UserContext>().SeedAsync();
 
-            app.UseCookieAuthentication(new CookieAuthenticationOptions {
-                AuthenticationScheme = "Cookies",
-                LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login"),
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true
-            });
-
-            app.UseDeveloperExceptionPage();
-            //if (env.IsDevelopment()) {
-                
-            //}
-
             app.UseMvc(routes => {
                 routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            app.MapWebSocketManager("/messageshub", serviceProvider.GetService<WebSocketMessageHandler>());
         }
     }
 

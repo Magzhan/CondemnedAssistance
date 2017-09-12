@@ -1,6 +1,6 @@
 ﻿@model CondemnedAssistance.ViewModels.UserModelCreate
 @{
-    Layout = "_Layout";
+    Layout = "_Layout_Sidebar";
 }
 <input type="hidden" id="activate-script-for-drop-down" value="true" />
 <form asp-controller="User" asp-action="Update" asp-anti-forgery="true">
@@ -98,11 +98,11 @@
         <textarea asp-for="MainAddress"></textarea>
         <span asp-validation-for="MainAddress"></span>
     </div>
-    @if(User.IsInRole("1")){
-    <div>
-        <label asp-for="ProfessionIds"></label>
-        <select asp-for="ProfessionIds" multiple asp-items="@(new SelectList(Model.Professions, "Id", "Name"))"></select>
-    </div>
+    @if (!User.IsInRole("3") && !User.IsInRole("2")) {
+        <div>
+            <label asp-for="ProfessionIds"></label>
+            <select asp-for="ProfessionIds" multiple asp-items="@(new SelectList(Model.Professions, "Id", "Name"))"></select>
+        </div>
     }
     <div>
         <input type="submit" value="Save" />

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Models {
-    public class Address : TemplateHelperTable{
+    public class Address : TemplateTable{
         public int AddressLevelId { get; set; }
         public AddressLevel AddressLevel { get; set; }
     }
@@ -16,7 +16,7 @@ namespace CondemnedAssistance.Models {
         public int ChildAddressId { get; set; }
     }
 
-    public class AddressLevel : TemplateHelperTable {
+    public class AddressLevel : TemplateTable {
     }
 
     public class Kato {

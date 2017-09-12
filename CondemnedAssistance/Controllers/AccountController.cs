@@ -1,6 +1,7 @@
 ﻿using CondemnedAssistance.Helpers;
 using CondemnedAssistance.Models;
 using CondemnedAssistance.ViewModels;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -114,8 +115,8 @@ namespace CondemnedAssistance.Controllers {
                         NormalizedEmail = model.Email.ToUpper(),
                         PasswordHash = model.Password,
                         PhoneNumber = model.PhoneNumber,
-                        ModifiedUserDate = DateTime.Now,
-                        ModifiedUserId = Convert.ToInt32(HttpContext.User.Identity.Name)
+                        RequestDate = DateTime.Now,
+                        RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
                     });
 
                     await _db.SaveChangesAsync();
@@ -155,11 +156,11 @@ namespace CondemnedAssistance.Controllers {
 
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
-            await HttpContext.Authentication.SignInAsync("Cookies", new ClaimsPrincipal(id));
+            await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(id));
         }
 
         public async Task<IActionResult> Logout() {
-            await HttpContext.Authentication.SignOutAsync("Cookies");
+            await HttpContext.SignOutAsync("Cookies");
             return RedirectToAction("Login", "Account");
         }
 

@@ -1,0 +1,14 @@
+﻿@model IEnumerable<CondemnedAssistance.Models.EventStatus>
+@{
+    Layout = "_Layout";
+}
+<table>
+    @foreach (var e in Model) {
+        <tr>
+            <td>@e.Name</td>
+            <td><a asp-controller="Event" asp-action="ViewStatus" asp-route-id="@e.Id">View</a></td>
+            <td><a asp-controller="Event" asp-action="UpdateStatus" asp-route-id="@e.Id">Update</a></td>
+            <td><a asp-controller="Event" asp-action="DeleteStatus" asp-route-id="@e.Id">Delete</a></td>
+        </tr>
+    }
+</table>

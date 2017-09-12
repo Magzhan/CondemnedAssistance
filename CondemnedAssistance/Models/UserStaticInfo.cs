@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace CondemnedAssistance.Models {
-    public class UserStaticInfo {
+    public class UserStaticInfo : TrackingTemplate{
         public int Id { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
@@ -24,8 +24,5 @@ namespace CondemnedAssistance.Models {
 
         public int UserTypeId { get; set; }
         public UserType UserType { get; set; }
-
-        public int RequestUser { get; set; }
-        public DateTime RequestDate { get; set; }
     }
 }
