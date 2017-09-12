@@ -95,10 +95,12 @@
         <textarea asp-for="MainAddress"></textarea>
         <span asp-validation-for="MainAddress"></span>
     </div>
+    @if(User.IsInRole("1")){
     <div>
         <label asp-for="ProfessionIds"></label>
         <select asp-for="ProfessionIds" multiple asp-items="@(new SelectList(Model.Professions, "Id", "Name"))"></select>
     </div>
+    }
     <div>
         <input type="submit" value="Save" />
     </div>

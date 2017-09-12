@@ -100,7 +100,12 @@ namespace CondemnedAssistance.Helpers {
 
             switch (_state) {
                 case UserPersistenceState.Create:
+                    _db.Users.Add(_user);
                     _db.SaveChanges();
+                    break;
+                case UserPersistenceState.Update:
+                    _db.Users.Attach(_user);
+                    _db.Entry(_user).State = EntityState.Modified;
                     break;
             }
         }
@@ -124,6 +129,17 @@ namespace CondemnedAssistance.Helpers {
             _userStaticInfo.MainAddress = _model.MainAddress;
             _userStaticInfo.RequestUser = Convert.ToInt32(_identity.Identity.Name);
             _userStaticInfo.RequestDate = DateTime.Now;
+            
+            switch (_state) {
+                case UserPersistenceState.Create:
+                    _db.UserStaticInfo.Add(_userStaticInfo);
+                    _db.SaveChanges();
+                    break;
+                case UserPersistenceState.Update:
+                    _db.UserStaticInfo.Attach(_userStaticInfo);
+                    _db.Entry(_userStaticInfo).State = EntityState.Modified;
+                    break;
+            }
         }
 
         private void loadUserRole() {
@@ -133,6 +149,17 @@ namespace CondemnedAssistance.Helpers {
                     break;
             }
             _userRole.RoleId = _model.RoleId;
+
+            switch (_state) {
+                case UserPersistenceState.Create:
+                    _db.UserRoles.Add(_userRole);
+                    _db.SaveChanges();
+                    break;
+                case UserPersistenceState.Update:
+                    _db.UserRoles.Attach(_userRole);
+                    _db.Entry(_userRole).State = EntityState.Modified;
+                    break;
+            }
         }
 
         private void loadUserRegister() {
@@ -142,6 +169,17 @@ namespace CondemnedAssistance.Helpers {
                     break;
             }
             _userRegister.RegisterId = _model.UserRegisterId;
+
+            switch (_state) {
+                case UserPersistenceState.Create:
+                    _db.UserRegisters.Add(_userRegister);
+                    _db.SaveChanges();
+                    break;
+                case UserPersistenceState.Update:
+                    _db.UserRegisters.Attach(_userRegister);
+                    _db.Entry(_userRegister).State = EntityState.Modified;
+                    break;
+            }
         }
 
         private void loadUserAddress() {
