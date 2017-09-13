@@ -35,7 +35,8 @@ namespace CondemnedAssistance.Helpers
                 int tempParent = _db.RegisterHierarchies.Single(r => r.ChildRegister == childId).ParentRegister;
                 allParents.AddRange(parents);
                 allParents.Add(tempParent);
-                allParents.AddRange(GetRegisterParents(tempParents, parent));
+                allParents.Add(childId);
+                allParents.AddRange(GetRegisterParents(allParents.ToArray(), tempParent));
 
                 return allParents.Distinct().ToArray();
             }
