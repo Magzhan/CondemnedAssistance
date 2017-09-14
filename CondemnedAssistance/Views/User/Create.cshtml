@@ -2,106 +2,111 @@
 @{
     Layout = "_Layout";
 }
-<input type="hidden" id="activate-script-for-drop-down" value="true" />
-<form asp-controller="User" asp-action="Create" method="post" asp-anti-forgery="true">
-    <div>
-        <label asp-for="Login"></label>
-        <input type="text" asp-for="Login" />
-        <span asp-validation-for="Login"></span>
-    </div>
-    <div>
-        <label asp-for="RoleId"></label>
-        <select asp-for="RoleId" asp-items="@(new SelectList(Model.Roles, "Id", "Name"))"></select>
-        <span asp-validation-for="RoleId"></span>
-    </div>
-    <div>
-        <label asp-for="UserStatusId"></label>
-        <select asp-for="UserStatusId" asp-items="@(new SelectList(Model.UserStatuses, "Id", "Name"))"></select>
-        <span asp-validation-for="UserStatusId"></span>
-    </div>
-    <div>
-        <label asp-for="UserTypeId"></label>
-        <select asp-for="UserTypeId" asp-items="@(new SelectList(Model.UserTypes, "Id", "Name"))"></select>
-        <span asp-validation-for="UserTypeId"></span>
-    </div>
-    <div>
-        <label asp-for="UserRegisterId"></label>
-        <select asp-for="UserRegisterId" asp-items="@(new SelectList(Model.UserRegisters, "Id", "Name"))"></select>
-        <span asp-validation-for="UserRegisterId"></span>
-    </div>
-    <div>
-        <label asp-for="LastName"></label>
-        <input type="text" asp-for="LastName"  />
-        <span asp-validation-for="LastName"/>
-    </div>
-    <div>
-        <label asp-for="FirstName"></label>
-        <input type="text" asp-for="FirstName" />
-        <span asp-validation-for="FirstName"></span>
-    </div>
-    <div>
-        <label asp-for="MiddleName"></label>
-        <input type="text" asp-for="MiddleName" />
-        <span asp-validation-for="MiddleName"></span>
-    </div>
-    <div>
-        <label asp-for="Birthdate"></label>
-        <input type="date" asp-for="Birthdate" />
-        <span asp-validation-for="Birthdate"></span>
-    </div>
-    <div>
-        <label asp-for="Gender"></label>
-        Male <input type="radio" asp-for="Gender" value="true"/>
-        Female <input type="radio" asp-for="Gender" value="false"/>
-    </div>
-    <div>
-        <label asp-for="PhoneNumber"></label>
-        <input type="tel" asp-for="PhoneNumber" />
-        <span asp-validation-for="PhoneNumber"></span>
-    </div>
-    <div>
-        <label asp-for="Email"></label>
-        <input type="email" asp-for="Email" />
-        <span asp-validation-for="Email"></span>
-    </div>
-    <div>
-        <label asp-for="AddressLevelOneId"></label>
-        <select asp-for="AddressLevelOneId">
-            <option value="" selected></option>
-            <option value="@Model.Addresses.FirstOrDefault(a => a.AddressLevelId == 1).Id">@Model.Addresses.FirstOrDefault(a => a.AddressLevelId == 1).Name</option>
-        </select>
-        <span asp-validation-for="AddressLevelOneId"></span>
-    </div>
-    <div>
-        <label asp-for="AddressLevelTwoId"></label>
-        <select asp-for="AddressLevelTwoId">
-            @if(Model.AddressLevelTwoId > 0) {
-                <option value="@Model.AddressLevelTwoId">@Model.Addresses.First(a => a.Id == Model.AddressLevelTwoId).Name</option>
-            }
-        </select>
-        <span asp-validation-for="AddressLevelTwoId"></span>
-    </div>
-    <div>
-        <label asp-for="AddressLevelThreeId"></label>
-        <select asp-for="AddressLevelThreeId">
-            @if (Model.AddressLevelThreeId > 0) {
-                <option value="@Model.AddressLevelThreeId">@Model.Addresses.First(a => a.Id == Model.AddressLevelThreeId).Name</option>
-            }
-        </select>
-        <span asp-validation-for="AddressLevelThreeId"></span>
-    </div>
-    <div>
-        <label asp-for="MainAddress"></label>
-        <textarea asp-for="MainAddress"></textarea>
-        <span asp-validation-for="MainAddress"></span>
-    </div>
-    @if(User.IsInRole("1")){
-    <div>
-        <label asp-for="ProfessionIds"></label>
-        <select asp-for="ProfessionIds" multiple asp-items="@(new SelectList(Model.Professions, "Id", "Name"))"></select>
-    </div>
-    }
-    <div>
-        <input type="submit" value="Save" />
-    </div>
-</form>
+<div class=grad>
+    <input type="hidden" id="activate-script-for-drop-down" value="true" />
+    <form asp-controller="User" asp-action="Create" method="post" asp-anti-forgery="true">
+        <div>
+            <label asp-for="Login"></label>
+            <input type="text" asp-for="Login" />
+            <span asp-validation-for="Login"></span>
+        </div>
+        <div>
+            <label asp-for="RoleId"></label>
+            <select asp-for="RoleId" asp-items="@(new SelectList(Model.Roles, "Id", "Name"))"></select>
+            <span asp-validation-for="RoleId"></span>
+        </div>
+        <div>
+            <label asp-for="UserStatusId"></label>
+            <select asp-for="UserStatusId" asp-items="@(new SelectList(Model.UserStatuses, "Id", "Name"))"></select>
+            <span asp-validation-for="UserStatusId"></span>
+        </div>
+        <div>
+            <label asp-for="UserTypeId"></label>
+            <select asp-for="UserTypeId" asp-items="@(new SelectList(Model.UserTypes, "Id", "Name"))"></select>
+            <span asp-validation-for="UserTypeId"></span>
+        </div>
+        <div>
+            <label asp-for="UserRegisterId"></label>
+            <select asp-for="UserRegisterId" asp-items="@(new SelectList(Model.UserRegisters, "Id", "Name"))"></select>
+            <span asp-validation-for="UserRegisterId"></span>
+        </div>
+        <div>
+            <label asp-for="LastName"></label>
+            <input type="text" asp-for="LastName" />
+            <span asp-validation-for="LastName" />
+        </div>
+        <div>
+            <label asp-for="FirstName"></label>
+            <input type="text" asp-for="FirstName" />
+            <span asp-validation-for="FirstName"></span>
+        </div>
+        <div>
+            <label asp-for="MiddleName"></label>
+            <input type="text" asp-for="MiddleName" />
+            <span asp-validation-for="MiddleName"></span>
+        </div>
+        <div>
+            <label asp-for="Birthdate"></label>
+            <input type="date" asp-for="Birthdate" />
+            <span asp-validation-for="Birthdate"></span>
+        </div>
+        <div>
+            <label asp-for="Gender"></label>
+            Male <input type="radio" asp-for="Gender" value="true" />
+            Female <input type="radio" asp-for="Gender" value="false" />
+        </div>
+        <div>
+            <label asp-for="PhoneNumber"></label>
+            <input type="tel" asp-for="PhoneNumber" />
+            <span asp-validation-for="PhoneNumber"></span>
+        </div>
+        <div>
+            <label asp-for="Email"></label>
+            <input type="email" asp-for="Email" />
+            <span asp-validation-for="Email"></span>
+        </div>
+        <div>
+            <label asp-for="AddressLevelOneId"></label>
+            <select asp-for="AddressLevelOneId">
+                <option value="" selected></option>
+                <option value="@Model.Addresses.FirstOrDefault(a => a.AddressLevelId == 1).Id">@Model.Addresses.FirstOrDefault(a => a.AddressLevelId == 1).Name</option>
+            </select>
+            <span asp-validation-for="AddressLevelOneId"></span>
+        </div>
+        <div>
+            <label asp-for="AddressLevelTwoId"></label>
+            <select asp-for="AddressLevelTwoId">
+                @if (Model.AddressLevelTwoId > 0)
+                {
+                    <option value="@Model.AddressLevelTwoId">@Model.Addresses.First(a => a.Id == Model.AddressLevelTwoId).Name</option>
+                }
+            </select>
+            <span asp-validation-for="AddressLevelTwoId"></span>
+        </div>
+        <div>
+            <label asp-for="AddressLevelThreeId"></label>
+            <select asp-for="AddressLevelThreeId">
+                @if (Model.AddressLevelThreeId > 0)
+                {
+                    <option value="@Model.AddressLevelThreeId">@Model.Addresses.First(a => a.Id == Model.AddressLevelThreeId).Name</option>
+                }
+            </select>
+            <span asp-validation-for="AddressLevelThreeId"></span>
+        </div>
+        <div>
+            <label asp-for="MainAddress"></label>
+            <textarea asp-for="MainAddress"></textarea>
+            <span asp-validation-for="MainAddress"></span>
+        </div>
+        @if (User.IsInRole("1"))
+        {
+            <div>
+                <label asp-for="ProfessionIds"></label>
+                <select asp-for="ProfessionIds" multiple asp-items="@(new SelectList(Model.Professions, "Id", "Name"))"></select>
+            </div>
+        }
+        <div>
+            <input type="submit" value="Save" />
+        </div>
+    </form>
+</div>

@@ -21,6 +21,46 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
+        public IActionResult PsychoHelp() {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult PravoHelp()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult MedHelp()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ObrHelp()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ZawitaHelp()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult TrudHelp()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult AktyHelp()
+        {
+            return View();
+        }
+        [HttpGet]
         public IActionResult Index() {
             List<Help> model = _db.Helps.ToList();
             return View(model);

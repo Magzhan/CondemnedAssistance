@@ -1,28 +1,42 @@
-﻿<li>
-    <a href="#">Помощь </a>
-    <ul>
-        <li><a href="#">Психологическая помощь</a></li>
-        <li><a href="#">Правовая помощь</a></li>
-        <li><a href="#">Медицинская помощь</a></li>
-        <li><a href="#">Получение Образования </a></li>
-        <li><a href="#">Защита Прав</a></li>
-        <li><a href="#">Трудоустройство</a></li>
-        <li><a href="#">Правовые акты</a></li>
-    </ul>
+﻿
+<li class="drop">
+    <a href="#"><b>ПОМОЩЬ</b></a>
+    <div class="dropdownContain">
+        <div class="dropOut">
+
+            <ul>
+                <li><a asp-controller="Help" asp-action="psychohelp" style=" padding: 0px;  line-height: 0;"><b>ПСИХОЛОГИЧЕСКАЯ</b></a></li>
+                <li><a asp-controller="Help" asp-action="pravohelp" style=" padding: 0px;  line-height: 0;"><b>ПРАВОВАЯ</b></a></li>
+                <li><a asp-controller="Help" asp-action="medhelp" style=" padding: 0px;  line-height: 0;"><b>МЕДИЦИНСКАЯ</b></a></li>
+                <li><a asp-controller="Help" asp-action="obrhelp" style=" padding: 0px;  line-height: 0;"><b>ПОЛУЧЕНИЕ ОБРАЗОВАНИЯ</b></a></li>
+                <li><a asp-controller="Help" asp-action="zawitahelp" style=" padding: 0px;  line-height: 0;"><b>ЗАЩИТА ПРАВ</b></a></li>
+                <li><a asp-controller="Help" asp-action="trudhelp" style=" padding: 0px;  line-height: 0;"><b>ТРУДОУСТРОЙСТВО</b></a></li>
+                <li><a asp-controller="Help" asp-action="aktyhelp" style=" padding: 0px;  line-height: 0;"><b>ПРАВОВЫЕ АКТЫ</b></a></li>
+            </ul>
+        </div>
+    </div>
 </li>
+
+
+
+
 <li>
-    <a asp-controller="Message" asp-action="Index">Консультация</a>
+    <a asp-controller="Message" asp-action="Index"><b>КОНСУЛЬТАЦИЯ</b></a>
 </li>
-<li>
-    <a href="#">Управление</a>
-    <ul>
-        <li><a asp-controller="User" asp-action="Index">Пользователи</a></li>
-        <li><a asp-controller="Register" asp-action="Index">Регистрации</a></li>
-        <li><a asp-controller="Address" asp-action="Index">Адреса</a></li>
-        <li><a href="#">Рассылки</a></li>
-        <li><a asp-controller="Role" asp-action="Index">Роли</a></li>
-        <li><a asp-controller="UserStatus" asp-action="Index">Статус пользователей</a></li>
-        <li><a asp-controller="UserType" asp-action="Index">Типы пользователей</a></li>
-        <li><a asp-controller="Help" asp-action="Index">Помощь</a></li>
-    </ul>
+<li class="drop">
+    <a href="#"><b>УПРАВЛЕНИЕ</b></a>
+    <div class="dropdownContain">
+        <div class="dropOut">
+            <ul>
+                <li><a asp-controller="User" asp-action="Index" style=" padding: 0px;  line-height: 0;"><b> ПОЛЬЗОВАТЕЛИ</b></a></li>
+                <li><a asp-controller="Register" asp-action="Index" style=" padding: 0px;  line-height: 0;"> <b>РЕГИСТРАЦИЯ</b></a></li>
+                <li><a asp-controller="Address" asp-action="Index" style=" padding: 0px;  line-height: 0;"><b>АДРЕСА</b></a></li>
+                <li><a href="#" style=" padding: 0px;  line-height: 0;"><b>РАССЫЛКИ</b></a></li>
+                <li><a asp-controller="Role" asp-action="Index" style=" padding: 0px;  line-height: 0;"><b>РОЛИ</b></a></li>
+                <li><a asp-controller="UserStatus" asp-action="Index" style=" padding: 0px;  line-height: 0;"><b>СТАТУСЫ ПОЛЬЗОВАТЕЛЕЙ</b></a></li>
+                <li><a asp-controller="UserType" asp-action="Index" style=" padding: 0px;  line-height: 0;"><b>ТИПЫ ПОЛЬЗОВАТЕЛЕЙ </b></a></li>
+                <li><a asp-controller="Help" asp-action="Index"style=" padding: 0px;  line-height: 0;" ><b>ПОМОЩЬ</b></a></li>
+            </ul>
+        </div>
+    </div>
 </li>

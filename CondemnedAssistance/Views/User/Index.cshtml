@@ -2,28 +2,33 @@
 @{
     Layout = "_Layout";
 }
-<a asp-action="Create">Добавить пользователя</a>
-<table>
-    <tr>
-        <th>Логин</th>
-        <th>Ф.И.О.</th>
-        <th>Роль</th>
-        <th>Статус</th>
-        <th>Регистр</th>
-        <th colspan="2">Действия</th>
-    </tr>
-    @foreach (var user in Model) {
+<div class="table" style="padding: 15%">
+    <button class="button"><a asp-action="Create">Добавить пользователя</a></button>
+    <table>
         <tr>
-            <td>@user.Login</td>
-            <td>@user.LastName @user.FirstName @user.MiddleName</td>
-            <td>@user.Role</td>
-            <td>@user.Status</td>
-            <td>@user.Registration</td>
-            <td><a asp-controller="User" asp-action="View" asp-route-id="@user.UserId">View</a></td>
-            <td><a asp-controller="User" asp-action="Update" asp-route-id="@user.UserId">Edit</a></td>
-            @if (User.IsInRole("3")) {
-                <td><a asp-controller="User" asp-action="Delete" asp-route-id="@user.UserId">Delete</a></td>
-            }
+            <th>Логин</th>
+            <th>Ф.И.О.</th>
+            <th>Роль</th>
+            <th>Статус</th>
+            <th>Регистр</th>
+            <th colspan="3">Действия</th>
         </tr>
-    }
-</table>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td class="gray">@user.Login</td>
+                <td class="gray">@user.LastName @user.FirstName @user.MiddleName</td>
+                <td class="gray">@user.Role</td>
+                <td class="gray">@user.Status</td>
+                <td class="gray">@user.Registration</td>
+                <td class="gray"><a asp-controller="User" asp-action="View" asp-route-id="@user.UserId">View</a></td>
+                <td class="gray"><a asp-controller="User" asp-action="Update" asp-route-id="@user.UserId">Edit</a></td>
+                @if (User.IsInRole("3"))
+                {
+                    <td class="gray"><a asp-controller="User" asp-action="Delete" asp-route-id="@user.UserId">Delete</a></td>
+                }
+            </tr>
+        }
+    </table>
+</div>
+
