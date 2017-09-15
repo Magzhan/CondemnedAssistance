@@ -78,8 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Education\" />
-    <Folder Include="Views\Shared\Components\MessageUser\" />
-    <Folder Include="Views\Shared\Components\MessageDialogbox\" />
   </ItemGroup>
 
 </Project>

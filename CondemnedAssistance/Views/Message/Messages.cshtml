@@ -27,7 +27,7 @@
         socket.onmessage = function (event) {
             var item = document.createElement("li");
             item.appendChild(document.createTextNode(event.data));
-            document.getElementById("message-exchange-container").appendChild(item);
+            document.getElementById("message-container-dialog").appendChild(item);
         }
     }
 
@@ -36,13 +36,15 @@
 <div id="main-message-container">
     <div id="help-container"> @await Component.InvokeAsync("MessageHelp")</div>
     <div id="receiver-container"></div>
-    <div id="message-exchange-container"></div>
-    <input type="hidden" id="selected-help-id" value="" />
-    <input type="hidden" id="selected-user-id" value=""/>
-    <input type="hidden" id="selected-user-register-id" value="" />
-    <input type="hidden" id="selected-user-role-id" value="" />
-    <textarea id="text-enter"></textarea>
-    <input type="button" id="send-text" />
+    <div id="message-exchange-container">
+        <div id="message-container-dialog"></div>
+        <input type="hidden" id="selected-help-id" value="" />
+        <input type="hidden" id="selected-user-id" value="" />
+        <input type="hidden" id="selected-user-register-id" value="" />
+        <input type="hidden" id="selected-user-role-id" value="" />
+        <textarea id="text-enter"></textarea>
+        <input type="button" id="send-text" />
+    </div>
 </div>
 <script>
     $(document).ready(function ($) {
@@ -88,5 +90,8 @@
             method: 'GET'
         });
 
+        var messageContainer = $("<li>").text(message);
+
+        $("#message-container-dialog").append(messageContainer);
     }
 </script>

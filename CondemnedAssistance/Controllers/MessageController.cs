@@ -48,7 +48,11 @@ namespace CondemnedAssistance.Controllers {
                 int[] userIdsByRole = _db.UserRoles.Select(r => r.UserId).ToArray();
                 allowedUserIds = userIdsByRegister.Intersect(userIdsByRole).ToArray();
             }
-            
+
+            List<int> tempList = allowedUserIds.ToList();
+            tempList.Add(Convert.ToInt32(User.FindFirst(c => c.Type == "RegisterId").Value));
+            allowedUserIds = tempList.ToArray();
+
             List<UserModelCreate> model = new List<UserModelCreate>();
 
             _db.UserStaticInfo.Where(u => allowedUserIds.Contains(u.UserId)).ToList().ForEach(row => {
