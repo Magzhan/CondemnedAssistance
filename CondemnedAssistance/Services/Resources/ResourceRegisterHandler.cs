@@ -79,6 +79,9 @@ namespace CondemnedAssistance.Services.Resources {
                 if (!currentChildren.Any(c => c == childId)) {
                     context.Fail();
                 }
+                else {
+                    context.Succeed(requirement);
+                }
             }
             
             return Task.CompletedTask;
