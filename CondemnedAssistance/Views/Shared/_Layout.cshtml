@@ -39,48 +39,44 @@
         </environment>
 
     </head>
-    <body>
+<body>
+<div class="header" id="header">
+    <a asp-controller="Home" asp-action="Index"><img src="/Components/img/logo.png"></a>
+    <p style="padding: 0; height:20px; margin-bottom: 20%; margin-top: -100px; margin-left:  15%; color: white; font-size: 25px;">
+        ОКАЗАНИЯ СОЦИАЛЬНО-ПРАВОВОЙ ПОМОЩИ ОСУЖДЕННЫМ<br>
+        <span style=" font-size: 15px; color: lightblue;"> ОФИЦИАЛЬНЫЙ САЙТ</span>
+    </p>
+</div>
+<div class="navcont" style="width: 100%" id="navigation">
+    <div class="nav">
+        <ul>
+            <li class="current"><a asp-controller="Home" asp-action="Index"><b>ГЛАВНАЯ</b></a></li>
 
-        <div class="header" id="header">
-            <a asp-controller="Home" asp-action="Index">
-                <img src="/Components/img/logo.png">
-            </a>
-                <p style="padding: 0; height:20px; margin-bottom: 20%; margin-top: -100px; margin-left:  15%; color: white; font-size: 25px;">
-                    ОКАЗАНИЯ СОЦИАЛЬНО-ПРАВОВОЙ ПОМОЩИ ОСУЖДЕННЫМ<br>
-                    <span style=" font-size: 15px; color: lightblue;"> ОФИЦИАЛЬНЫЙ САЙТ</span>
-                </p>
+            @await Component.InvokeAsync("NavigationMenu")
+
+            @await Component.InvokeAsync("LoginStatus")
+
+        </ul>
+    </div>
+</div>
+<div id="main">
+
+    @RenderBody()
+
+</div>
+<div class="footer" id="footer">
+    <div style="float: left;">
+        <h3 style="color: white;">Контакты:</h3>
+        <h4 style="color: white;">Адрес:</h4>
+        <h4 style="color: white;">Call-центр:</h4>
+        <h4 style="color: white;">Телефоны доверия:</h4>
+        <h4 style="color: white;">Канцелярия:</h4>
+    </div>
+</div>
+<div class="footer1">
+    <br><br>
+    <span class="footer2">Copyright &copy; 2017 ОКАЗАНИЕ СОЦИАЛЬНО-ПРАВОВОЙ ПОМОЩИ ОСУЖДЕННЫМ</span>
 </div>
 
-        <div class="navcont" style="width: 100%" id="navigation">
-            <div class="nav">
-                <ul>
-                    <li class="current"><a asp-controller="Home" asp-action="Index"><b>ГЛАВНАЯ</b></a></li>
-
-                    @await Component.InvokeAsync("NavigationMenu")
-
-                    @await Component.InvokeAsync("LoginStatus")
-
-                </ul>
-                </div>
-            </div>
-        <div id="main">
-
-            @RenderBody()
-
-        </div>
-            <div class="footer">
-                <div style="float: left;">
-                    <h3 style="color: white;">Контакты:</h3>
-                    <h4 style="color: white;">Адрес:</h4>
-                    <h4 style="color: white;">Call-центр:</h4>
-                    <h4 style="color: white;">Телефоны доверия:</h4>
-                    <h4 style="color: white;">Канцелярия:</h4>
-                </div>
-            </div>
-            <div class="footer1">
-                <br><br>
-                <span class="footer2">Copyright &copy; 2017 ОКАЗАНИЕ СОЦИАЛЬНО-ПРАВОВОЙ ПОМОЩИ ОСУЖДЕННЫМ</span>
-            </div>
-
-    </body>
-    </html>
+</body>
+</html>

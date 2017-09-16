@@ -33,12 +33,24 @@ namespace CondemnedAssistance.Controllers
                 users = _db.Users.ToList();
             }
             else {
-                users = (from u in _db.Users
-                         join ur in _db.UserRoles on u.Id equals ur.UserId into j
-                         from user in j.DefaultIfEmpty()
-                         where user.RoleId != 3 || user == null
-                         orderby u.Id descending
-                         select u).ToList();
+                int[] usersWithAllowedRoles = _db.UserRoles.Where(r => r.RoleId != 3).Select(r => r.UserId).ToArray();
+                int currUserRegisterId = Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value);
+                int[] registers = registerHelper.GetRegisterChildren(new int[] { }, currUserRegisterId);
+                List<int> tempRegisters = new List<int> { currUserRegisterId };
+                tempRegisters.AddRange(registers);
+                registers = tempRegisters.ToArray();
+                int[] usersWithAllowedRegisters = _db.UserRegisters.Where(r => registers.Contains(r.RegisterId)).Select(r => r.UserId).ToArray();
+
+                int[] allowedUsersList = usersWithAllowedRegisters.Intersect(usersWithAllowedRoles).ToArray();
+
+                users = _db.Users.Where(u => allowedUsersList.Contains(u.Id)).ToList();
+
+                //users = (from u in _db.Users
+                //         join ur in _db.UserRoles on u.Id equals ur.UserId into j
+                //         from user in j.DefaultIfEmpty()
+                //         where user.RoleId != 3 || user == null
+                //         orderby u.Id descending
+                //         select u).ToList();
             }
             foreach (User user in users) {
                 UserStaticInfo info = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == user.Id);

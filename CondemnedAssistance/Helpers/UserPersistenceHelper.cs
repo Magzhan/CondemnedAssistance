@@ -390,6 +390,9 @@ namespace CondemnedAssistance.Helpers {
             RegisterHelper registerHelper = new RegisterHelper(_db);
             int operatorRegisterId = Convert.ToInt32(_identity.FindFirst(c => c.Type == "RegisterId").Value);
             int[] registerChildren = registerHelper.GetRegisterChildren(new int[] { }, operatorRegisterId);
+            List<int> tempRegisters = new List<int> { operatorRegisterId };
+            tempRegisters.AddRange(registerChildren);
+            registerChildren = tempRegisters.ToArray();
             switch (_state) {
                 case PersistenceState.Update:
                     _model.UserRegisterId = _db.UserRegisters.First(r => r.UserId == _user.Id).RegisterId;
