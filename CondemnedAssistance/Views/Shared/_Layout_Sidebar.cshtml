@@ -10,113 +10,80 @@
     <environment names="Development">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="~/Components/css/style.css" />
+       
+        <link rel="stylesheet" href="~/Components/css/layout1.css" />
+      
+        <link rel="stylesheet" href="~/Components/css/header1.css" />
+        
+        <link rel="stylesheet" href="~/Components/css/navigation1.css" />
+       
+        <link rel="stylesheet" href="~/Components/css/main1.css" />
 
-        <link rel="stylesheet" href="~/Components/css/layout.css" />
-
-        <link rel="stylesheet" href="~/Components/css/header.css" />
-
-        <link rel="stylesheet" href="~/Components/css/navigation.css" />
-
-        <link rel="stylesheet" href="~/Components/css/main.css" />
-
-        <link rel="stylesheet" href="~/Components/css/footer.css" />
+        <link rel="stylesheet" href="~/Components/css/footer1.css" />
         <link rel="shortcut icon" href="/Components/img/logo.png" />
     </environment>
     <environment names="Production">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="/Components/css/Style.css" />
-
-        <link rel="stylesheet" href="~/Components/css/layout.css" />
-
-        <link rel="stylesheet" href="~/Components/css/header.css" />
-
-        <link rel="stylesheet" href="~/Components/css/navigation.css" />
-
-        <link rel="stylesheet" href="~/Components/css/main.css" />
-
-        <link rel="stylesheet" href="~/Components/css/footer.css" />
+        
+        <link rel="stylesheet" href="~/Components/css/layout1.css" />
+     
+        <link rel="stylesheet" href="~/Components/css/header1.css" />
+        
+        <link rel="stylesheet" href="~/Components/css/navigation1.css" />
+        
+        <link rel="stylesheet" href="~/Components/css/main1.css" />
+       
+        <link rel="stylesheet" href="~/Components/css/footer1.css" />
         <link rel="shortcut icon" href="/Components/img/logo.png" />
-    </environment>
-    <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
-    <script src="~/Components/js/user-controller-scripts.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <environment names="Development">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link rel="stylesheet" href="~/Components/css/style.css" />
+        </environment>
 
-        <link rel="stylesheet" href="~/Components/css/layout.css" />
+    </head>
+    <body>
 
-        <link rel="stylesheet" href="~/Components/css/header.css" />
+        <div class="header">
+            <a asp-controller="Home" asp-action="Index">
+                <img src="/Components/img/logo.png">
+            </a>
+                <p style="padding: 0; height:20px; margin-bottom: 20%; margin-top: -100px; margin-left:  15%; color: white; font-size: 25px;">
+                    ОКАЗАНИЯ СОЦИАЛЬНО-ПРАВОВОЙ ПОМОЩИ ОСУЖДЕННЫМ<br>
+                    <span style=" font-size: 15px; color: lightblue;"> ОФИЦИАЛЬНЫЙ САЙТ</span>
+                </p>
+</div>
 
-        <link rel="stylesheet" href="~/Components/css/navigation.css" />
+        <div class="navcont" style="width: 100%">
+            <div class="nav">
+                <ul>
+                    <li class="current"><a asp-controller="Home" asp-action="Index"><b>ГЛАВНАЯ</b></a></li>
 
-        <link rel="stylesheet" href="~/Components/css/main.css" />
+                    @await Component.InvokeAsync("NavigationMenu")
 
-        <link rel="stylesheet" href="~/Components/css/footer.css" />
-        <link rel="shortcut icon" href="/Components/img/logo.png" />
-    </environment>
-    <environment names="Production">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/Components/css/Style.css" />
+                    @await Component.InvokeAsync("LoginStatus")
 
-        <link rel="stylesheet" href="~/Components/css/layout.css" />
-
-        <link rel="stylesheet" href="~/Components/css/header.css" />
-
-        <link rel="stylesheet" href="~/Components/css/navigation.css" />
-
-        <link rel="stylesheet" href="~/Components/css/main.css" />
-
-        <link rel="stylesheet" href="~/Components/css/footer.css" />
-        <link rel="shortcut icon" href="/Components/img/logo.png" />
-    </environment>
-
-</head>
-<body>
-    <div class="header">
-        <a asp-controller="Home" asp-action="Index">
-            <img src="/Components/img/logo.png">
-        </a>
-        <p style="padding: 0; height:20px; margin-bottom: 20%; margin-top: -100px; margin-left:  15%; color: white; font-size: 25px;">
-            ОКАЗАНИЯ СОЦИАЛЬНО-ПРАВОВОЙ ПОМОЩИ ОСУЖДЕННЫМ<br>
-            <span style=" font-size: 15px; color: lightblue;"> ОФИЦИАЛЬНЫЙ САЙТ</span>
-        </p>
-    </div>
-
-
-    <div class="navcont" style="width: 100%">
-        <div class="nav">
-            <ul>
-                <li class="current"><a asp-controller="Home" asp-action="Index"><b>ГЛАВНАЯ</b></a></li>
-
-                @await Component.InvokeAsync("NavigationMenu")
-
-                @await Component.InvokeAsync("LoginStatus")
-
-            </ul>
+                </ul>
+                </div>
+            </div>
+        <div id="left-sidebar">
+            @await Component.InvokeAsync("SideBar", (CondemnedAssistance.Helpers.LinkClass[])ViewData["sidebar"])
         </div>
-    </div>
-    <div id="left-sidebar">
-        @await Component.InvokeAsync("SideBar", (CondemnedAssistance.Helpers.LinkClass[])ViewData["sidebar"])
-    </div>
-    <div id="main">
-        @RenderBody()
-    </div>
-    <div class="footer">
-        <div style="float: left;">
-            <h3 style="color: white;">Контакты:</h3>
-            <h4 style="color: white;">Адрес:</h4>
-            <h4 style="color: white;">Call-центр:</h4>
-            <h4 style="color: white;">Телефоны доверия:</h4>
-            <h4 style="color: white;">Канцелярия:</h4>
+        <div id="main">
+
+            @RenderBody()
+
         </div>
-    </div>
-    <div class="footer1">
-        <br><br>
-        <span class="footer2">Copyright &copy; 2017 ОКАЗАНИЕ СОЦИАЛЬНО-ПРАВОВОЙ ПОМОЩИ ОСУЖДЕННЫМ</span>
-    </div>
-</body>
-</html>
+            <div class="footer">
+                <div style="float: left;">
+                    <h3 style="color: white;">Контакты:</h3>
+                    <h4 style="color: white;">Адрес:</h4>
+                    <h4 style="color: white;">Call-центр:</h4>
+                    <h4 style="color: white;">Телефоны доверия:</h4>
+                    <h4 style="color: white;">Канцелярия:</h4>
+                </div>
+            </div>
+            <div class="footer1">
+                <br><br>
+                <span class="footer2">Copyright &copy; 2017 ОКАЗАНИЕ СОЦИАЛЬНО-ПРАВОВОЙ ПОМОЩИ ОСУЖДЕННЫМ</span>
+            </div>
+
+    </body>
+    </html>

@@ -23,7 +23,12 @@ namespace CondemnedAssistance.Services.Resources {
             int[] currentChildren = registerHelper.GetRegisterChildren(new int[] { }, Convert.ToInt32(context.User.FindFirst(c => c.Type == "RegisterId").Value));
 
             int registerId = Convert.ToInt32(context.User.FindFirst(c => c.Type == "RegisterId").Value);
-            
+
+            List<int> tempRegisters = new List<int> { registerId };
+            tempRegisters.AddRange(currentChildren);
+
+            currentChildren = tempRegisters.ToArray();
+
             if (context.User.IsInRole("3")) {
                 context.Succeed(requirement);
                 return Task.CompletedTask;
