@@ -1,106 +1,140 @@
-﻿/* drop-down function is here */
-#nav > ul > li {
-    display: inline-block;
+﻿.navcont {
+    margin: 0 auto;
+    background-color: rgba(0,69,133,1);
+    height: 45px;
+    float: left;
+}
+
+.nav {
+    height: 45px;
+    background: ransparent url(http://i50.tinypic.com/bj0nm.png) center bottom no-repeat;
+    padding-bottom: 7px;
+    margin-bottom: 23px;
+}
+
+    .nav ul {
+        margin: 0;
+        box-shadow: 0px 1px 2px -1px rgba(0, 0, 0, 0.4);
+        -webkit-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.2);
+    }
+
+        .nav ul li {
+            font: 13px Verdana, 'Lucida Grande';
+            cursor: pointer;
+            -webkit-transition: padding .05s linear;
+            -moz-transition: padding .05s linear;
+            -ms-transition: padding .05s linear;
+            -o-transition: padding .05s linear;
+            transition: padding .05s linear;
+            background: transparent url(http://i46.tinypic.com/21c5h93.png) left center no-repeat;
+        }
+
+    .nav li:first-child {
+        background: none;
+    }
+
+    .nav ul li.drop {
+        position: relative;
+    }
+
+    .nav ul > li {
+        display: inline-block;
+    }
+
+    .nav ul li a {
+        line-height: 45px;
+        padding: 0 20px;
+        height: 45px;
+        color: white;
+    }
+
+        .nav ul li a:hover {
+            color: #09F;
+        }
+.dropOut .triangle {
+    width: 0;
+    height: 0;
+    position: absolute;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white;
+    top: -8px;
+    left: 50%;
+    margin-left: -8px;
+}
+
+.dropdownContain {
+    width: 200px;
+    position: absolute;
+    z-index: 2;
+    left: 60%;
+    margin-left: -100px;
+    top: -400px;
+    color: #777;
+}
+
+.dropOut {
+    width: 200px;
+    background: white;
+    float: left;
     position: relative;
+    margin-top: 0px;
+    opacity: 0;
+    -webkit-box-shadow: 0 1px 6px rgba(0,0,0,.15);
+    -moz-box-shadow: 0 1px 6px rgba(0,0,0,.15);
+    box-shadow: 0 1px 6px rgba(0,0,0,.15);
+    -webkit-transition: all .2s ease-out;
+    -moz-transition: all .2s ease-out;
+    -ms-transition: all .2s ease-out;
+    -o-transition: all .2s ease-out;
+    transition: all .2s ease-out;
 }
 
-#nav > ul > li:hover > ul {
-    display: block;
+    .dropOut ul {
+        float: left;
+        padding: 0 0;
+    }
+
+        .dropOut ul li {
+            text-align: left;
+            background: transparent url(http://i50.tinypic.com/303efm1.png) center top repeat-x;
+            float: left;
+            width: 155px;
+            padding: 12px 0 10px 15px;
+            margin: 0px 15px;
+            color: #777;
+        }
+
+            .dropOut ul li a {
+                color: #777;
+            }
+
+    .dropOut li:first-child {
+        background: none;
+    }
+
+    .dropOut ul li:hover {
+        color: #09F;
+        -webkit-transition: all 200ms ease-in;
+        -o-transition: all 200ms ease-in;
+        -moz-transition: all 200ms ease-in;
+    }
+
+ul li:hover a {
+    -webkit-transition: all 200ms ease-in;
+    -o-transition: all 200ms ease-in;
+    -moz-transition: all 200ms ease-in;
 }
 
-#nav > ul > li > ul {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    /*padding: 12px 16px;*/
-    z-index: 1;
+ul li:hover .dropdownContain {
+    top: 45px;
 }
 
-/* drop-down style is here*/
-
-#nav {
-    display: block;
-    left: 0;
-    width: 100%;
-    text-align: center;
+ul li:hover .underline {
+    border-bottom-color: #777;
 }
 
-#nav > ul {
-    display: inline-block;
-    border-radius: 0.35em;
-    box-shadow: inset 0px 0px 1px 1px black;
-    padding: 0 1.5em 0 1.5em;
-}
-
-#nav > ul > li {
-    display: inline-block;
-    text-align: center;
-    padding: 0 1.5em 0 1.5em;
-}
-
-#nav > ul > li > ul {
-    display: none;
-}
-
-#nav > ul > li a{
-    display: block;
-    color: #eee;
-    color: black;
-    text-transform: uppercase;
-    text-decoration: none;
-    font-size: 0.7em;
-    letter-spacing: 0.25em;
-    height: 5em;
-    line-height: 5em;
-    -moz-transition: all .25s ease-in-out;
-    -webkit-transition: all .25s ease-in-out;
-    -o-transition: all .25s ease-in-out;
-    -ms-transition: all .25s ease-in-out;
-    transition: all .25s ease-in-out;
-    outline: 0;
-}
-
-#nav > ul > li:hover > a {
-    color: #fff;
-}
-
-#nav > ul > li.active > a {
-    color: #fff;
-}
-
-#nav > ul > li > ul > li > a {
-    display: inline-block;
-    text-align: center;
-    text-decoration: none;
-}
-
-#nav > ul > li {
-    display: inline-block;
-}
-
-#nav > ul > li > ul {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-#nav > ul > li > ul a {
-    color: black;
-    /*padding: 12px 16px;*/
-    text-decoration: none;
-    display: block;
-    text-align: left;
-}
-
-#nav > ul > li > ul a:hover {
-    background-color: #f1f1f1;
-}
-
-#nav > ul > li > ul > li{
-    list-style:none;
+ul li:hover .dropOut {
+    opacity: 1;
+    margin-top: 8px;
 }

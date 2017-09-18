@@ -71,12 +71,10 @@ namespace CondemnedAssistance {
             else {
                 app.UseExceptionHandler("/error");
             }
-
+            app.UseWebSockets();
             app.UseStaticFiles();
 
             app.UseAuthentication();
-
-            app.UseWebSockets();
 
             loggerFactory.AddConsole();
 

@@ -21,41 +21,48 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult PsychoHelp() {
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult PravoHelp()
         {
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult MedHelp()
         {
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult ObrHelp()
         {
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult ZawitaHelp()
         {
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult TrudHelp()
         {
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult AktyHelp()
         {
             return View();
