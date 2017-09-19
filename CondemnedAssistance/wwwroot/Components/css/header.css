@@ -1,20 +1,9 @@
-﻿#header1 {
-    float: left;
-    margin-left: 2%;
-}
-
-#header2 {
-    color: white;
-    text-transform: uppercase;
-    padding-top: 4%;
-    font: normal 23px/22px 'PT Serif Caption';
-    letter-spacing: -0.06em;
-}
-
-#header3 {
-    font: normal 10px/10px Arial;
-    color: #21538E;
-    letter-spacing: 8px;
-    text-transform: uppercase;
-    padding: 10px 0px;
+﻿.header{
+    width: auto;
+    height: 150px;
+    margin: auto;
+    border: 1px #81a8cb;
+    background-image: url("/Components/img/sin.jpg");
+    position: relative;
+    padding: 0px;
 }

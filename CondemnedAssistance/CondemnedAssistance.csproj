@@ -5,16 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="wwwroot\Components\css\layout.css">
+    <EmbeddedResource Include="wwwroot\Components\css\layout12.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="wwwroot\Components\css\left-sidebar.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="wwwroot\Components\css\main.css">
+    <EmbeddedResource Include="wwwroot\Components\css\main12.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="wwwroot\Components\css\navigation.css">
+    <EmbeddedResource Include="wwwroot\Components\css\navigation12.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="wwwroot\Components\css\style.css">

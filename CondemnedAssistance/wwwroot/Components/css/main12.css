@@ -1,0 +1,41 @@
+﻿.mySlides {
+    display: none;
+}
+
+#main1 {
+    max-width: 700px;
+    margin: auto;
+}
+
+/* page title*/
+#main > h2{
+
+}
+
+#main > form > div{
+    margin-left:20%;
+}
+
+#main > form > div > div{
+
+}
+
+#main > form > div > div > label{
+
+}
+
+#main > form > input[type=text] {
+
+}
+
+#main > form > div > div > span {
+    color:red;
+}
+
+#main > form input[type=submit]{
+
+}
+
+#main > form select{
+
+}
