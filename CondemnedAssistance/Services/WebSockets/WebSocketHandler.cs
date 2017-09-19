@@ -39,5 +39,9 @@ namespace CondemnedAssistance.Services.WebSockets {
         }
 
         public abstract Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer);
+
+        public WebSocket GetCurrentUserSocket(int id) {
+            return WebSocketConnectionManager.GetSocketByUserId(id);
+        }
     }
 }

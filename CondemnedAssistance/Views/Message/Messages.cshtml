@@ -54,7 +54,10 @@
         $(document).on("click", "#send-text", SendMessage);
 
         var helpId = $("#help-container").first().find("#help-id").val();
+        var receiverId = $("#receiver-container").first().find("#receiver-id").val();
         $("#receiver-container").load("message/loadusers?helpId=" + helpId);
+        $("#message-container-dialog").load("message/loadmessages?receiverId=" + receiverId);
+
     });
 
     function SetUserSelected() {
@@ -65,6 +68,8 @@
         $("#selected-user-id").val(receiverId);
         $("#selected-user-register-id").val(registerId);
         $("#selected-user-role-id").val(roleId);
+
+        LoadMessages(receiverId);
     }
 
     function LoadUsers() {
@@ -78,6 +83,11 @@
         $("#selected-user-id").val(receiverId);
         $("#selected-user-register-id").val(registerId);
         $("#selected-user-role-id").val(roleId);
+    }
+
+    function LoadMessages(receiverId) {
+
+        $("#message-container-dialog").load("message/loadmessages?receiverId=" + receiverId);
     }
 
     function SendMessage(message) {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net.WebSockets;
+using System.Threading;
 
 namespace CondemnedAssistance.Hubs {
     public class WebSocketMessageHandler : WebSocketHandler
@@ -12,8 +13,7 @@ namespace CondemnedAssistance.Hubs {
         {
         }
 
-        public override Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)
-        {
+        public override Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer) {
             throw new NotImplementedException();
         }
     }

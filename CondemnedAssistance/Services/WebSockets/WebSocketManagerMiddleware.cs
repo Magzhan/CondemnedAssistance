@@ -50,7 +50,7 @@ namespace CondemnedAssistance.Services.WebSockets {
             byte[] buffer = new byte[1024 * 4];
 
             while(socket.State == WebSocketState.Open) {
-                var result = await socket.ReceiveAsync(buffer: new ArraySegment<byte>(buffer),
+                WebSocketReceiveResult result = await socket.ReceiveAsync(buffer: new ArraySegment<byte>(buffer),
                     cancellationToken: CancellationToken.None);
 
                 handleMessage(result, buffer);
