@@ -10,11 +10,14 @@ namespace CondemnedAssistance.Models {
         public DbSet<Register> Registers { get; set; }
         public DbSet<RegisterHierarchy> RegisterHierarchies { get; set; }
         public DbSet<RegisterLevel> RegisterLevels { get; set; }
+        public DbSet<RegisterLevelHierarchy> RegisterLevelHierarchies { get; set; }
         public DbSet<UserRegister> UserRegisters { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Help> Helps { get; set; }
         public DbSet<Profession> Professions { get; set; }
         public DbSet<UserProfession> UserProfessions { get; set; }
+        public DbSet<Vacancy> Vacancies { get; set; }
+        public DbSet<VacancyProfession> VacancyProfessions { get; set; }
         public DbSet<Education> Educations { get; set; }
         public DbSet<EducationLevel> EducationLevels { get; set; }
         public DbSet<UserEducation> UserEducations { get; set; }

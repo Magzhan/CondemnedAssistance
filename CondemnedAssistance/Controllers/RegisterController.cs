@@ -36,7 +36,9 @@ namespace CondemnedAssistance.Controllers {
                         Name = r.Name,
                         Description = r.Description,
                         RegisterLevelId = r.RegisterLevelId,
-                        RegisterLevels = new List<RegisterLevelModel> { registerLevelModel } });
+                        RegisterLevels = new List<RegisterLevelModel> { registerLevelModel },
+                        RegisterLevelHierarchies = _db.RegisterLevelHierarchies.ToList()
+                    });
                 });
             } else {
                 int registerId = Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value);
@@ -50,7 +52,8 @@ namespace CondemnedAssistance.Controllers {
                     Name = register.Name,
                     Description = register.Description,
                     RegisterLevelId = register.RegisterLevelId,
-                    RegisterLevels = new List<RegisterLevelModel> { new RegisterLevelModel { Id = registerLevel.Id, Name = registerLevel.Name, Description = registerLevel.Description } }
+                    RegisterLevels = new List<RegisterLevelModel> { new RegisterLevelModel { Id = registerLevel.Id, Name = registerLevel.Name, Description = registerLevel.Description } },
+                    RegisterLevelHierarchies = _db.RegisterLevelHierarchies.ToList()
                 });
 
                 registers = registers.OrderBy(r => r.RegisterLevelId).ToList();
@@ -60,7 +63,7 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create(int levelId, int parentId, int childId) {
+        public async Task<IActionResult> Create(int levelId, int parentId) {
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", levelId);
             registerActions.Add("parentId", parentId);
@@ -81,6 +84,7 @@ namespace CondemnedAssistance.Controllers {
                     Description = row.Description
                 });
             });
+            model.RegisterLevelHierarchies = _db.RegisterLevelHierarchies.ToList();
             model.RegisterLevels.AddRange(registerLevels);
             model.RegisterLevelId = levelId;
             if (parentId > 0 && parentRegister != null){
@@ -128,6 +132,7 @@ namespace CondemnedAssistance.Controllers {
                     ModelState.AddModelError("", "Such address already exists");
                 }
             }
+            model.RegisterLevelHierarchies = _db.RegisterLevelHierarchies.ToList();
             return RedirectToAction("Index", "Register");
         }
 
@@ -159,6 +164,7 @@ namespace CondemnedAssistance.Controllers {
                 registerLevels.ForEach(row => registerModels.Add(new RegisterLevelModel { Id = row.Id, Name = row.Name, Description = row.Description }));
                 model.RegisterLevels = registerModels;
                 model.RegisterParent = registerParent;
+                model.RegisterLevelHierarchies = _db.RegisterLevelHierarchies.ToList();
                 return View(model);
             }
             return RedirectToAction("Index", "Register");
@@ -189,6 +195,7 @@ namespace CondemnedAssistance.Controllers {
                 _db.Registers.Attach(register);
                 _db.Entry(register).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 _db.SaveChanges();
+                model.RegisterLevelHierarchies = _db.RegisterLevelHierarchies.ToList();
                 return View(model);
             }
             return RedirectToAction("Index", "Register");
@@ -241,8 +248,15 @@ namespace CondemnedAssistance.Controllers {
 
         [Authorize(Roles = "3")]
         [HttpGet]
-        public IActionResult CreateRegisterLevel() {
-            return View();
+        public IActionResult CreateRegisterLevel(int parentId = 0) {
+            RegisterLevelModel model = new RegisterLevelModel {
+                IsFirstAncestor = parentId == 0 ? true:false,
+                ParentLevelId = parentId
+            };
+
+            model.RegisterLevels = _db.RegisterLevels.ToList();
+
+            return View(model);
         }
 
         [Authorize(Roles = "3")]
@@ -255,11 +269,24 @@ namespace CondemnedAssistance.Controllers {
                         Name = model.Name,
                         NormalizedName = model.Name.ToUpper(),
                         Description = model.Description,
+                        IsFirstAncestor = model.IsFirstAncestor,
+                        IsLastChild = model.IsLastChild,
                         RequestDate = DateTime.Now,
                         RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
                     };
                     _db.RegisterLevels.Add(registerLevel);
                     _db.SaveChanges();
+
+                    if (!model.IsFirstAncestor) {
+                        RegisterLevelHierarchy registerLevelHierarchy = new RegisterLevelHierarchy {
+                            ParentLevel = model.ParentLevelId,
+                            ChildLevel = registerLevel.Id
+                        };
+
+                        _db.RegisterLevelHierarchies.Add(registerLevelHierarchy);
+                        _db.SaveChanges();
+                    }
+
                     return RedirectToAction("RegisterLevels", "Register");
                 }
                 else {
@@ -278,12 +305,19 @@ namespace CondemnedAssistance.Controllers {
                 model = new RegisterLevelModel {
                     Id = registerLevel.Id,
                     Name = registerLevel.Name,
-                    Description = registerLevel.Description
+                    Description = registerLevel.Description,
+                    IsFirstAncestor = registerLevel.IsFirstAncestor,
+                    IsLastChild = registerLevel.IsLastChild
                 };
+
+                if (!registerLevel.IsFirstAncestor) {
+                    model.ParentLevelId = _db.RegisterLevelHierarchies.Single(r => r.ChildLevel == registerLevel.Id).ParentLevel;
+                }
             }
             else {
                 return RedirectToAction("RegisterLevels", "Register");
             }
+            model.RegisterLevels = _db.RegisterLevels.ToList();
             return View(model);
         }
 
@@ -296,24 +330,31 @@ namespace CondemnedAssistance.Controllers {
                     registerLevel.Name = model.Name;
                     registerLevel.NormalizedName = model.Name.ToUpper();
                     registerLevel.Description = model.Description;
+                    registerLevel.IsFirstAncestor = model.IsFirstAncestor;
+                    registerLevel.IsLastChild = model.IsLastChild;
                     registerLevel.RequestDate = DateTime.Now;
                     registerLevel.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
 
                     _db.RegisterLevels.Attach(registerLevel);
                     _db.Entry(registerLevel).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                     _db.SaveChanges();
+
+                    return RedirectToAction("Register", "RegisterLevels");
                 }
             }
+            model.RegisterLevels = _db.RegisterLevels.ToList();
             return View(model);
         }
 
         [Authorize(Roles = "3")]
         [HttpGet]
         public IActionResult DeleteRegisterLevel(int id) {
-            if (_db.Registers.Count(r => r.RegisterLevelId == id) > 0) {
+            if (_db.Registers.Count(r => r.RegisterLevelId == id) > 0 || _db.RegisterLevelHierarchies.Any(r => r.ParentLevel == id)) {
                 ModelState.AddModelError("", "It still has binded elements");
                 return RedirectToAction("RegisterLevels", "Register");
             }
+            RegisterLevelHierarchy registerLevelHierarchy = _db.RegisterLevelHierarchies.Single(r => r.ChildLevel == id);
+            _db.RegisterLevelHierarchies.Remove(registerLevelHierarchy);
             RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.Id == id);
             _db.RegisterLevels.Remove(registerLevel);
             _db.SaveChanges();

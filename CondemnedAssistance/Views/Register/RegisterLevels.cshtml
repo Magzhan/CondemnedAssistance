@@ -9,6 +9,10 @@
         <td>@m.Description</td>
         <td><a asp-controller="Register" asp-action="UpdateRegisterLevel" asp-route-id="@m.Id">Edit</a></td>
         <td><a asp-controller="Register" asp-action="DeleteRegisterLevel" asp-route-id="@m.Id">Delete</a></td>
+        @if (!m.IsLastChild) {
+            <td><a asp-controller="Register" asp-action="CreateRegisterLevel" asp-route-parentId="@m.Id">Add</a></td>
+        }
+        
     </tr>
 }
 </table>

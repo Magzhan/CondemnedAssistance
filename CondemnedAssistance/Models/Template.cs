@@ -1,8 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace CondemnedAssistance.Models
-{
+namespace CondemnedAssistance.Models {
     public class Template {
     }
 
