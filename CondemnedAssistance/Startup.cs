@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 using System;
 using CondemnedAssistance.Services.WebSockets;
 using CondemnedAssistance.Hubs;
+using CondemnedAssistance.Services.Sms;
+using CondemnedAssistance.Services.IService;
+using CondemnedAssistance.Services.Email;
 
 namespace CondemnedAssistance {
     public class Startup {
@@ -54,6 +57,9 @@ namespace CondemnedAssistance {
             services.AddSingleton<IAuthorizationHandler, ResourceRegisterHandler>();
 
             services.AddWebSocketManager();
+
+            services.AddTransient<IMessageSender, SmsSender>();
+            services.AddTransient<IMessageSender, EmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
