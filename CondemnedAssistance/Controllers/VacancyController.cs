@@ -6,13 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    [Authorize(Roles = "3")]
-    public class EmailController : Controller{
-
-        public IActionResult Index() {
-            //TO DO
-            return View();
-        }
-
+    [Authorize(Roles="3")]
+    public class VacancyController : Controller{
+        
     }
 }

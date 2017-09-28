@@ -16,7 +16,7 @@ namespace CondemnedAssistance.Services.Sms {
             _db = context;
         }
         
-        public string Send(int userId, string subject, string message) {
+        public string Send(int userId, int senderId, string subject, string message) {
 
             string phone = _db.Users.Single(u => u.Id == userId).PhoneNumber;
             string login = "probaciya";
@@ -49,7 +49,7 @@ namespace CondemnedAssistance.Services.Sms {
                 IsSuccessfullySent = true,
                 ReceiverPhone = phone,
                 SentDate = DateTime.Now,
-                SenderId = 1,
+                SenderId = senderId,
                 SmsId = sms.Id
             };
 

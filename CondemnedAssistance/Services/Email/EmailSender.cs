@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CondemnedAssistance.Services.Email {
     public class EmailSender : IMessageSender {
 
-        string IMessageSender.Send(int userId, string subject, string message) {
+        string IMessageSender.Send(int userId, int senderId, string subject, string message) {
             throw new NotImplementedException();
         }
     }
