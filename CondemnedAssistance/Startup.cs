@@ -59,7 +59,7 @@ namespace CondemnedAssistance {
             services.AddWebSocketManager();
 
             services.AddTransient<IMessageSender, SmsSender>();
-            services.AddTransient<IMessageSender, EmailSender>();
+            //services.AddTransient<IMessageSender, EmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
