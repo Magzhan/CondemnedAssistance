@@ -1,0 +1,20 @@
+﻿@model CondemnedAssistance.ViewModels.SmsModel
+@{
+    Layout = "_Layout";
+}
+<form asp-controller="Sms" asp-action="Send">
+    <div>
+        <div>
+            <input type="text" asp-for="UserId" />
+        </div>
+        <div>
+            <input type="text" asp-for="Subject" />
+        </div>
+        <div>
+            <textarea asp-for="Text"></textarea>
+        </div>
+        <div>
+            <input type="submit" />
+        </div>
+    </div>
+</form>

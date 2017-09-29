@@ -11,9 +11,10 @@ using System;
 namespace CondemnedAssistance.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20170920154553_RegistersCorrection")]
+    partial class RegistersCorrection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,48 +121,6 @@ namespace CondemnedAssistance.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EducationLevels");
-                });
-
-            modelBuilder.Entity("CondemnedAssistance.Models.Email", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Subject");
-
-                    b.Property<string>("Text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Emails");
-                });
-
-            modelBuilder.Entity("CondemnedAssistance.Models.EmailExchange", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<long>("EmailId");
-
-                    b.Property<bool>("IsSuccessfullySent");
-
-                    b.Property<string>("ReceiverEmail");
-
-                    b.Property<int>("ReceiverId");
-
-                    b.Property<int>("SenderId");
-
-                    b.Property<DateTime>("SentDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmailId");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("EmailExchanges");
                 });
 
             modelBuilder.Entity("CondemnedAssistance.Models.Event", b =>
@@ -422,48 +381,6 @@ namespace CondemnedAssistance.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("CondemnedAssistance.Models.Sms", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Subject");
-
-                    b.Property<string>("Text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Smss");
-                });
-
-            modelBuilder.Entity("CondemnedAssistance.Models.SmsExchange", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<bool>("IsSuccessfullySent");
-
-                    b.Property<int>("ReceiverId");
-
-                    b.Property<string>("ReceiverPhone");
-
-                    b.Property<int>("SenderId");
-
-                    b.Property<DateTime>("SentDate");
-
-                    b.Property<long>("SmsId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.HasIndex("SmsId");
-
-                    b.ToTable("SmsExchanges");
                 });
 
             modelBuilder.Entity("CondemnedAssistance.Models.Transaction", b =>
@@ -1004,24 +921,6 @@ namespace CondemnedAssistance.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CondemnedAssistance.Models.EmailExchange", b =>
-                {
-                    b.HasOne("CondemnedAssistance.Models.Email", "Email")
-                        .WithMany()
-                        .HasForeignKey("EmailId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CondemnedAssistance.Models.User", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CondemnedAssistance.Models.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("CondemnedAssistance.Models.Event", b =>
                 {
                     b.HasOne("CondemnedAssistance.Models.EventStatus", "EventStatus")
@@ -1066,24 +965,6 @@ namespace CondemnedAssistance.Migrations
                     b.HasOne("CondemnedAssistance.Models.RegisterLevel", "RegisterLevel")
                         .WithMany()
                         .HasForeignKey("RegisterLevelId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("CondemnedAssistance.Models.SmsExchange", b =>
-                {
-                    b.HasOne("CondemnedAssistance.Models.User", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CondemnedAssistance.Models.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CondemnedAssistance.Models.Sms", "Sms")
-                        .WithMany()
-                        .HasForeignKey("SmsId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

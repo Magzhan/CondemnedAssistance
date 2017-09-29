@@ -1,4 +1,6 @@
-﻿
+﻿@inject CondemnedAssistance.Hubs.WebSocketMessageHandler SocketsHandler
+@using System.Net.WebSockets
+@using System.Threading
 <li class="drop">
     <a href="#"><b>ПОМОЩЬ</b></a>
     <div class="dropdownContain">
@@ -17,11 +19,8 @@
     </div>
 </li>
 
-
-
-
 <li>
-    <a asp-controller="Message" asp-action="Index"><b>КОНСУЛЬТАЦИЯ</b></a>
+    <a asp-controller="Message" asp-action="Index"><b>КОНСУЛЬТАЦИЯ </b></a>
 </li>
 <li class="drop">
     <a href="#"><b>УПРАВЛЕНИЕ</b></a>

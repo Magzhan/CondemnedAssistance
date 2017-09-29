@@ -1,0 +1,5 @@
+﻿@model IEnumerable<CondemnedAssistance.Models.Message>
+
+    @foreach (var message in Model) {
+        <li>@message.Text</li>
+    }

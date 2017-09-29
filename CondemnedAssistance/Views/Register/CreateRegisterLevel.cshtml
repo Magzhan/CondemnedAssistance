@@ -9,6 +9,24 @@
     <div>
         <textarea asp-for="Description"></textarea>
     </div>
+    @if (Model.IsFirstAncestor) {
+        <div>
+            <input type="checkbox" asp-for="IsFirstAncestor" />
+        </div>
+    }
+    else {
+        <div>
+            <input type="checkbox" asp-for="IsLastChild" />
+        </div>
+        <div>
+            <select disabled>
+                <option selected>@Model.RegisterLevels.Single(r => r.Id == Model.ParentLevelId).Name</option>
+            </select>
+        </div>
+    }
+    <div>
+        <input type="hidden" asp-for="ParentLevelId" />
+    </div>
     <div>
         <input type="submit" value="Save" />
     </div>

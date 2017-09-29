@@ -31,6 +31,9 @@ namespace CondemnedAssistance.Controllers {
         [HttpGet]
         public IActionResult LoadUsers(int helpId = 0) {
             int[] currUserRegisterIds = registerHelper.GetRegisterChildren(new int[] { }, Convert.ToInt32(User.FindFirst(c => c.Type == "RegisterId").Value));
+            List<int> tempRegisters = new List<int>() { Convert.ToInt32(User.FindFirst(c => c.Type == "RegisterId").Value) };
+            tempRegisters.AddRange(currUserRegisterIds);
+            currUserRegisterIds = tempRegisters.ToArray();
             int[] userIdsByRegister = _db.UserRegisters.Where(r => currUserRegisterIds.Contains(r.RegisterId)).Select(r => r.UserId).ToArray();
             int[] allowedUserIds;
             if (User.IsInRole("2")) {
@@ -48,10 +51,6 @@ namespace CondemnedAssistance.Controllers {
                 int[] userIdsByRole = _db.UserRoles.Select(r => r.UserId).ToArray();
                 allowedUserIds = userIdsByRegister.Intersect(userIdsByRole).ToArray();
             }
-
-            List<int> tempList = allowedUserIds.ToList();
-            tempList.Add(Convert.ToInt32(User.FindFirst(c => c.Type == "RegisterId").Value));
-            allowedUserIds = tempList.ToArray();
 
             List<UserModelCreate> model = new List<UserModelCreate>();
 
@@ -73,9 +72,50 @@ namespace CondemnedAssistance.Controllers {
             return PartialView(model);
         }
 
+        public IActionResult LoadMessages(int receiverId) {
+
+            int currUserId = Convert.ToInt32(HttpContext.User.Identity.Name);
+
+            List<MessageExchange> dialogs = _db.MessageExchanges.Where(m => m.SenderId == currUserId & m.ReceiverId == receiverId).ToList();
+            List<Message> messages = new List<Message>();
+
+            dialogs.ForEach(dialog => {
+                messages.Add(_db.Messages.Single(m => m.Id == dialog.MessageId));
+            });
+
+            return PartialView(messages);
+        }
+
         [HttpGet]
-        public async Task Send(int receiverId, int registerId, int roleId, [FromQueryAttribute] string message) {
-            await _webScoketMessageHandler.SendMessageAsync(receiverId, registerId, roleId, message);
+        public async Task Send(int receiverId, int registerId, int roleId, [FromQueryAttribute] string message, int helpId = 1) {
+
+            WebSocket socket = _webScoketMessageHandler.GetCurrentUserSocket(receiverId);
+
+            if(socket != null) {
+                await _webScoketMessageHandler.SendMessageAsync(receiverId, registerId, roleId, message);
+            }
+
+            Message thisMessage = new Message {
+                    IsRead = false,
+                    IsReceived = true,
+                    IsSent = true,
+                    SentDate = DateTime.Now,
+                    ReceivedDate = DateTime.Now,
+                    SenderId = Convert.ToInt32(User.Identity.Name),
+                    Text = message
+                };
+                _db.Messages.Add(thisMessage);
+
+                await _db.SaveChangesAsync();
+
+                _db.MessageExchanges.Add(new MessageExchange {
+                    HelpId = helpId,
+                    MessageId = thisMessage.Id,
+                    ReceiverId = receiverId,
+                    SenderId = Convert.ToInt32(User.Identity.Name)
+                });
+
+                await _db.SaveChangesAsync();
         }
     }
 }

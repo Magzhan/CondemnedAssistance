@@ -23,6 +23,7 @@ namespace CondemnedAssistance.Services.Resources {
             int[] currentChildren = registerHelper.GetRegisterChildren(new int[] { }, Convert.ToInt32(context.User.FindFirst(c => c.Type == "RegisterId").Value));
 
             int registerId = Convert.ToInt32(context.User.FindFirst(c => c.Type == "RegisterId").Value);
+            int registerLevelId = Convert.ToInt32(context.User.FindFirst(c => c.Type == "RegisterLevelId").Value);
 
             List<int> tempRegisters = new List<int> { registerId };
             tempRegisters.AddRange(currentChildren);
@@ -46,21 +47,17 @@ namespace CondemnedAssistance.Services.Resources {
             if (resource.ContainsKey("levelId")) {
                 int requestedRegisterLevel = resource["levelId"];
 
-                switch (Convert.ToInt32(context.User.FindFirst(c => c.Type == "RegisterLevelId").Value)) {
-                    case 1:
-                        if (requestedRegisterLevel == 1) {
-                            context.Fail();
-                        } 
-                        break;
-                    case 2:
-                        if (requestedRegisterLevel < 3) {
-                            context.Fail();
-                        }
-                        break;
-                    case 3:
-                    default:
-                        context.Fail();
-                        break;
+                int[] registerLevelChildren = registerHelper.GetRegisterLevelChildren(new int[] { }, registerLevelId);
+
+                if(_db.RegisterLevels.Single(r => r.Id == requestedRegisterLevel).IsFirstAncestor) {
+                    context.Fail();
+                }
+
+                if (registerLevelChildren.Contains(requestedRegisterLevel)) {
+                    context.Succeed(requirement);
+                }
+                else {
+                    context.Fail();
                 }
             }
 
@@ -74,10 +71,27 @@ namespace CondemnedAssistance.Services.Resources {
                 }
             }
 
+            if(resource.ContainsKey("parentId") && resource.ContainsKey("levelId")) {
+                int parentId = resource["parentId"];
+                int requestedRegisterLevel = resource["levelId"];
+
+                int parentRegisterLevelId = _db.Registers.Single(r => r.Id == parentId).RegisterLevelId;
+
+                if(_db.RegisterLevelHierarchies.Any(r => r.ParentLevel == parentRegisterLevelId & r.ChildLevel == requestedRegisterLevel)) {
+                    context.Succeed(requirement);
+                }
+                else {
+                    context.Fail();
+                }
+            }
+
             if (resource.ContainsKey("childId")) {
                 int childId = resource["childId"];
                 if (!currentChildren.Any(c => c == childId)) {
                     context.Fail();
+                }
+                else {
+                    context.Succeed(requirement);
                 }
             }
             
