@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace CondemnedAssistance.Controllers {
-    public class HomeController : Controller {
+    public class HomeController : Microsoft.AspNetCore.Mvc.Controller {
         [AllowAnonymous]
         public IActionResult Index() {
             return View();

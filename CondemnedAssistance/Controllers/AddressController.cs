@@ -1,7 +1,10 @@
 ﻿using CondemnedAssistance.Models;
+using CondemnedAssistance.Services.Security._Constants;
+using CondemnedAssistance.Services.Security.Address;
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,20 +15,31 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    [Authorize(Roles = "2, 3")]
-    public class AddressController : Controller{
+    //[Authorize(Roles = "2, 3")]
+    public class AddressController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
+        private readonly IAuthorizationService _authorizationService;
+        private int _controllerId;
 
-        public AddressController(UserContext context) {
+        public AddressController(UserContext context, IAuthorizationService authorizationService) {
             _db = context;
+            _authorizationService = authorizationService;
+            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Address.ToUpper()).Id;
         }
 
         [HttpGet]
-        public IActionResult Index() {
+        public async Task<IActionResult> Index() {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.Read);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             List<AddressModel> model = new List<AddressModel>();
-            _db.Addresses.ToList().ForEach(a => {
-                AddressLevel addressLevel = _db.AddressLevels.FirstOrDefault(l => l.Id ==a.AddressLevelId);
+            _db.Addresses.ToList().ForEach(async a => {
+                var addressLevel = await _db.AddressLevels.FirstOrDefaultAsync(l => l.Id ==a.AddressLevelId);
                 model.Add(new AddressModel {
                     Id = a.Id,
                     Name = a.Name,
@@ -40,7 +54,14 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult Create(int levelId, int parentId, int childId) {
+        public async Task<IActionResult> Create(int levelId, int parentId, int childId) {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.Create);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             AddressModel model = new AddressModel();
             Address parentAddress = _db.Addresses.FirstOrDefault(a => a.Id == parentId);
             List<AddressLevelModel> addressLevels = new List<AddressLevelModel>();
@@ -61,7 +82,14 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpPost]
-        public IActionResult Create(AddressModel model) {
+        public async Task<IActionResult> Create(AddressModel model) {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.Create);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             if (ModelState.IsValid) {
                 if(!_db.Addresses.Any(a => a.NormalizedName == model.Name.ToUpper())) {
                     Address address = new Address {

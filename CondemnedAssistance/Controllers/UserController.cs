@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CondemnedAssistance.Controllers
 {
     [Authorize(Roles = "2, 3")]
-    public class UserController : Controller {
+    public class UserController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
         private IAuthorizationService _authorizationService;

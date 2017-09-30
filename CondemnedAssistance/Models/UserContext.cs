@@ -37,6 +37,9 @@ namespace CondemnedAssistance.Models {
         public DbSet<SmsExchange> SmsExchanges { get; set; }
         public DbSet<Email> Emails { get; set; }
         public DbSet<EmailExchange> EmailExchanges { get; set; }
+        public DbSet<Controller> Controllers { get; set; }
+        public DbSet<Action> Actions { get; set; }
+        public DbSet<RoleAccess> RoleAccesses { get; set; }
 
         public DbSet<UserHistory> UserHistory { get; set; }
         public DbSet<UserStaticInfoHistory> UserStaticInfoHistory { get; set; }

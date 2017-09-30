@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
     [Authorize(Roles = "2,3")]
-    public class ProfessionController : Controller{
+    public class ProfessionController : Microsoft.AspNetCore.Mvc.Controller
+    {
 
         private UserContext _db;
 

@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
     [Authorize(Roles="3")]
-    public class VacancyController : Controller{
+    public class VacancyController : Microsoft.AspNetCore.Mvc.Controller
+    {
         
     }
 }

@@ -77,6 +77,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Services\Security\Education\" />
+    <Folder Include="Services\Security\Email\" />
+    <Folder Include="Services\Security\Event\" />
+    <Folder Include="Services\Security\Help\" />
+    <Folder Include="Services\Security\Message\" />
+    <Folder Include="Services\Security\Profession\" />
+    <Folder Include="Services\Security\Role\" />
+    <Folder Include="Services\Security\Sms\" />
+    <Folder Include="Services\Security\User\" />
+    <Folder Include="Services\Security\Vacancy\" />
     <Folder Include="Views\Vacancy\" />
   </ItemGroup>
 

@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    public class AccountController : Controller {
+    public class AccountController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
         private RegisterHelper registerHelper;
@@ -99,14 +99,14 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        [Authorize(Roles = "3, 2")]
+        [Authorize(Roles = "3")]
         public IActionResult Register() {
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "3, 2")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> Register(RegistrationModel model) {
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login);

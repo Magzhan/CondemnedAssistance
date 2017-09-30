@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
     [Authorize(Roles = "2, 3")]
-    public class EducationController : Controller{
+    public class EducationController : Microsoft.AspNetCore.Mvc.Controller
+    {
 
         [HttpGet]
         public IActionResult Index() {

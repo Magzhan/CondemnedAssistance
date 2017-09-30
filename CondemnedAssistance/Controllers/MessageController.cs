@@ -10,7 +10,7 @@ using System.Net.WebSockets;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    public class MessageController : Controller {
+    public class MessageController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
         private RegisterHelper registerHelper;

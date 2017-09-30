@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
     [Authorize(Roles = "2, 3")]
-    public class RegisterController : Controller {
+    public class RegisterController : Microsoft.AspNetCore.Mvc.Controller {
         private UserContext _db;
         private IAuthorizationService _authorizationService;
         private RegisterHelper _registerHelper;

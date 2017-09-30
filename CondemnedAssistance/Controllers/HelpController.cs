@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
     [Authorize(Roles = "3")]
-    public class HelpController : Controller {
+    public class HelpController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
         private LinkHelper linkHelper;

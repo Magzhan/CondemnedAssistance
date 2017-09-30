@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
     [Authorize(Roles = "3")]
-    public class SmsController : Controller{
+    public class SmsController : Microsoft.AspNetCore.Mvc.Controller
+    {
 
         public IActionResult Index() {
             return View();

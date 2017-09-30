@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace CondemnedAssistance.Controllers {
     [Authorize(Roles = "3")]
-    public class UserStatusController : Controller {
+    public class UserStatusController : Microsoft.AspNetCore.Mvc.Controller {
         private UserContext _db;
 
         public UserStatusController(UserContext context) {

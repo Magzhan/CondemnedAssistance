@@ -16,6 +16,10 @@ using CondemnedAssistance.Hubs;
 using CondemnedAssistance.Services.Sms;
 using CondemnedAssistance.Services.IService;
 using CondemnedAssistance.Services.Email;
+using CondemnedAssistance.Services.Security._Constants;
+using CondemnedAssistance.Services.Security.Address;
+using CondemnedAssistance.Services.Security.RoleAuthorization;
+using System.Linq;
 
 namespace CondemnedAssistance {
     public class Startup {
@@ -60,6 +64,8 @@ namespace CondemnedAssistance {
 
             services.AddTransient<IMessageSender, SmsSender>();
             //services.AddTransient<IMessageSender, EmailSender>();
+
+            services.AddSingleton<IAuthorizationHandler, RoleAuthorizationHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -105,6 +111,35 @@ namespace CondemnedAssistance {
         }
 
         private static async Task AddData(UserContext context) {
+            if(!await context.Controllers.AnyAsync()) {
+                await context.Controllers.AddRangeAsync(
+                    new Controller { Name = Constants.Address, NormalizedName = Constants.Address.ToUpper(), Description = "Address Controller", RequestDate = DateTime.Now, RequestUser = -1 }
+                );
+
+                await context.SaveChangesAsync();
+            }
+
+            if(!await context.Actions.AnyAsync()) {
+                int controllerId =  context.Controllers.Single(c => c.NormalizedName == Constants.Address.ToUpper()).Id;
+                await context.Actions.AddRangeAsync(
+                    new Models.Action { Name = AddressOperations.Create.Name, NormalizedName = AddressOperations.Create.Name, Description = "Address Controller, Create Action", ControllerId = controllerId, RequestDate = DateTime.Now, RequestUser = -1 },
+                    new Models.Action { Name = AddressOperations.Read.Name, NormalizedName = AddressOperations.Read.Name, Description = "Address Controller, Read Action", ControllerId = controllerId, RequestDate = DateTime.Now, RequestUser = -1 },
+                    new Models.Action { Name = AddressOperations.Update.Name, NormalizedName = AddressOperations.Update.Name, Description = "Address Controller, Update Action", ControllerId = controllerId, RequestDate = DateTime.Now, RequestUser = -1 },
+                    new Models.Action { Name = AddressOperations.Delete.Name, NormalizedName = AddressOperations.Delete.Name, Description = "Address Controller, Delete Action", ControllerId = controllerId, RequestDate = DateTime.Now, RequestUser = -1 }
+                );
+
+                await context.SaveChangesAsync();
+            }
+
+            if(!await context.RoleAccesses.AnyAsync()) {
+                int controllerId = context.Controllers.Single(c => c.NormalizedName == Constants.Address.ToUpper()).Id;
+                int actionId = context.Actions.Single(a => a.NormalizedName == AddressOperations.Create.Name & a.ControllerId == controllerId).Id;
+                int roleId = 3;
+                await context.RoleAccesses.AddRangeAsync(
+                    new RoleAccess { RoleId = roleId, ControllerId = controllerId, ActionId = actionId, RequestDate = DateTime.Now, RequestUser = -1}
+                );
+            }
+
             if (!await context.AddressLevels.AnyAsync()) {
                 await context.AddressLevels.AddRangeAsync(
                     new AddressLevel { Name = "Республика", NormalizedName = "Республика".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1 },

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
     [Authorize(Roles = "3")]
-    public class RoleController : Controller {
+    public class RoleController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
 
