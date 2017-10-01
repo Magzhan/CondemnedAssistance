@@ -6,9 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    [Authorize(Roles = "3")]
-    public class EmailController : Microsoft.AspNetCore.Mvc.Controller
-    {
+    public class EmailController : Microsoft.AspNetCore.Mvc.Controller {
 
         public IActionResult Index() {
             //TO DO

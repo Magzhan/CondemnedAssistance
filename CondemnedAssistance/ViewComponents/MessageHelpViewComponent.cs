@@ -1,5 +1,6 @@
 ﻿using CondemnedAssistance.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace CondemnedAssistance.ViewComponents {
         public async Task<IViewComponentResult> InvokeAsync() {
             if (User.IsInRole("2"))
                 return View("Empty");
-            return View(_db.Helps.ToList());
+            return View(await _db.Helps.ToListAsync());
         }
 
     }

@@ -11,38 +11,15 @@ using System;
 namespace CondemnedAssistance.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20171001130025_DropAccessTables")]
+    partial class DropAccessTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.0.0-rtm-26452")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("CondemnedAssistance.Models.Action", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ControllerId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("NormalizedName");
-
-                    b.Property<DateTime>("RequestDate");
-
-                    b.Property<int>("RequestUser");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ControllerId");
-
-                    b.ToTable("Actions");
-                });
 
             modelBuilder.Entity("CondemnedAssistance.Models.Address", b =>
                 {
@@ -100,26 +77,6 @@ namespace CondemnedAssistance.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AddressLevels");
-                });
-
-            modelBuilder.Entity("CondemnedAssistance.Models.Controller", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("NormalizedName");
-
-                    b.Property<DateTime>("RequestDate");
-
-                    b.Property<int>("RequestUser");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Controllers");
                 });
 
             modelBuilder.Entity("CondemnedAssistance.Models.Education", b =>
@@ -466,32 +423,6 @@ namespace CondemnedAssistance.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("CondemnedAssistance.Models.RoleAccess", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("ActionId");
-
-                    b.Property<int>("ControllerId");
-
-                    b.Property<DateTime>("RequestDate");
-
-                    b.Property<int>("RequestUser");
-
-                    b.Property<int>("RoleId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ActionId");
-
-                    b.HasIndex("ControllerId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("RoleAccesses");
                 });
 
             modelBuilder.Entity("CondemnedAssistance.Models.Sms", b =>
@@ -1058,14 +989,6 @@ namespace CondemnedAssistance.Migrations
                     b.ToTable("VacancyProfessions");
                 });
 
-            modelBuilder.Entity("CondemnedAssistance.Models.Action", b =>
-                {
-                    b.HasOne("CondemnedAssistance.Models.Controller", "Controller")
-                        .WithMany()
-                        .HasForeignKey("ControllerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("CondemnedAssistance.Models.Address", b =>
                 {
                     b.HasOne("CondemnedAssistance.Models.AddressLevel", "AddressLevel")
@@ -1144,24 +1067,6 @@ namespace CondemnedAssistance.Migrations
                     b.HasOne("CondemnedAssistance.Models.RegisterLevel", "RegisterLevel")
                         .WithMany()
                         .HasForeignKey("RegisterLevelId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("CondemnedAssistance.Models.RoleAccess", b =>
-                {
-                    b.HasOne("CondemnedAssistance.Models.Action", "Action")
-                        .WithMany()
-                        .HasForeignKey("ActionId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CondemnedAssistance.Models.Controller", "Controller")
-                        .WithMany()
-                        .HasForeignKey("ControllerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CondemnedAssistance.Models.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -229,13 +229,15 @@ namespace CondemnedAssistance {
                 await context.SaveChangesAsync();
             }
 
-            if(!await context.RoleAccesses.AnyAsync()) {
-                int controllerId = context.Controllers.Single(c => c.NormalizedName == Constants.Address.ToUpper()).Id;
-                int actionId = context.Actions.Single(a => a.NormalizedName == AddressOperations.Create.Name & a.ControllerId == controllerId).Id;
+            if (!await context.RoleAccesses.AnyAsync()) {
                 int roleId = 3;
-                await context.RoleAccesses.AddRangeAsync(
-                    new RoleAccess { RoleId = roleId, ControllerId = controllerId, ActionId = actionId, RequestDate = DateTime.Now, RequestUser = -1}
-                );
+                foreach(Controller c in context.Controllers.ToList()) {
+                    foreach(Models.Action a in context.Actions.Where(action => action.ControllerId == c.Id).ToList()) {
+                        await context.RoleAccesses.AddRangeAsync(
+                            new RoleAccess { RoleId = roleId, ControllerId = c.Id, ActionId = a.Id, RequestDate = DateTime.Now, RequestUser = -1}
+                        );
+                    }
+                }
             }
 
             if (!await context.AddressLevels.AnyAsync()) {
@@ -287,6 +289,69 @@ namespace CondemnedAssistance {
                     new Role { Name = "Администратор", NormalizedName = "Администратор".ToUpper(), Description = "3", RequestDate = DateTime.Now, RequestUser = -1 }
                 );
                 await context.SaveChangesAsync();
+            }
+
+            if (!await context.Users.AnyAsync()) {
+                User system = new User {
+                    Email = "test@probaciya.kz",
+                    EmailConfirmed = false,
+                    Login = "000000000000",
+                    PasswordHash = "qwerty",
+                    NormalizedEmail = "test@probaciya.kz".ToUpper(),
+                    PhoneNumber = "000000",
+                    PhoneNumberConfirmed = false,
+                    AccessFailedCount = 0,
+                    RequestDate = DateTime.Now,
+                    RequestUser = -1
+                };
+                User admin1 = new User {
+                    Email = "magzhan_alter@mail.ru",
+                    EmailConfirmed = false,
+                    Login = "931023350276",
+                    PasswordHash = "qwerty",
+                    NormalizedEmail = "magzhan_alter@mail.ru".ToUpper(),
+                    PhoneNumber = "87077524956",
+                    PhoneNumberConfirmed = false,
+                    AccessFailedCount = 0,
+                    RequestDate = DateTime.Now,
+                    RequestUser = -1
+                };
+                UserStaticInfo admin1info = new UserStaticInfo {
+                    Birthdate = new DateTime(1993, 10, 23),
+                    FirstName = "Magzhan",
+                    Gender = true, // Male
+                    LastName = "Yelshibayev",
+                    MainAddress = "Uly Dala 29",
+                    MiddleName = "Kayratuli",
+                    RequestDate = DateTime.Now,
+                    RequestUser = -1,
+                    Xin = "931023350276",
+                    UserStatusId = 1,
+                    UserTypeId = 1
+                };
+                UserRole admin1role = new UserRole {
+                    RoleId = 3,
+                    UserId = 2,
+                    RequestDate = DateTime.Now,
+                    RequestUser = -1
+                };
+                UserRegister admin1register = new UserRegister {
+                    UserId = 2,
+                    RegisterId = 1,
+                    RequestUser = -1,
+                    RequestDate = DateTime.Now
+                };
+                await context.Users.AddRangeAsync(
+                    system, admin1
+                );
+                await context.SaveChangesAsync();
+
+                admin1info.UserId = admin1.Id;
+                await context.UserStaticInfo.AddAsync(admin1info);
+                admin1role.UserId = admin1.Id;
+                await context.UserRoles.AddAsync(admin1role);
+                admin1register.UserId = admin1.Id;
+                await context.UserRegisters.AddAsync(admin1register);
             }
             await context.SaveChangesAsync();
         }

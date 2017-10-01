@@ -10,11 +10,14 @@ namespace CondemnedAssistance.Services.WebSockets {
     public abstract class WebSocketHandler {
         protected WebSocketConnectionManager WebSocketConnectionManager { get; set; }
 
+        private async Task doSomething() => await Task.Delay(1).ConfigureAwait(true);
+
         public WebSocketHandler(WebSocketConnectionManager webSocketConnectionManager) {
             WebSocketConnectionManager = webSocketConnectionManager;
         }
 
         public virtual async Task OnConnected(int id, int registerId, int roleId, WebSocket socket) {
+            await doSomething();
             WebSocketConnectionManager.AddSocket(id, new WebSocketResources { Socket = socket, RegisterId = registerId, RoleId = roleId });
         }
 

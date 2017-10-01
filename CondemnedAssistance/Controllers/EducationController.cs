@@ -6,9 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    [Authorize(Roles = "2, 3")]
-    public class EducationController : Microsoft.AspNetCore.Mvc.Controller
-    {
+    public class EducationController : Microsoft.AspNetCore.Mvc.Controller {
 
         [HttpGet]
         public IActionResult Index() {
