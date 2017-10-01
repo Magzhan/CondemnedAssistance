@@ -1,4 +1,6 @@
 ﻿using CondemnedAssistance.Models;
+using CondemnedAssistance.Services.Security._Constants;
+using CondemnedAssistance.Services.Security.Role;
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,17 +11,25 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    [Authorize(Roles = "3")]
     public class RoleController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
+        private IAuthorizationService _authorizationService;
+        private int _controllerId;
 
-        public RoleController(UserContext context) {
+        public RoleController(UserContext context, IAuthorizationService authorizationService) {
             this._db = context;
+            _authorizationService = authorizationService;
+            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Role.ToUpper()).Id;
         }
 
         [HttpGet]
-        public IActionResult Index() {
+        public async Task<IActionResult> Index() {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RoleOperations.Read);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             ICollection<RoleModel> roles = new List<RoleModel>();
             
             foreach(var role in _db.Roles) {
@@ -33,13 +43,23 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult Create() {
+        public async Task<IActionResult> Create() {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RoleOperations.Create);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RoleModel model) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RoleOperations.Create);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             if (ModelState.IsValid) {
                 Role role = await _db.Roles.FirstOrDefaultAsync(r => r.Name == model.Name);
                 if (role == null) {
@@ -60,7 +80,12 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult Update(int id) {
+        public async Task<IActionResult> Update(int id) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RoleOperations.Update);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Role role = _db.Roles.FirstOrDefault(r => r.Id == id);
             
             if (role == null) {
@@ -78,6 +103,11 @@ namespace CondemnedAssistance.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(RoleModel model) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RoleOperations.Update);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             if (ModelState.IsValid) {
                 Role role = await _db.Roles.FirstOrDefaultAsync(r => r.Id == model.Id);
                 if (role != null) {
@@ -100,6 +130,11 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RoleOperations.Delete);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Role role = await _db.Roles.FirstOrDefaultAsync(r => r.Id == id);
             _db.Roles.Remove(role);
             await _db.SaveChangesAsync();

@@ -15,7 +15,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    //[Authorize(Roles = "2, 3")]
     public class AddressController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
@@ -120,7 +119,15 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult Update(int id) {
+        public async Task<IActionResult> Update(int id) {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.Update);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
+
             if (_db.Addresses.Any(a => a.Id == id)) {
                 Address address = _db.Addresses.First(a => a.Id == id);
                 Address addressParent = null;
@@ -145,7 +152,14 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpPost]
-        public IActionResult Update(int id, AddressModel model) {
+        public async Task<IActionResult> Update(int id, AddressModel model) {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.Update);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             if (ModelState.IsValid) {
                 if (!_db.Addresses.Any(a => a.Id != id && a.NormalizedName == model.Name.ToUpper())) {
                     Address address = _db.Addresses.FirstOrDefault(a => a.Id == id);
@@ -168,7 +182,14 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult Delete(int id) {
+        public async Task<IActionResult> Delete(int id) {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.Delete);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             if(_db.UserAddresses.Any(a => a.AddressId == id)) {
                 ModelState.AddModelError("", "Has users so cannot be deleted");
                 return RedirectToAction("Index");
@@ -189,7 +210,14 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult AddressLevels() {
+        public async Task<IActionResult> AddressLevels() {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.AddressLevels);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             List<AddressLevelModel> models = new List<AddressLevelModel>();
             foreach(AddressLevel addressLevel in _db.AddressLevels.ToList()) {
                 models.Add(new AddressLevelModel {
@@ -202,12 +230,23 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult CreateLevel() {
+        public async Task<IActionResult> CreateLevel() {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.AddressLevels);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             return View();
         }
 
         [HttpPost]
-        public IActionResult CreateLevel(AddressLevelModel model) {
+        public async Task<IActionResult> CreateLevel(AddressLevelModel model) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.CreateLevel);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             if (ModelState.IsValid) {
                 if(!_db.AddressLevels.Any(ad => ad.NormalizedName == model.Name.ToUpper())) {
                     AddressLevel addressLevel = new AddressLevel {
@@ -227,7 +266,12 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult UpdateLevel(int id) {
+        public async Task<IActionResult> UpdateLevel(int id) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.UpdateLevel);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             if(_db.AddressLevels.Any(ad => ad.Id == id)) {
                 AddressLevel addressLevel = _db.AddressLevels.First(a => a.Id == id);
                 AddressLevelModel model = new AddressLevelModel {
@@ -241,7 +285,12 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpPost]
-        public IActionResult UpdateLevel(int id, AddressLevelModel model) {
+        public async Task<IActionResult> UpdateLevel(int id, AddressLevelModel model) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.UpdateLevel);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             if (ModelState.IsValid) {
                 if (_db.AddressLevels.Any(a => a.Id == id)) {
                     AddressLevel addressLevel = _db.AddressLevels.First(a => a.Id == id);
@@ -261,7 +310,12 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult DeleteLevel(int id) {
+        public async Task<IActionResult> DeleteLevel(int id) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.DeleteLevel);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             if (_db.Addresses.Any(a => a.AddressLevelId == id)) {
                 ModelState.AddModelError("", "It still has binded elements");
                 return RedirectToAction("AddressLevels");
@@ -272,7 +326,13 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult GetAddressList(int addressId) {            
+        public async Task<IActionResult> GetAddressList(int addressId) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, AddressOperations.GetAddressList);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             int[] childrenIds = _db.AddressHierarchies.Where(a => a.ParentAddressId == addressId).Select(a => a.ChildAddressId).ToArray();
             AddressModel[] children = _db.Addresses.Where(a => childrenIds.Contains(a.Id)).Select(a => new AddressModel { Id = a.Id, Name = a.Name, Description = a.Description }).ToArray();            
             return PartialView("_DropDownList", children);

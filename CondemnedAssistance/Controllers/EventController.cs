@@ -1,5 +1,7 @@
 ﻿using CondemnedAssistance.Helpers;
 using CondemnedAssistance.Models;
+using CondemnedAssistance.Services.Security._Constants;
+using CondemnedAssistance.Services.Security.Event;
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,21 +12,28 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    [Authorize(Roles = "2,3")]
     public class EventController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
         private IAuthorizationService _authService;
         private LinkHelper linkHelper;
+        private int _controllerId;
 
         public EventController(UserContext context, IAuthorizationService authService) {
             _db = context;
             _authService = authService;
             linkHelper = new LinkHelper(context, "userEdit");
+            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Event.ToUpper()).Id;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(int userId) {
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.Read);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             Dictionary<string, int> actions = new Dictionary<string, int> {
                 { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
             };
@@ -94,6 +103,12 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Create(int userId) {
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.Create);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             Dictionary<string, int> actions = new Dictionary<string, int> {
                 { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
             };
@@ -145,6 +160,12 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> Create(int userId, EventCreateModel model) {
+
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.Create);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
 
             Dictionary<string, int> actions = new Dictionary<string, int> {
                 { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
@@ -253,6 +274,13 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Update(int id){
+
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.Update);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             int userId = _db.UserEvents.Single(e => e.EventId == id).UserId;
             Dictionary<string, int> actions = new Dictionary<string, int> {
                 { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
@@ -313,6 +341,13 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> Update(int id, EventCreateModel model) {
+
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.Update);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             int userId = _db.UserEvents.Single(e => e.EventId == id).UserId;
             Dictionary<string, int> actions = new Dictionary<string, int> {
                 { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
@@ -413,6 +448,13 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id) {
+
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.Delete);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             int userId = _db.UserEvents.Single(e => e.EventId == id).UserId;
             Dictionary<string, int> actions = new Dictionary<string, int> {
                 { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
@@ -460,18 +502,38 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult EventStatuses() {
+        public async Task<IActionResult> EventStatuses() {
+
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.EventStatuses);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             List<EventStatus> model = _db.EventStatuses.ToList();
             return View(model);
         }
 
         [HttpGet]
-        public IActionResult CreateStatus() {
+        public async Task<IActionResult> CreateStatus() {
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.CreateStatus);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             return View();
         }
 
         [HttpPost]
-        public IActionResult CreateStatus(EventStatus model) {
+        public async Task<IActionResult> CreateStatus(EventStatus model) {
+
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.CreateStatus);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             if (ModelState.IsValid) {
                 if (!_db.EventStatuses.Any(s => s.NormalizedName == model.Name.ToUpper())) {
                     _db.EventStatuses.Add(new EventStatus {
@@ -491,13 +553,27 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult UpdateStatus(int id){
+        public async Task<IActionResult> UpdateStatus(int id){
+
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.UpdateStatus);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             EventStatus model = _db.EventStatuses.Single(s => s.Id == id);
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult UpdateStatus(int id, EventStatus model) {
+        public async Task<IActionResult> UpdateStatus(int id, EventStatus model) {
+
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.UpdateStatus);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             if (ModelState.IsValid) {
                 if (!_db.EventStatuses.Any(s => s.Id != id && s.NormalizedName == model.Name.ToUpper())) {
                     model.RequestDate = DateTime.Now;
@@ -514,7 +590,14 @@ namespace CondemnedAssistance.Controllers {
         }
 
         [HttpGet]
-        public IActionResult DeleteStatus(int id) {
+        public async Task<IActionResult> DeleteStatus(int id) {
+
+            AuthorizationResult result = await _authService.AuthorizeAsync(User, _controllerId, EventOperations.DeleteStatus);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             if(!_db.Events.Any(e => e.EventStatusId == id)) {
                 EventStatus model = _db.EventStatuses.Single(e => e.Id == id);
                 _db.EventStatuses.Remove(model);

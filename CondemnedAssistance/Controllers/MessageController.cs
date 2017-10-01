@@ -1,7 +1,10 @@
 ﻿using CondemnedAssistance.Helpers;
 using CondemnedAssistance.Hubs;
 using CondemnedAssistance.Models;
+using CondemnedAssistance.Services.Security._Constants;
+using CondemnedAssistance.Services.Security.Message;
 using CondemnedAssistance.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -15,21 +18,36 @@ namespace CondemnedAssistance.Controllers {
         private UserContext _db;
         private RegisterHelper registerHelper;
         private WebSocketMessageHandler _webScoketMessageHandler;
+        private IAuthorizationService _authorizationService;
+        private int _controllerId;
 
-        public MessageController(UserContext context, WebSocketMessageHandler webSocketMessageHandler) {
+        public MessageController(UserContext context, WebSocketMessageHandler webSocketMessageHandler, IAuthorizationService authorizationService) {
             _db = context;
             registerHelper = new RegisterHelper(context);
             _webScoketMessageHandler = webSocketMessageHandler;
+            _authorizationService = authorizationService;
+            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Message).Id;
         }
 
         [HttpGet]
-        public IActionResult Index(){
+        public async Task<IActionResult> Index(){
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, MessageOperations.Read);
 
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             return View("Messages");
         }
 
         [HttpGet]
-        public IActionResult LoadUsers(int helpId = 0) {
+        public async Task<IActionResult> LoadUsers(int helpId = 0) {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, MessageOperations.LoadUsers);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             int[] currUserRegisterIds = registerHelper.GetRegisterChildren(new int[] { }, Convert.ToInt32(User.FindFirst(c => c.Type == "RegisterId").Value));
             List<int> tempRegisters = new List<int>() { Convert.ToInt32(User.FindFirst(c => c.Type == "RegisterId").Value) };
             tempRegisters.AddRange(currUserRegisterIds);
@@ -72,7 +90,14 @@ namespace CondemnedAssistance.Controllers {
             return PartialView(model);
         }
 
-        public IActionResult LoadMessages(int receiverId) {
+        [HttpGet]
+        public async Task<IActionResult> LoadMessages(int receiverId) {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, MessageOperations.LoadMessages);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
 
             int currUserId = Convert.ToInt32(HttpContext.User.Identity.Name);
 
@@ -88,6 +113,12 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task Send(int receiverId, int registerId, int roleId, [FromQueryAttribute] string message, int helpId = 1) {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, MessageOperations.Send);
+
+            if (!result.Succeeded) {
+                new ChallengeResult();
+            }
 
             WebSocket socket = _webScoketMessageHandler.GetCurrentUserSocket(receiverId);
 

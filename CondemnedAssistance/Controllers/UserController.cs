@@ -1,5 +1,7 @@
 ﻿using CondemnedAssistance.Helpers;
 using CondemnedAssistance.Models;
+using CondemnedAssistance.Services.Security._Constants;
+using CondemnedAssistance.Services.Security.User;
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,25 +10,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CondemnedAssistance.Controllers
-{
-    [Authorize(Roles = "2, 3")]
+namespace CondemnedAssistance.Controllers {
     public class UserController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
         private IAuthorizationService _authorizationService;
         private RegisterHelper registerHelper;
         private LinkHelper linkHelper;
+        private int _controllerId;
 
         public UserController(UserContext context, IAuthorizationService authorizationService) {
             this._db = context;
             this._authorizationService = authorizationService;
             this.registerHelper = new RegisterHelper(context);
             this.linkHelper = new LinkHelper(context, "userEdit");
+            this._controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.User).Id;
         }
 
         [HttpGet]
-        public IActionResult Index() {
+        public async Task<IActionResult> Index() {
+
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, UserOperations.Read);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             ICollection<User> users = new List<User>();
             ICollection<UserProfileModel> model = new List<UserProfileModel>();
             if (User.IsInRole("3")) {
@@ -44,13 +53,6 @@ namespace CondemnedAssistance.Controllers
                 int[] allowedUsersList = usersWithAllowedRegisters.Intersect(usersWithAllowedRoles).ToArray();
 
                 users = _db.Users.Where(u => allowedUsersList.Contains(u.Id)).ToList();
-
-                //users = (from u in _db.Users
-                //         join ur in _db.UserRoles on u.Id equals ur.UserId into j
-                //         from user in j.DefaultIfEmpty()
-                //         where user.RoleId != 3 || user == null
-                //         orderby u.Id descending
-                //         select u).ToList();
             }
             foreach (User user in users) {
                 UserStaticInfo info = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == user.Id);
@@ -81,7 +83,12 @@ namespace CondemnedAssistance.Controllers
         }
 
         [HttpGet]
-        public IActionResult View(int id) {
+        public async Task<IActionResult> View(int id) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, UserOperations.Read);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             User user = _db.Users.FirstOrDefault(u => u.Id == id);
             UserStaticInfo userStaticInfo = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == id);
             UserRole myRole = _db.UserRoles.FirstOrDefault(u => u.UserId == id);
@@ -114,7 +121,12 @@ namespace CondemnedAssistance.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create() {
+        public async Task<IActionResult> Create() {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, UserOperations.Create);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             UserModelCreate model = new UserModelCreate();
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
@@ -128,6 +140,11 @@ namespace CondemnedAssistance.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Create(UserModelCreate model) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, UserOperations.Create);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Dictionary<string, int> actions = new Dictionary<string, int> {
                 { "roleId", model.RoleId },
                 { "childId", model.UserRegisterId }
@@ -158,7 +175,11 @@ namespace CondemnedAssistance.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Update(int id) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, UserOperations.Update);
 
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Dictionary<string, int> actions = new Dictionary<string, int>();
             if(_db.UserRoles.Any(u => u.UserId == id)) {
                 actions.Add("roleId", _db.UserRoles.First(u => u.UserId == id).RoleId);
@@ -220,7 +241,11 @@ namespace CondemnedAssistance.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Update(int id, UserModelCreate model) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, UserOperations.Update);
 
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Dictionary<string, int> actions = new Dictionary<string, int>();
             if (_db.UserRoles.Any(u => u.UserId == id)) {
                 actions.Add("roleId", _db.UserRoles.First(u => u.UserId == id).RoleId);
@@ -289,6 +314,11 @@ namespace CondemnedAssistance.Controllers
 
         [HttpGet]
         public async Task<IActionResult> History(int userId) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, UserOperations.History);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Dictionary<string, int> actions = new Dictionary<string, int>();
             if (_db.UserRoles.Any(u => u.UserId == userId))  actions.Add("roleId", _db.UserRoles.First(u => u.UserId == userId).RoleId); 
 
@@ -339,6 +369,11 @@ namespace CondemnedAssistance.Controllers
 
         [HttpGet]
         public async Task<IActionResult> HistoryDetail(long transactionId, int userId) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, UserOperations.HistoryDetail);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Dictionary<string, int> actions = new Dictionary<string, int>();
             if (_db.UserRoles.Any(u => u.UserId == userId)) actions.Add("roleId", _db.UserRoles.First(u => u.UserId == userId).RoleId);
 

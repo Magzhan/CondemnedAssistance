@@ -1,5 +1,7 @@
 ﻿using CondemnedAssistance.Helpers;
 using CondemnedAssistance.Models;
+using CondemnedAssistance.Services.Security._Constants;
+using CondemnedAssistance.Services.Security.Register;
 using CondemnedAssistance.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,20 +11,26 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    [Authorize(Roles = "2, 3")]
     public class RegisterController : Microsoft.AspNetCore.Mvc.Controller {
         private UserContext _db;
         private IAuthorizationService _authorizationService;
         private RegisterHelper _registerHelper;
+        private int _controllerId;
 
         public RegisterController(UserContext context, IAuthorizationService authorizationService) {
             _db = context;
             _authorizationService = authorizationService;
             _registerHelper = new RegisterHelper(context);
+            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Register.ToUpper()).Id;
         }
 
         [HttpGet]
-        public IActionResult Index() {
+        public async Task<IActionResult> Index() {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.Read);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             List<RegisterModel> registers = new List<RegisterModel>();
             if (User.IsInRole("3")) {
                 _db.Registers.ToList().ForEach(r => {
@@ -64,6 +72,12 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Create(int levelId, int parentId) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.Create);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
+
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", levelId);
             registerActions.Add("parentId", parentId);
@@ -97,6 +111,11 @@ namespace CondemnedAssistance.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RegisterModel model) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.Create);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", model.RegisterLevelId);
             registerActions.Add("parentId", model.RegisterParentId);
@@ -138,6 +157,11 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Update(int id) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.Update);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
             RegisterHierarchy registerHierarchy = _db.RegisterHierarchies.FirstOrDefault(r => r.ChildRegister == id);
             Register registerParent = null;
@@ -172,6 +196,11 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> Update(int id, RegisterModel model) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.Update);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
             registerActions.Add("levelId", model.RegisterLevelId);
@@ -203,6 +232,11 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.Delete);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             Register register = _db.Registers.FirstOrDefault(r => r.Id == id);
 
             Dictionary<string, int> registerActions = new Dictionary<string, int>();
@@ -232,9 +266,13 @@ namespace CondemnedAssistance.Controllers {
             return RedirectToAction("Index", "Register");
         }
 
-        [Authorize(Roles = "3")]
         [HttpGet]
-        public IActionResult RegisterLevels() {
+        public async Task<IActionResult> RegisterLevels() {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.RegisterLevels);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             List<RegisterLevelModel> registerLevels = new List<RegisterLevelModel>();
             foreach(var r in _db.RegisterLevels.ToList()) {
                 registerLevels.Add(new RegisterLevelModel {
@@ -246,9 +284,13 @@ namespace CondemnedAssistance.Controllers {
             return View(registerLevels);
         }
 
-        [Authorize(Roles = "3")]
         [HttpGet]
-        public IActionResult CreateRegisterLevel(int parentId = 0) {
+        public async Task<IActionResult> CreateRegisterLevel(int parentId = 0) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.CreateLevel);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             RegisterLevelModel model = new RegisterLevelModel {
                 IsFirstAncestor = parentId == 0 ? true:false,
                 ParentLevelId = parentId
@@ -259,9 +301,13 @@ namespace CondemnedAssistance.Controllers {
             return View(model);
         }
 
-        [Authorize(Roles = "3")]
         [HttpPost]
-        public IActionResult CreateRegisterLevel(RegisterLevelModel model) {
+        public async Task<IActionResult> CreateRegisterLevel(RegisterLevelModel model) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.CreateLevel);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             if (ModelState.IsValid) {
                 RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.NormalizedName.Equals(model.Name.ToUpper()));
                 if (registerLevel == null) {
@@ -296,9 +342,13 @@ namespace CondemnedAssistance.Controllers {
             return  View(model);
         }
 
-        [Authorize(Roles = "3")]
         [HttpGet]
-        public IActionResult UpdateRegisterLevel(int id) {
+        public async Task<IActionResult> UpdateRegisterLevel(int id) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.UpdateLevel);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.Id == id);
             RegisterLevelModel model = null;
             if (registerLevel != null){
@@ -321,9 +371,13 @@ namespace CondemnedAssistance.Controllers {
             return View(model);
         }
 
-        [Authorize(Roles = "3")]
         [HttpPost]
-        public IActionResult UpdateRegisterLevel(int id, RegisterLevelModel model) {
+        public async Task<IActionResult> UpdateRegisterLevel(int id, RegisterLevelModel model) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.UpdateLevel);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             if (ModelState.IsValid) {
                 RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.Id == id);
                 if (registerLevel != null) {
@@ -346,9 +400,13 @@ namespace CondemnedAssistance.Controllers {
             return View(model);
         }
 
-        [Authorize(Roles = "3")]
         [HttpGet]
-        public IActionResult DeleteRegisterLevel(int id) {
+        public async Task<IActionResult> DeleteRegisterLevel(int id) {
+            AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RegisterOperations.DeleteLevel);
+
+            if (!result.Succeeded) {
+                return new ChallengeResult();
+            }
             if (_db.Registers.Count(r => r.RegisterLevelId == id) > 0 || _db.RegisterLevelHierarchies.Any(r => r.ParentLevel == id)) {
                 ModelState.AddModelError("", "It still has binded elements");
                 return RedirectToAction("RegisterLevels", "Register");
