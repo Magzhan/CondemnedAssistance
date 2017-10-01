@@ -1,1 +1,7 @@
-﻿
+﻿.sidebar {
+    border: 1px solid lightgrey;
+    margin-bottom: 5%;
+    font-family: "Bitter",serif;
+    line-height: 1.8;
+    background-color: lightblue;
+}

@@ -34,16 +34,21 @@
     connect();
 </script>
 <div id="main-message-container">
-    <div id="help-container"> @await Component.InvokeAsync("MessageHelp")</div>
-    <div id="receiver-container"></div>
-    <div id="message-exchange-container">
-        <div id="message-container-dialog"></div>
-        <input type="hidden" id="selected-help-id" value="" />
-        <input type="hidden" id="selected-user-id" value="" />
-        <input type="hidden" id="selected-user-register-id" value="" />
-        <input type="hidden" id="selected-user-role-id" value="" />
-        <textarea id="text-enter"></textarea>
-        <input type="button" id="send-text" />
+    <div id="help-container" style=" border: 1px solid black; width: 200px; height:300px;" > @await Component.InvokeAsync("MessageHelp")</div>
+    <hr />
+    <div id="receiver-container" style=" border: 1px solid black; width: 200px; height:100px;"></div>
+    <div id="message-exchange-container" >
+        <div id="message-container-dialog" style=" border: 1px solid black; width: 200px; height:100px;"></div>
+        <form >
+            <fieldset>
+                <input type="hidden" id="selected-help-id" value="" />
+                <input type="hidden" id="selected-user-id" value="" />
+                <input type="hidden" id="selected-user-register-id" value="" />
+                <input type="hidden" id="selected-user-role-id" value="" />
+                <textarea id="text-enter">132132</textarea>
+                <input type="button" id="send-text" value=" send" />
+            </fieldset>
+        </form>
     </div>
 </div>
 <script>
