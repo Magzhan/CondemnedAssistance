@@ -72,16 +72,16 @@ namespace CondemnedAssistance.Models {
         public Role Role { get; set; }
     }
 
-    public class UserEvent : TrackingTemplate{
-        [Key]
-        public int Id { get; set; }
+    //public class UserEvent : TrackingTemplate{
+    //    [Key]
+    //    public int Id { get; set; }
 
-        public int EventId { get; set; }
-        public Event Event { get; set; }
+    //    public int EventId { get; set; }
+    //    public Event Event { get; set; }
 
-        public int UserId { get; set; }
-        public User User { get; set; }
-    }
+    //    public int UserId { get; set; }
+    //    public User User { get; set; }
+    //}
 
     public class UserHelp {
         public int Id { get; set; }
@@ -173,12 +173,12 @@ namespace CondemnedAssistance.Models {
         public int UserId { get; set; }
     }
 
-    public class UserEventHistory : HistoryTemplate{
-        [Key]
-        public int Id { get; set; }
+    //public class UserEventHistory : HistoryTemplate{
+    //    [Key]
+    //    public int Id { get; set; }
 
-        public int EventId { get; set; }
+    //    public int EventId { get; set; }
 
-        public int UserId { get; set; }
-    }
+    //    public int UserId { get; set; }
+    //}
 }

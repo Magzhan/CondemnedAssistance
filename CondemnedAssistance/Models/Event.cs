@@ -6,6 +6,9 @@ namespace CondemnedAssistance.Models {
 
         public int EventStatusId { get; set; }
         public EventStatus EventStatus { get; set; }
+
+        public int UserId { get; set; }
+        public User User { get; set; }
     }
 
     public class EventStatus : TemplateTable{

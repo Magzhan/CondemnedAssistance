@@ -23,7 +23,7 @@ namespace CondemnedAssistance.Helpers {
         private UserRegister _userRegister;
         private List<UserAddress> _userAddresses;
         private List<UserProfession> _userProfessions;
-        private List<UserEvent> _userEvents;
+        //private List<UserEvent> _userEvents;
 
         private IDbContextTransaction _transaction;
         private Transaction currentSession;
@@ -73,7 +73,7 @@ namespace CondemnedAssistance.Helpers {
                     _userRegister = new UserRegister();
                     _userAddresses = new List<UserAddress>();
                     _userProfessions = new List<UserProfession>();
-                    _userEvents = new List<UserEvent>();
+                    //_userEvents = new List<UserEvent>();
                     break;
                 case PersistenceState.Update:
                     loadPersistenceState(model.UserId);
@@ -96,7 +96,7 @@ namespace CondemnedAssistance.Helpers {
             _userRegister = _db.UserRegisters.First(u => u.UserId == userId);
             _userAddresses = _db.UserAddresses.Where(u => u.UserId == userId).ToList();
             _userProfessions = _db.UserProfessions.Where(u => u.UserId == userId).ToList();
-            _userEvents = _db.UserEvents.Where(u => u.UserId == userId).ToList();
+            //_userEvents = _db.UserEvents.Where(u => u.UserId == userId).ToList();
         }
 
         private void loadUserMode() {
@@ -256,22 +256,22 @@ namespace CondemnedAssistance.Helpers {
             }
         }
 
-        private void loadUserEvents() {
-            List<UserEventHistory> hist = new List<UserEventHistory>();
-            _userEvents.ForEach(e => {
-                hist.Add(new UserEventHistory {
-                    EventId = e.Id,
-                    ActionType = currentAction,
-                    RequestDate = DateTime.Now,
-                    RequestUser = currentUser,
-                    TransactionId = currentSession.TransactionId,
-                    UserId = _model.UserId
-                });
-            });
+        //private void loadUserEvents() {
+        //    List<UserEventHistory> hist = new List<UserEventHistory>();
+        //    _userEvents.ForEach(e => {
+        //        hist.Add(new UserEventHistory {
+        //            EventId = e.Id,
+        //            ActionType = currentAction,
+        //            RequestDate = DateTime.Now,
+        //            RequestUser = currentUser,
+        //            TransactionId = currentSession.TransactionId,
+        //            UserId = _model.UserId
+        //        });
+        //    });
 
-            if(hist.Count > 0)
-                _db.UserEventHistory.AddRange(hist);
-        }
+        //    if(hist.Count > 0)
+        //        _db.UserEventHistory.AddRange(hist);
+        //}
 
         private void loadUserProfessions() {
             switch (_model.RoleId) {
@@ -477,7 +477,7 @@ namespace CondemnedAssistance.Helpers {
                 loadUserStaticData();
                 loadUserRole();
                 loadUserRegister();
-                loadUserEvents();
+                //loadUserEvents();
                 loadUserAddress();
                 loadUserProfessions();
                 PersistHistory();
