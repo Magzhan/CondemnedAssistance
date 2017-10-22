@@ -10,7 +10,6 @@ namespace CondemnedAssistance.Models {
         public long Id { get; set; }
 
         public int RoleId { get; set; }
-        public Role Role { get; set; }
 
         public int ControllerId { get; set; }
         public Controller Controller { get; set; }

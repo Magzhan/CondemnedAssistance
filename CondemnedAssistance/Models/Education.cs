@@ -27,6 +27,5 @@ namespace CondemnedAssistance.Models {
         public Education Education { get; set; }
 
         public int UserId { get; set; }
-        public User User { get; set; }
     }
 }

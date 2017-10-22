@@ -15,7 +15,6 @@ namespace CondemnedAssistance.Models {
         public DateTime ReadDate { get; set; }
 
         public int SenderId { get; set; }
-        public User Sender { get; set; }
     }
 
     public class MessageExchange {
@@ -25,10 +24,8 @@ namespace CondemnedAssistance.Models {
         public Message Message { get; set; }
 
         public int SenderId { get; set; }
-        public User Sender { get; set; }
 
         public int ReceiverId { get; set; }
-        public User Receiver { get; set; }
 
         public int HelpId { get; set; }
         public Help Help { get; set; }

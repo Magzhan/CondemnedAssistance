@@ -77,7 +77,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Migrations\" />
     <Folder Include="Views\Vacancy\" />
   </ItemGroup>
 
