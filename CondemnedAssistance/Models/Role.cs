@@ -17,5 +17,7 @@ namespace CondemnedAssistance.Models {
 
         public int ActionId { get; set; }
         public Action Action { get; set; }
+
+        public bool IsAllowed { get; set; }
     }
 }

@@ -11,9 +11,10 @@ using System;
 namespace CondemnedAssistance.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20171017162928_ModifiedAccessTable")]
+    partial class ModifiedAccessTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

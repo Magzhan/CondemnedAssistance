@@ -1,9 +1,5 @@
 ﻿using CondemnedAssistance.Services.Security._Constants;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Services.Security.Role {
     public static class RoleOperations {
@@ -11,5 +7,6 @@ namespace CondemnedAssistance.Services.Security.Role {
         public static OperationAuthorizationRequirement Read = new OperationAuthorizationRequirement { Name = Constants.Read };
         public static OperationAuthorizationRequirement Update = new OperationAuthorizationRequirement { Name = Constants.Update };
         public static OperationAuthorizationRequirement Delete = new OperationAuthorizationRequirement { Name = Constants.Delete };
+        public static OperationAuthorizationRequirement RoleAccess = new OperationAuthorizationRequirement { Name = Constants.RoleAccess };
     }
 }

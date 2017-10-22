@@ -20,7 +20,7 @@ namespace CondemnedAssistance.Services.Security.RoleAuthorization {
             int roleId = _db.UserRoles.Single(r => r.UserId == Convert.ToInt32(context.User.Identity.Name)).RoleId;
             int actionId = _db.Actions.Single(a => a.ControllerId == resource & a.NormalizedName == requirement.Name).Id;
 
-            if (_db.RoleAccesses.Any(r => r.ControllerId == resource & r.ActionId == actionId & r.RoleId == roleId)) {
+            if (_db.RoleAccesses.Any(r => r.ControllerId == resource & r.ActionId == actionId & r.RoleId == roleId & r.IsAllowed)) {
                 context.Succeed(requirement);
             }
 

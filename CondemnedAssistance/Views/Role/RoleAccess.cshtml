@@ -1,0 +1,28 @@
+﻿@model CondemnedAssistance.ViewModels.RoleAccessModel
+@{
+    Layout = "_Layout";
+}
+<form asp-controller="Role" asp-action="RoleAccess" method="post">
+    <div>
+        <div>
+            <input type="hidden" asp-for="RoleId" />
+        </div>
+        <div>
+            <table>
+                @foreach(var c in Model.Controllers) {
+                    <tr>
+                        <td><input type="checkbox" name="ControllerIds" value="@c.Id" /></td>
+                        <td>@c.Description</td>
+                    </tr>
+                    <tr>
+                        <td>-</td>
+                        <td><select asp-for="ActionIds" multiple asp-items="@(new SelectList(Model.Actions.Where(a => a.ControllerId == c.Id).ToArray(), "Id", "Description"))"></select></td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <div>
+            <input type="submit" value="Save" />
+        </div>
+    </div>
+</form>

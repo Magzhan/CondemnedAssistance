@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
-    public class VacancyController : Microsoft.AspNetCore.Mvc.Controller {
+    public class VacancyController : Microsoft.AspNetCore.Mvc.Controller  {
 
         private UserContext _db;
         private IAuthorizationService _authorizationService;

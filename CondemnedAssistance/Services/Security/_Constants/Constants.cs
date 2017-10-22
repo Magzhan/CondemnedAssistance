@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CondemnedAssistance.Services.Security._Constants {
+﻿namespace CondemnedAssistance.Services.Security._Constants {
     public class Constants {
         //Controllers
         public static readonly string Address = "Address";
@@ -53,5 +48,8 @@ namespace CondemnedAssistance.Services.Security._Constants {
         //User Controller
         public static readonly string History = "HISTORY";
         public static readonly string HistoryDetail = "HISTORY_DETAIL";
+
+        //Role Controller
+        public static readonly string RoleAccess = "ROLE_ACCESS";
     }
 }

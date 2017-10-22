@@ -140,5 +140,64 @@ namespace CondemnedAssistance.Controllers {
             await _db.SaveChangesAsync();
             return RedirectToAction("Index", "Role");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> RoleAccess(int id) {
+            //AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RoleOperations.RoleAccess);
+
+            //if (!result.Succeeded) {
+            //    return new ChallengeResult();
+            //}
+
+            List<RoleAccess> roleAccess = await _db.RoleAccesses.Where(r => r.RoleId == id).ToListAsync();
+            RoleAccessModel model = new RoleAccessModel();
+            model.RoleId = id;
+            model.ControllerIds = roleAccess.Select(r => r.ControllerId.ToString()).ToArray();
+            model.ActionIds = roleAccess.Select(r => r.ActionId).ToArray();
+            model.Controllers = await _db.Controllers.ToListAsync();
+            model.Actions = await _db.Actions.ToListAsync();
+            return View(model);
+        }
+
+        public async Task<IActionResult> RoleAccess(int id, RoleAccessModel model, string[] ControllerIds) {
+            //AuthorizationResult result = await _authorizationService.AuthorizeAsync(User, _controllerId, RoleOperations.RoleAccess);
+
+            //if (!result.Succeeded) {
+            //    return new ChallengeResult();
+            //}
+
+            if (ModelState.IsValid) {
+                List<RoleAccess> currAccess = await _db.RoleAccesses.Where(r => r.RoleId == model.RoleId).ToListAsync();
+                if(currAccess.Count == 0) {
+                    RoleAccess randomRoleAccess = await _db.RoleAccesses.FirstOrDefaultAsync();
+                    currAccess = await _db.RoleAccesses.Where(r => r.RoleId == randomRoleAccess.RoleId).ToListAsync();
+                    currAccess.ForEach(r => { r.RoleId = model.RoleId; });
+                }
+
+                currAccess.ForEach(row => { row.IsAllowed = false; });
+                currAccess.ForEach(row => {
+                    if(model.ControllerIds.Contains(row.ControllerId.ToString()) && model.ActionIds.Contains(row.ActionId)) {
+                        row.IsAllowed = true;
+                    }
+                });
+
+                foreach(RoleAccess ra in currAccess) {
+                    if(await _db.RoleAccesses.AnyAsync(r => r.RoleId == model.RoleId & r.ControllerId == ra.ControllerId & r.ActionId == ra.ActionId)) {
+                        _db.RoleAccesses.Attach(ra);
+                        _db.Entry(ra).State = EntityState.Modified;
+                        await _db.SaveChangesAsync();
+                    }
+                    else {
+                        await _db.RoleAccesses.AddAsync(new RoleAccess { RoleId = model.RoleId, ControllerId = ra.ControllerId, ActionId = ra.ActionId, IsAllowed = ra.IsAllowed });
+                        await _db.SaveChangesAsync();
+                    }
+                }
+            }
+
+            model.Controllers = await _db.Controllers.ToListAsync();
+            model.Actions = await _db.Actions.ToListAsync();
+
+            return View(model);
+        }
     }
 }
