@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Transactions;
 
 namespace CondemnedAssistance.Helpers {
     public class UserPersistenceHelper {
@@ -26,7 +27,8 @@ namespace CondemnedAssistance.Helpers {
         private List<UserProfession> _userProfessions;
 
         private IDbContextTransaction _transaction;
-        private Transaction currentSession;
+        private TransactionScope _t;
+        private Models.Transaction currentSession;
         private int currentUser;
         private DatabaseActionTypes currentAction;
 
@@ -35,7 +37,7 @@ namespace CondemnedAssistance.Helpers {
         private UserRoleHistory _userRoleHist;
         private UserRegisterHistory _userRegisterHist;
 
-        public UserPersistenceHelper(UserContext context, Transaction transaction, DatabaseActionTypes action, int userId) {
+        public UserPersistenceHelper(UserContext context, Models.Transaction transaction, DatabaseActionTypes action, int userId) {
             _db = context;
             currentSession = transaction;
             currentAction = action;
@@ -59,7 +61,7 @@ namespace CondemnedAssistance.Helpers {
                     _db.Database.AutoTransactionsEnabled = false;
                     _transaction = _db.Database.BeginTransaction();
 
-                    currentSession = new Transaction { TransactionGuid = _transaction.TransactionId };
+                    currentSession = new Models.Transaction { TransactionGuid = _transaction.TransactionId };
 
                     _db.Transactions.Add(currentSession);
                     _db.SaveChanges();
@@ -255,23 +257,6 @@ namespace CondemnedAssistance.Helpers {
             }
         }
 
-        //private void loadUserEvents() {
-        //    List<UserEventHistory> hist = new List<UserEventHistory>();
-        //    _userEvents.ForEach(e => {
-        //        hist.Add(new UserEventHistory {
-        //            EventId = e.Id,
-        //            ActionType = currentAction,
-        //            RequestDate = DateTime.Now,
-        //            RequestUser = currentUser,
-        //            TransactionId = currentSession.TransactionId,
-        //            UserId = _model.UserId
-        //        });
-        //    });
-
-        //    if(hist.Count > 0)
-        //        _db.UserEventHistory.AddRange(hist);
-        //}
-
         private void loadUserProfessions() {
             switch (_model.RoleId) {
                 case 2:
@@ -325,9 +310,9 @@ namespace CondemnedAssistance.Helpers {
                 UserProfession profession = _app.UserProfessions.First(p => p.ProfessionId == professionId && p.UserId == _user.Id);
                 profession.ProfessionId = (EntityState.Deleted == entityState) ? firstQueue.Dequeue() : secondQueue.Dequeue();
                 _app.UserProfessions.Attach(profession);
-                _db.Entry(profession).State = EntityState.Modified;
+                _app.Entry(profession).State = EntityState.Modified;
 
-                _db.UserProfessionHistory.Add(new UserProfessionHistory { ProfessionId = profession.ProfessionId,
+                _app.UserProfessionHistory.Add(new UserProfessionHistory { ProfessionId = profession.ProfessionId,
                     RequestDate = DateTime.Now,
                     RequestUser = currentUser,
                     TransactionId = currentSession.TransactionId,
@@ -340,7 +325,7 @@ namespace CondemnedAssistance.Helpers {
                 switch (entityState) {
                     case EntityState.Added:
                         _app.UserProfessions.Add(new UserProfession { UserId = _user.Id, ProfessionId = professionId });
-                        _db.UserProfessionHistory.Add(new UserProfessionHistory {
+                        _app.UserProfessionHistory.Add(new UserProfessionHistory {
                             UserId = _user.Id,
                             ProfessionId = professionId,
                             RequestDate = DateTime.Now,
@@ -352,7 +337,7 @@ namespace CondemnedAssistance.Helpers {
                     case EntityState.Deleted:
                         UserProfession profession = _app.UserProfessions.First(p => p.ProfessionId == professionId && p.UserId == _user.Id);
                         _app.UserProfessions.Remove(profession);
-                        _db.UserProfessionHistory.Add(new UserProfessionHistory {
+                        _app.UserProfessionHistory.Add(new UserProfessionHistory {
                             UserId = profession.UserId,
                             ProfessionId = profession.ProfessionId,
                             RequestDate = DateTime.Now,
@@ -476,7 +461,6 @@ namespace CondemnedAssistance.Helpers {
                 loadUserStaticData();
                 loadUserRole();
                 loadUserRegister();
-                //loadUserEvents();
                 loadUserAddress();
                 loadUserProfessions();
                 PersistHistory();
@@ -546,7 +530,7 @@ namespace CondemnedAssistance.Helpers {
             }
 
             foreach(UserProfession profession in _userProfessions) {
-                _db.UserProfessionHistory.Add(new UserProfessionHistory {
+                _app.UserProfessionHistory.Add(new UserProfessionHistory {
                     ProfessionId = profession.ProfessionId,
                     RequestDate = DateTime.Now,
                     RequestUser = currentUser,

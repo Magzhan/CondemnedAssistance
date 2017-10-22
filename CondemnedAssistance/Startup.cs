@@ -103,6 +103,9 @@ namespace CondemnedAssistance
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope()) {
                 var context = serviceScope.ServiceProvider.GetRequiredService<UserContext>();
                 context.Database.Migrate();
+
+                var context2 = serviceScope.ServiceProvider.GetRequiredService<ApplicationContext>();
+                context2.Database.Migrate();
             }
 
             app.ApplicationServices.GetRequiredService<ApplicationContext>().SeedAsyncApp();
@@ -274,6 +277,7 @@ namespace CondemnedAssistance
                     );
                 }
             }
+            await context.SaveChangesAsync();
         }
 
         private static async Task AddData(UserContext context) {
