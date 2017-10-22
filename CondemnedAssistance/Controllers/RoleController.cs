@@ -197,6 +197,8 @@ namespace CondemnedAssistance.Controllers {
             model.Controllers = await _db.Controllers.ToListAsync();
             model.Actions = await _db.Actions.ToListAsync();
 
+            //Lets checkout something
+
             return View(model);
         }
     }
