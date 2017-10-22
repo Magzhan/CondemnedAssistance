@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Controllers {
     [Authorize(Roles = "3")]
-    public class UserTypeController : Microsoft.AspNetCore.Mvc.Controller {
+    public class TypeController : Microsoft.AspNetCore.Mvc.Controller {
         private UserContext _db;
 
-        public UserTypeController(UserContext context) {
+        public TypeController(UserContext context) {
             this._db = context;
         }
 
         [HttpGet]
         public IActionResult Index() {
-            ICollection<UserType> types = _db.UserTypes.ToList();
+            ICollection<Models.Type> types = _db.Types.ToList();
             return View(types);
         }
 
@@ -29,11 +29,11 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(UserType model) {
+        public IActionResult Create(Models.Type model) {
             if (ModelState.IsValid) {
-                UserType type = _db.UserTypes.FirstOrDefault(t => t.NormalizedName == model.Name.ToUpper());
+                Models.Type type = _db.Types.FirstOrDefault(t => t.NormalizedName == model.Name.ToUpper());
                 if (type == null) {
-                    type = new UserType {
+                    type = new Models.Type {
                         Name = model.Name,
                         NormalizedName = model.Name.ToUpper(),
                         Description = model.Description,
@@ -41,7 +41,7 @@ namespace CondemnedAssistance.Controllers {
                         RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
                     };
 
-                    _db.UserTypes.Add(type);
+                    _db.Types.Add(type);
                     _db.SaveChanges();
                     return RedirectToAction("Index", "UserType");
                 }
@@ -54,7 +54,7 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public IActionResult Update(int id) {
-            UserType type = _db.UserTypes.FirstOrDefault(s => s.Id == id);
+            Models.Type type = _db.Types.FirstOrDefault(s => s.Id == id);
             if (type == null) {
                 ModelState.AddModelError("", "Status with that id does not exist");
                 return RedirectToAction("Index", "UserType");
@@ -64,10 +64,10 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update(int id, UserType model) {
+        public IActionResult Update(int id, Models.Type model) {
             if (ModelState.IsValid) {
-                UserType type = _db.UserTypes.FirstOrDefault(s => s.Id == id);
-                int count = _db.UserTypes.Where(s => s.NormalizedName == model.Name.ToUpper()).Count();
+                Models.Type type = _db.Types.FirstOrDefault(s => s.Id == id);
+                int count = _db.Types.Where(s => s.NormalizedName == model.Name.ToUpper()).Count();
                 if (count > 1) {
                     ModelState.AddModelError("", "No duplicates");
                     return View(model);
@@ -79,7 +79,7 @@ namespace CondemnedAssistance.Controllers {
                     type.RequestDate = DateTime.Now;
                     type.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
 
-                    _db.UserTypes.Attach(type);
+                    _db.Types.Attach(type);
                     _db.Entry(type).State = EntityState.Modified;
                     _db.SaveChanges();
                     return RedirectToAction("Index", "UserType");
@@ -93,12 +93,12 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public IActionResult Delete(int id) {
-            UserType type = _db.UserTypes.FirstOrDefault(s => s.Id == id);
+            Models.Type type = _db.Types.FirstOrDefault(s => s.Id == id);
             if (type == null) {
                 ModelState.AddModelError("", "No such status exists");
                 return RedirectToAction("Index", "UserType");
             }
-            _db.UserTypes.Remove(type);
+            _db.Types.Remove(type);
             return RedirectToAction("Index", "UserType");
         }
     }

@@ -14,17 +14,19 @@ namespace CondemnedAssistance.Controllers {
     public class UserController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
+        private ApplicationContext _app;
         private IAuthorizationService _authorizationService;
         private RegisterHelper registerHelper;
         private LinkHelper linkHelper;
         private int _controllerId;
 
-        public UserController(UserContext context, IAuthorizationService authorizationService) {
+        public UserController(UserContext context, ApplicationContext app, IAuthorizationService authorizationService) {
             this._db = context;
+            this._app = app;
             this._authorizationService = authorizationService;
             this.registerHelper = new RegisterHelper(context);
             this.linkHelper = new LinkHelper(context, "userEdit");
-            this._controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.User).Id;
+            this._controllerId = _app.Controllers.Single(c => c.NormalizedName == Constants.User).Id;
         }
 
         [HttpGet]
@@ -55,12 +57,12 @@ namespace CondemnedAssistance.Controllers {
                 users = _db.Users.Where(u => allowedUsersList.Contains(u.Id)).ToList();
             }
             foreach (User user in users) {
-                UserStaticInfo info = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == user.Id);
+                UserStaticInfo info = _db.UserInfo.FirstOrDefault(u => u.UserId == user.Id);
                 Role role = _db.Roles.FirstOrDefault(r => r.Id == _db.UserRoles.FirstOrDefault(u => u.UserId == user.Id).RoleId);
                 Register register = null;
-                UserStatus userStatus = null;
+                Status userStatus = null;
                 if (info != null) {
-                    userStatus = _db.UserStatuses.FirstOrDefault(s => s.Id == info.UserStatusId);
+                    userStatus = _db.Statuses.FirstOrDefault(s => s.Id == info.UserStatusId);
                 }
                 UserRegister userRegister = _db.UserRegisters.FirstOrDefault(u => u.UserId == user.Id);
                 if(userRegister != null) {
@@ -90,10 +92,10 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
             User user = _db.Users.FirstOrDefault(u => u.Id == id);
-            UserStaticInfo userStaticInfo = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == id);
+            UserStaticInfo userStaticInfo = _db.UserInfo.FirstOrDefault(u => u.UserId == id);
             UserRole myRole = _db.UserRoles.FirstOrDefault(u => u.UserId == id);
-            UserStatus userStatus = _db.UserStatuses.FirstOrDefault(u => u.Id == userStaticInfo.UserStatusId);
-            UserType userType = _db.UserTypes.FirstOrDefault(u => u.Id == userStaticInfo.UserTypeId);
+            Status userStatus = _db.Statuses.FirstOrDefault(u => u.Id == userStaticInfo.UserStatusId);
+            Models.Type userType = _db.Types.FirstOrDefault(u => u.Id == userStaticInfo.UserTypeId);
             Role role = _db.Roles.FirstOrDefault(r => r.Id == myRole.RoleId);
 
             if (user == null) {
@@ -130,7 +132,7 @@ namespace CondemnedAssistance.Controllers {
             UserModelCreate model = new UserModelCreate();
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
-                PersistenceHelperMode.Read, _db, PersistenceState.Create, model);
+                PersistenceHelperMode.Read, _db, _app, PersistenceState.Create, model);
 
             userPersistenceHelper.LoadModel();
 
@@ -157,7 +159,7 @@ namespace CondemnedAssistance.Controllers {
             }
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User, 
-                PersistenceHelperMode.Write, _db, PersistenceState.Create, model);
+                PersistenceHelperMode.Write, _db, _app, PersistenceState.Create, model);
 
             if (ModelState.IsValid) {
                 if (userPersistenceHelper.Validate(out string message)) {
@@ -196,7 +198,7 @@ namespace CondemnedAssistance.Controllers {
             }
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
-                PersistenceHelperMode.Read, _db, PersistenceState.Update, new UserModelCreate { UserId = id });
+                PersistenceHelperMode.Read, _db, _app, PersistenceState.Update, new UserModelCreate { UserId = id });
 
             userPersistenceHelper.LoadModel();
             UserModelCreate model = userPersistenceHelper.GetModel();
@@ -263,7 +265,7 @@ namespace CondemnedAssistance.Controllers {
             if (!authResult.Succeeded) return new ChallengeResult();
 
             UserPersistenceHelper userPersistenceHelper = new UserPersistenceHelper(HttpContext.User,
-                PersistenceHelperMode.Write, _db, PersistenceState.Update, model);
+                PersistenceHelperMode.Write, _db, _app, PersistenceState.Update, model);
 
             if (ModelState.IsValid) {
                 if (userPersistenceHelper.Persist(out string message)) {
@@ -330,7 +332,7 @@ namespace CondemnedAssistance.Controllers {
 
             if (!authResult.Succeeded) return new ChallengeResult();
 
-            List<UserHistoryModel> model = _db.UserHistory.Where(h => h.Id == userId).Select(h => new UserHistoryModel { UserId = h.Id, OperationDate = h.RequestDate, OperatorFullName = _db.UserStaticInfo.Single(u => u.UserId == h.RequestUser).FirstName, TransactionId = h.TransactionId }).OrderByDescending(h => h.TransactionId).ToList();
+            List<UserHistoryModel> model = _db.UserHistory.Where(h => h.Id == userId).Select(h => new UserHistoryModel { UserId = h.Id, OperationDate = h.RequestDate, OperatorFullName = _db.UserInfo.Single(u => u.UserId == h.RequestUser).FirstName, TransactionId = h.TransactionId }).OrderByDescending(h => h.TransactionId).ToList();
 
             Dictionary<string, string> routeVals = new Dictionary<string, string> { };
             routeVals.Add("id", userId.ToString());

@@ -15,13 +15,15 @@ namespace CondemnedAssistance.Controllers {
     public class SmsController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
+        private ApplicationContext _app;
         private IAuthorizationService _authorizationService;
         private int _controllerId;
 
-        public SmsController(UserContext context, IAuthorizationService authorizationService) {
+        public SmsController(UserContext context, ApplicationContext app, IAuthorizationService authorizationService) {
             _db = context;
+            _app = app;
             _authorizationService = authorizationService;
-            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Sms.ToUpper()).Id;
+            _controllerId = _app.Controllers.Single(c => c.NormalizedName == Constants.Sms.ToUpper()).Id;
         }
 
         public IActionResult Index() {

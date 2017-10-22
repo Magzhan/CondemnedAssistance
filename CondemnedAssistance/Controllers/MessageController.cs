@@ -16,17 +16,19 @@ namespace CondemnedAssistance.Controllers {
     public class MessageController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
+        private ApplicationContext _app;
         private RegisterHelper registerHelper;
         private WebSocketMessageHandler _webScoketMessageHandler;
         private IAuthorizationService _authorizationService;
         private int _controllerId;
 
-        public MessageController(UserContext context, WebSocketMessageHandler webSocketMessageHandler, IAuthorizationService authorizationService) {
+        public MessageController(UserContext context, ApplicationContext app, WebSocketMessageHandler webSocketMessageHandler, IAuthorizationService authorizationService) {
             _db = context;
+            _app = app;
             registerHelper = new RegisterHelper(context);
             _webScoketMessageHandler = webSocketMessageHandler;
             _authorizationService = authorizationService;
-            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Message).Id;
+            _controllerId = _app.Controllers.Single(c => c.NormalizedName == Constants.Message).Id;
         }
 
         [HttpGet]
@@ -59,7 +61,7 @@ namespace CondemnedAssistance.Controllers {
                 allowedUserIds = userIdsByRole.Intersect(userIdsByRegister).ToArray();
             }else if (User.IsInRole("1")) {
                 int[] userIdsByRole = _db.UserRoles.Where(r => r.RoleId == 2).Select(r => r.UserId).ToArray();
-                int[] userIdsByHelp = _db.UserHelps.Where(h => h.HelpId == helpId).Select(h => h.UserId).ToArray();
+                int[] userIdsByHelp = _app.UserHelps.Where(h => h.HelpId == helpId).Select(h => h.UserId).ToArray();
                 currUserRegisterIds = registerHelper.GetRegisterParents(new int[] { }, Convert.ToInt32(User.FindFirst(c => c.Type == "RegisterId").Value));
                 userIdsByRegister = _db.UserRegisters.Where(r => currUserRegisterIds.Contains(r.RegisterId)).Select(r => r.UserId).ToArray();
                 allowedUserIds = userIdsByRegister.Intersect(userIdsByRole).ToArray();
@@ -72,7 +74,7 @@ namespace CondemnedAssistance.Controllers {
 
             List<UserModelCreate> model = new List<UserModelCreate>();
 
-            _db.UserStaticInfo.Where(u => allowedUserIds.Contains(u.UserId)).ToList().ForEach(row => {
+            _db.UserInfo.Where(u => allowedUserIds.Contains(u.UserId)).ToList().ForEach(row => {
 
                 int roleId = _db.UserRoles.Single(r => r.UserId == row.UserId).RoleId;
                 int registerId = _db.UserRegisters.Single(r => r.UserId == row.UserId).RegisterId;
@@ -101,11 +103,11 @@ namespace CondemnedAssistance.Controllers {
 
             int currUserId = Convert.ToInt32(HttpContext.User.Identity.Name);
 
-            List<MessageExchange> dialogs = _db.MessageExchanges.Where(m => m.SenderId == currUserId & m.ReceiverId == receiverId).ToList();
+            List<MessageExchange> dialogs = _app.MessageExchanges.Where(m => m.SenderId == currUserId & m.ReceiverId == receiverId).ToList();
             List<Message> messages = new List<Message>();
 
             dialogs.ForEach(dialog => {
-                messages.Add(_db.Messages.Single(m => m.Id == dialog.MessageId));
+                messages.Add(_app.Messages.Single(m => m.Id == dialog.MessageId));
             });
 
             return PartialView(messages);
@@ -135,18 +137,18 @@ namespace CondemnedAssistance.Controllers {
                     SenderId = Convert.ToInt32(User.Identity.Name),
                     Text = message
                 };
-                _db.Messages.Add(thisMessage);
+                _app.Messages.Add(thisMessage);
 
-                await _db.SaveChangesAsync();
+                await _app.SaveChangesAsync();
 
-                _db.MessageExchanges.Add(new MessageExchange {
+                _app.MessageExchanges.Add(new MessageExchange {
                     HelpId = helpId,
                     MessageId = thisMessage.Id,
                     ReceiverId = receiverId,
                     SenderId = Convert.ToInt32(User.Identity.Name)
                 });
 
-                await _db.SaveChangesAsync();
+                await _app.SaveChangesAsync();
         }
     }
 }

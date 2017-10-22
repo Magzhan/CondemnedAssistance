@@ -14,15 +14,17 @@ namespace CondemnedAssistance.Controllers {
     public class HelpController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
+        private ApplicationContext _app;
         private LinkHelper linkHelper;
         private IAuthorizationService _authorizationService;
         private int _controllerId;
 
-        public HelpController(UserContext context, IAuthorizationService authorizationService) {
+        public HelpController(UserContext context, ApplicationContext app, IAuthorizationService authorizationService) {
             _db = context;
+            _app = app;
             linkHelper = new LinkHelper(context, "userEdit");
             _authorizationService = authorizationService;
-            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Help).Id;
+            _controllerId = _app.Controllers.Single(c => c.NormalizedName == Constants.Help).Id;
         }
 
         [HttpGet]
@@ -80,7 +82,7 @@ namespace CondemnedAssistance.Controllers {
             if (!result.Succeeded) {
                 return new ChallengeResult();
             }
-            List<Help> model = _db.Helps.ToList();
+            List<Help> model = _app.Helps.ToList();
             return View(model);
         }
 
@@ -102,13 +104,13 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
             if (ModelState.IsValid) {
-                if(!_db.Helps.Any(h => h.NormalizedName == model.Name.ToUpper())) {
+                if(!_app.Helps.Any(h => h.NormalizedName == model.Name.ToUpper())) {
                     model.NormalizedName = model.Name.ToUpper();
                     model.RequestDate = DateTime.Now;
                     model.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
 
-                    _db.Helps.Add(model);
-                    _db.SaveChanges();
+                    _app.Helps.Add(model);
+                    _app.SaveChanges();
                     return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("", "Already has such topic");
@@ -123,7 +125,7 @@ namespace CondemnedAssistance.Controllers {
             if (!result.Succeeded) {
                 return new ChallengeResult();
             }
-            Help model = _db.Helps.Single(h => h.Id == id);
+            Help model = _app.Helps.Single(h => h.Id == id);
             return View(model);
         }
 
@@ -135,14 +137,14 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
             if (ModelState.IsValid) {
-                if(!_db.Helps.Any(h => h.NormalizedName == model.Name.ToUpper() && h.Id != id)) {
+                if(!_app.Helps.Any(h => h.NormalizedName == model.Name.ToUpper() && h.Id != id)) {
                     model.NormalizedName = model.Name.ToUpper();
                     model.RequestDate = DateTime.Now;
                     model.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
 
-                    _db.Helps.Attach(model);
-                    _db.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                    _db.SaveChanges();
+                    _app.Helps.Attach(model);
+                    _app.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    _app.SaveChanges();
                     return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("", "Already has such topic");
@@ -157,10 +159,10 @@ namespace CondemnedAssistance.Controllers {
             if (!result.Succeeded) {
                 return new ChallengeResult();
             }
-            if (_db.Helps.Any(h => h.Id == id)) {
-                Help help = _db.Helps.Single(h => h.Id == id);
-                _db.Helps.Remove(help);
-                _db.SaveChanges();
+            if (_app.Helps.Any(h => h.Id == id)) {
+                Help help = _app.Helps.Single(h => h.Id == id);
+                _app.Helps.Remove(help);
+                _app.SaveChanges();
             }
             return RedirectToAction("Index");
         }
@@ -172,8 +174,8 @@ namespace CondemnedAssistance.Controllers {
             if (!result.Succeeded) {
                 return new ChallengeResult();
             }
-            int[] userHelpList = _db.UserHelps.Where(h => h.UserId == userId).Select(h => h.HelpId).ToArray();
-            return View(_db.Helps.Where(h => userHelpList.Contains(h.Id)).ToList());
+            int[] userHelpList = _app.UserHelps.Where(h => h.UserId == userId).Select(h => h.HelpId).ToArray();
+            return View(_app.Helps.Where(h => userHelpList.Contains(h.Id)).ToList());
         }
 
         [HttpGet]
@@ -218,7 +220,7 @@ namespace CondemnedAssistance.Controllers {
 
             ViewData["sidebar"] = links.ToArray();
 
-            return View(new HelpModel { UserId = userId, Helps = _db.Helps.ToList(), HelpIds = _db.UserHelps.Where(h => h.UserId == userId).Select(h => h.HelpId).ToArray() });
+            return View(new HelpModel { UserId = userId, Helps = _app.Helps.ToList(), HelpIds = _app.UserHelps.Where(h => h.UserId == userId).Select(h => h.HelpId).ToArray() });
         }
 
         [HttpPost]
@@ -229,18 +231,18 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
             if (ModelState.IsValid) {
-                if (_db.UserHelps.Any(h => h.UserId == userId)) {
-                    foreach (UserHelp help in _db.UserHelps.Where(h => h.UserId == userId)) {
-                        _db.UserHelps.Remove(help);
+                if (_app.UserHelps.Any(h => h.UserId == userId)) {
+                    foreach (UserHelp help in _app.UserHelps.Where(h => h.UserId == userId)) {
+                        _app.UserHelps.Remove(help);
                     }
-                    _db.SaveChanges();
+                    _app.SaveChanges();
                 }
                 List<UserHelp> userHelps = new List<UserHelp>();
                 foreach(int id in model.HelpIds) {
                     userHelps.Add(new UserHelp { UserId = userId, HelpId = id });
                 }
-                _db.UserHelps.AddRange(userHelps);
-                _db.SaveChanges();
+                _app.UserHelps.AddRange(userHelps);
+                _app.SaveChanges();
             }
 
             Dictionary<string, string> routeVals = new Dictionary<string, string> { };

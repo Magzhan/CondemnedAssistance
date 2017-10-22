@@ -10,17 +10,19 @@ namespace CondemnedAssistance.Services.Security.RoleAuthorization {
     public class RoleAuthorizationHandler : AuthorizationHandler<OperationAuthorizationRequirement, int> {
 
         private UserContext _db;
+        private ApplicationContext _app;
 
-        public RoleAuthorizationHandler(UserContext context) {
+        public RoleAuthorizationHandler(UserContext context, ApplicationContext app) {
             _db = context;
+            _app = app;
         }
 
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OperationAuthorizationRequirement requirement, int resource) {
             int roleId = _db.UserRoles.Single(r => r.UserId == Convert.ToInt32(context.User.Identity.Name)).RoleId;
-            int actionId = _db.Actions.Single(a => a.ControllerId == resource & a.NormalizedName == requirement.Name).Id;
+            int actionId = _app.Actions.Single(a => a.ControllerId == resource & a.NormalizedName == requirement.Name).Id;
 
-            if (_db.RoleAccesses.Any(r => r.ControllerId == resource & r.ActionId == actionId & r.RoleId == roleId & r.IsAllowed)) {
+            if (_app.RoleAccesses.Any(r => r.ControllerId == resource & r.ActionId == actionId & r.RoleId == roleId & r.IsAllowed)) {
                 context.Succeed(requirement);
             }
 

@@ -25,10 +25,10 @@ namespace CondemnedAssistance.ViewModels {
         public IEnumerable<Role> Roles { get; set; }
         [Display(Name = "Статус")]
         public int UserStatusId { get; set; }
-        public IEnumerable<UserStatus> UserStatuses { get; set; }
+        public IEnumerable<Status> UserStatuses { get; set; }
         [Display(Name = "Тип пользователя")]
         public int UserTypeId { get; set; }
-        public IEnumerable<UserType> UserTypes { get; set; }
+        public IEnumerable<Models.Type> UserTypes { get; set; }
         [Display(Name = "Регистр")]
         public int UserRegisterId { get; set; }
         public IEnumerable<Register> UserRegisters { get; set; }

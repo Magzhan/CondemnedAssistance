@@ -22,10 +22,10 @@ namespace CondemnedAssistance.Models {
         public int AccessFailedCount { get; set; }
     }
 
-    public class UserStatus : TemplateTable { 
+    public class Status : TemplateTable { 
     }
 
-    public class UserType : TemplateTable {
+    public class Type : TemplateTable {
     }
 
     public class UserRegister : TrackingTemplate {

@@ -13,6 +13,7 @@ namespace CondemnedAssistance.Helpers {
         private ClaimsPrincipal _identity;
 
         private UserContext _db;
+        private ApplicationContext _app;
         private PersistenceState _state;
         private PersistenceHelperMode _mode;
         private UserModelCreate _model;
@@ -23,7 +24,6 @@ namespace CondemnedAssistance.Helpers {
         private UserRegister _userRegister;
         private List<UserAddress> _userAddresses;
         private List<UserProfession> _userProfessions;
-        //private List<UserEvent> _userEvents;
 
         private IDbContextTransaction _transaction;
         private Transaction currentSession;
@@ -43,9 +43,10 @@ namespace CondemnedAssistance.Helpers {
             loadUserMode();
         }
 
-        public UserPersistenceHelper(ClaimsPrincipal User, PersistenceHelperMode mode, UserContext context, PersistenceState state, UserModelCreate model = null) {
+        public UserPersistenceHelper(ClaimsPrincipal User, PersistenceHelperMode mode, UserContext context, ApplicationContext app, PersistenceState state, UserModelCreate model = null) {
             _identity = User;
             _db = context;
+            _app = app;
             _state = state;
             _mode = mode;
             _model = model;
@@ -73,7 +74,6 @@ namespace CondemnedAssistance.Helpers {
                     _userRegister = new UserRegister();
                     _userAddresses = new List<UserAddress>();
                     _userProfessions = new List<UserProfession>();
-                    //_userEvents = new List<UserEvent>();
                     break;
                 case PersistenceState.Update:
                     loadPersistenceState(model.UserId);
@@ -91,12 +91,11 @@ namespace CondemnedAssistance.Helpers {
 
         private void loadPersistenceState(int userId) {
             _user = _db.Users.First(u => u.Id == userId);
-            _userStaticInfo = _db.UserStaticInfo.First(u => u.UserId == userId);
+            _userStaticInfo = _db.UserInfo.First(u => u.UserId == userId);
             _userRole = _db.UserRoles.First(u => u.UserId == userId);
             _userRegister = _db.UserRegisters.First(u => u.UserId == userId);
             _userAddresses = _db.UserAddresses.Where(u => u.UserId == userId).ToList();
-            _userProfessions = _db.UserProfessions.Where(u => u.UserId == userId).ToList();
-            //_userEvents = _db.UserEvents.Where(u => u.UserId == userId).ToList();
+            _userProfessions = _app.UserProfessions.Where(u => u.UserId == userId).ToList();
         }
 
         private void loadUserMode() {
@@ -177,10 +176,10 @@ namespace CondemnedAssistance.Helpers {
 
             switch (_state) {
                 case PersistenceState.Create:
-                    _db.UserStaticInfo.Add(_userStaticInfo);
+                    _db.UserInfo.Add(_userStaticInfo);
                     break;
                 case PersistenceState.Update:
-                    _db.UserStaticInfo.Attach(_userStaticInfo);
+                    _db.UserInfo.Attach(_userStaticInfo);
                     _db.Entry(_userStaticInfo).State = EntityState.Modified;
                     break;
             }
@@ -323,9 +322,9 @@ namespace CondemnedAssistance.Helpers {
             }
             while(firstQueue.Count != 0 && secondQueue.Count != 0) {
                 int professionId = (EntityState.Deleted == entityState) ? secondQueue.Dequeue() : firstQueue.Dequeue();
-                UserProfession profession = _db.UserProfessions.First(p => p.ProfessionId == professionId && p.UserId == _user.Id);
+                UserProfession profession = _app.UserProfessions.First(p => p.ProfessionId == professionId && p.UserId == _user.Id);
                 profession.ProfessionId = (EntityState.Deleted == entityState) ? firstQueue.Dequeue() : secondQueue.Dequeue();
-                _db.UserProfessions.Attach(profession);
+                _app.UserProfessions.Attach(profession);
                 _db.Entry(profession).State = EntityState.Modified;
 
                 _db.UserProfessionHistory.Add(new UserProfessionHistory { ProfessionId = profession.ProfessionId,
@@ -340,7 +339,7 @@ namespace CondemnedAssistance.Helpers {
                 int professionId = secondQueue.Dequeue();
                 switch (entityState) {
                     case EntityState.Added:
-                        _db.UserProfessions.Add(new UserProfession { UserId = _user.Id, ProfessionId = professionId });
+                        _app.UserProfessions.Add(new UserProfession { UserId = _user.Id, ProfessionId = professionId });
                         _db.UserProfessionHistory.Add(new UserProfessionHistory {
                             UserId = _user.Id,
                             ProfessionId = professionId,
@@ -351,8 +350,8 @@ namespace CondemnedAssistance.Helpers {
                         });
                         break;
                     case EntityState.Deleted:
-                        UserProfession profession = _db.UserProfessions.First(p => p.ProfessionId == professionId && p.UserId == _user.Id);
-                        _db.UserProfessions.Remove(profession);
+                        UserProfession profession = _app.UserProfessions.First(p => p.ProfessionId == professionId && p.UserId == _user.Id);
+                        _app.UserProfessions.Remove(profession);
                         _db.UserProfessionHistory.Add(new UserProfessionHistory {
                             UserId = profession.UserId,
                             ProfessionId = profession.ProfessionId,
@@ -382,8 +381,8 @@ namespace CondemnedAssistance.Helpers {
                     _model.MainAddress = _userStaticInfo.MainAddress;
                     break;
             }
-            _model.UserStatuses = _db.UserStatuses.ToList();
-            _model.UserTypes = _db.UserTypes.ToList();
+            _model.UserStatuses = _db.Statuses.ToList();
+            _model.UserTypes = _db.Types.ToList();
         }
 
         private void loadForUserRegisters() {
@@ -449,11 +448,11 @@ namespace CondemnedAssistance.Helpers {
             }
             switch (_state) {
                 case PersistenceState.Update:
-                    _model.ProfessionIds = _db.UserProfessions.Where(p => p.UserId == _user.Id).Select(p => p.ProfessionId).ToArray();
+                    _model.ProfessionIds = _app.UserProfessions.Where(p => p.UserId == _user.Id).Select(p => p.ProfessionId).ToArray();
                     break;
             }
 
-            _model.Professions = _db.Professions.ToList();
+            _model.Professions = _app.Professions.ToList();
         }
 
         public bool Validate(out string ErrorMessage) {

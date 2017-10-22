@@ -8,16 +8,16 @@ using System.Linq;
 
 namespace CondemnedAssistance.Controllers {
     [Authorize(Roles = "3")]
-    public class UserStatusController : Microsoft.AspNetCore.Mvc.Controller {
+    public class StatusController : Microsoft.AspNetCore.Mvc.Controller {
         private UserContext _db;
 
-        public UserStatusController(UserContext context) {
+        public StatusController(UserContext context) {
             this._db = context;
         }
 
         [HttpGet]
         public IActionResult Index() {
-            ICollection<UserStatus> statuses = _db.UserStatuses.ToList();
+            ICollection<Status> statuses = _db.Statuses.ToList();
             return View(statuses);
         }
 
@@ -28,11 +28,11 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(UserStatus model) {
+        public IActionResult Create(Status model) {
             if (ModelState.IsValid) {
-                UserStatus status = _db.UserStatuses.FirstOrDefault(s => s.NormalizedName == model.Name.ToUpper());
+                Status status = _db.Statuses.FirstOrDefault(s => s.NormalizedName == model.Name.ToUpper());
                 if (status == null) {
-                    status = new UserStatus {
+                    status = new Status {
                         Name = model.Name,
                         NormalizedName = model.Name.ToUpper(),
                         Description = model.Description,
@@ -40,7 +40,7 @@ namespace CondemnedAssistance.Controllers {
                         RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
                     };
 
-                    _db.UserStatuses.Add(status);
+                    _db.Statuses.Add(status);
                     _db.SaveChanges();
                     return RedirectToAction("Index", "UserStatus");
                 }
@@ -53,7 +53,7 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpGet]
         public IActionResult Update(int id) {
-            UserStatus status = _db.UserStatuses.FirstOrDefault(s => s.Id == id);
+            Status status = _db.Statuses.FirstOrDefault(s => s.Id == id);
             if (status == null) {
                 ModelState.AddModelError("", "Status with that id does not exist");
                 return RedirectToAction("Index", "UserStatus");
@@ -63,10 +63,10 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Update(int id, UserStatus model) {
+        public IActionResult Update(int id, Status model) {
             if (ModelState.IsValid) {
-                UserStatus status = _db.UserStatuses.FirstOrDefault(s => s.Id == id);
-                int count = _db.UserStatuses.Where(s => s.NormalizedName == model.Name.ToUpper()).Count();
+                Status status = _db.Statuses.FirstOrDefault(s => s.Id == id);
+                int count = _db.Statuses.Where(s => s.NormalizedName == model.Name.ToUpper()).Count();
                 if (count > 1) {
                     ModelState.AddModelError("", "No duplicates");
                     return View(model);
@@ -78,7 +78,7 @@ namespace CondemnedAssistance.Controllers {
                     status.RequestDate = DateTime.Now;
                     status.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
 
-                    _db.UserStatuses.Attach(status);
+                    _db.Statuses.Attach(status);
                     _db.Entry(status).State = EntityState.Modified;
                     _db.SaveChanges();
                     return RedirectToAction("Index", "UserStatus");
@@ -92,12 +92,12 @@ namespace CondemnedAssistance.Controllers {
 
         [HttpDelete]
         public IActionResult Delete(int id) {
-            UserStatus status = _db.UserStatuses.FirstOrDefault(s => s.Id == id);
+            Status status = _db.Statuses.FirstOrDefault(s => s.Id == id);
             if (status == null) {
                 ModelState.AddModelError("", "No such status exists");
                 return RedirectToAction("Index", "UserStatus");
             }
-            _db.UserStatuses.Remove(status);
+            _db.Statuses.Remove(status);
             return RedirectToAction("Index", "UserStatus");
         }
     }

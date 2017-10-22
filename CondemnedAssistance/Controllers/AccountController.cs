@@ -31,12 +31,12 @@ namespace CondemnedAssistance.Controllers {
             var userProfileModel = new UserProfileModel();
             var userId = Convert.ToInt32(HttpContext.User.Identity.Name);
             var user = _db.Users.First(u => u.Id == userId);
-            var userStaticData = _db.UserStaticInfo.FirstOrDefault(u => u.UserId == userId);
+            var userStaticData = _db.UserInfo.FirstOrDefault(u => u.UserId == userId);
             var userRegister = _db.UserRegisters.FirstOrDefault(r => r.UserId == userId).RegisterId;
             var register = _db.Registers.FirstOrDefault(r => r.Id == userRegister);
             var userRole = _db.UserRoles.FirstOrDefault(r => r.UserId == userId).RoleId;
             var role = _db.Roles.FirstOrDefault(r => r.Id == userRole);
-            var status = _db.UserStatuses.FirstOrDefault(s => s.Id == userStaticData.UserStatusId);
+            var status = _db.Statuses.FirstOrDefault(s => s.Id == userStaticData.UserStatusId);
 
             userProfileModel.Login = user.Login;
             userProfileModel.Role = role.Name;
@@ -76,7 +76,7 @@ namespace CondemnedAssistance.Controllers {
             if (ModelState.IsValid) {
                 User user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login && u.PasswordHash == model.Password);
                 if(user != null) {
-                    UserStaticInfo info = await _db.UserStaticInfo.FirstOrDefaultAsync(u => u.UserId == user.Id);
+                    UserStaticInfo info = await _db.UserInfo.FirstOrDefaultAsync(u => u.UserId == user.Id);
                     if (info == null || info.UserStatusId != 1) {
                         ModelState.AddModelError("", "Статус пользователя не позволяет войти в портал");
                     } else {

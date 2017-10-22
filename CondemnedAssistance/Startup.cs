@@ -47,8 +47,10 @@ namespace CondemnedAssistance
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services){
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            string connectionStringApp = Configuration.GetConnectionString("ApplicationConnection");
 
             services.AddDbContext<UserContext>(options => options.UseSqlServer(connectionString));
+            services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connectionStringApp));
 
             services.AddAuthentication("Cookies")
                 .AddCookie(options => {
@@ -103,6 +105,7 @@ namespace CondemnedAssistance
                 context.Database.Migrate();
             }
 
+            app.ApplicationServices.GetRequiredService<ApplicationContext>().SeedAsyncApp();
             app.ApplicationServices.GetRequiredService<UserContext>().SeedAsync();
 
             app.UseMvc(routes => {
@@ -118,8 +121,11 @@ namespace CondemnedAssistance
             await AddData(context);
         }
 
-        private static async Task AddData(UserContext context) {
+        public static async void SeedAsyncApp(this ApplicationContext context) {
+            await AddData(context);
+        }
 
+        private static async Task AddData(ApplicationContext context) {
             List<Controller> controllers = new List<Controller> {
                 new Controller { Name = Constants.Address, NormalizedName = Constants.Address.ToUpper(), Description = "Address Controller", RequestDate = DateTime.Now, RequestUser = -1 },
                 new Controller { Name = Constants.Education, NormalizedName = Constants.Education.ToUpper(), Description = "Education Controller", RequestDate = DateTime.Now, RequestUser = -1 },
@@ -268,6 +274,10 @@ namespace CondemnedAssistance
                     );
                 }
             }
+        }
+
+        private static async Task AddData(UserContext context) {
+
             
             if (!await context.AddressLevels.AnyAsync()) {
                 await context.AddressLevels.AddRangeAsync(
@@ -285,8 +295,8 @@ namespace CondemnedAssistance
                 await context.SaveChangesAsync();
             }
 
-            if (!await context.UserTypes.AnyAsync()) {
-                await context.UserTypes.AddAsync(new UserType { Name = "Пользователь", NormalizedName = "Пользователь".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1});
+            if (!await context.Types.AnyAsync()) {
+                await context.Types.AddAsync(new Models.Type { Name = "Пользователь", NormalizedName = "Пользователь".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1});
                 await context.SaveChangesAsync();
             }
 
@@ -306,8 +316,8 @@ namespace CondemnedAssistance
                 await context.SaveChangesAsync();
             }
 
-            if (!await context.UserStatuses.AnyAsync()) {
-                await context.UserStatuses.AddAsync(new UserStatus { Name = "Активный", NormalizedName = "Активный".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1 });
+            if (!await context.Statuses.AnyAsync()) {
+                await context.Statuses.AddAsync(new Status { Name = "Активный", NormalizedName = "Активный".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1 });
                 await context.SaveChangesAsync();
             }
 
@@ -376,7 +386,7 @@ namespace CondemnedAssistance
                 await context.SaveChangesAsync();
 
                 admin1info.UserId = admin1.Id;
-                await context.UserStaticInfo.AddAsync(admin1info);
+                await context.UserInfo.AddAsync(admin1info);
                 admin1role.UserId = admin1.Id;
                 await context.UserRoles.AddAsync(admin1role);
                 admin1register.UserId = admin1.Id;

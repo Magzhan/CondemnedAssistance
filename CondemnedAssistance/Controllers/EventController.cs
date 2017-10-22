@@ -15,15 +15,18 @@ namespace CondemnedAssistance.Controllers {
     public class EventController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
+        private ApplicationContext _app;
         private IAuthorizationService _authService;
         private LinkHelper linkHelper;
         private int _controllerId;
 
-        public EventController(UserContext context, IAuthorizationService authService) {
+        public EventController(UserContext context, ApplicationContext app, IAuthorizationService authService) {
             _db = context;
+            _app = app;
             _authService = authService;
             linkHelper = new LinkHelper(context, "userEdit");
-            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Event.ToUpper()).Id;
+            _controllerId = _app.Controllers.Single(c => c.NormalizedName == Constants.Event.ToUpper()).Id;
+
         }
 
         [HttpGet]
@@ -48,21 +51,21 @@ namespace CondemnedAssistance.Controllers {
                 UserId = userId
             };
 
-            await _db.Events.Where(e => e.UserId == userId).ForEachAsync(row => {
-                model.Events.Add(_db.Events.Single(r => r.Id == row.Id));
+            await _app.Events.Where(e => e.UserId == userId).ForEachAsync(row => {
+                model.Events.Add(_app.Events.Single(r => r.Id == row.Id));
             });
 
             model.Events = model.Events.OrderByDescending(e => e.Date).ToList();
 
             model.Events.ForEach(row => {
-                row.EventStatus = _db.EventStatuses.Single(e => e.Id == row.EventStatusId);
+                row.EventStatus = _app.EventStatuses.Single(e => e.Id == row.EventStatusId);
             });
 
             DateTime today = DateTime.Now;
-            model.CurrentUserStatus = _db.EventStatuses.Single(e => e.Id == 1).Name;
+            model.CurrentUserStatus = _app.EventStatuses.Single(e => e.Id == 1).Name;
             model.Events.OrderBy(e => e.Date).ToList().ForEach(row => {
                 if (today > row.Date) {
-                    model.CurrentUserStatus = _db.EventStatuses.Single(e => e.Id == row.EventStatusId).Name;
+                    model.CurrentUserStatus = _app.EventStatuses.Single(e => e.Id == row.EventStatusId).Name;
                 }
             });
 
@@ -120,7 +123,7 @@ namespace CondemnedAssistance.Controllers {
             }
 
             EventCreateModel model = new EventCreateModel {
-                EventStatuses = _db.EventStatuses.ToList()
+                EventStatuses = _app.EventStatuses.ToList()
             };
 
             Dictionary<string, string> routeVals = new Dictionary<string, string> { };
@@ -178,67 +181,27 @@ namespace CondemnedAssistance.Controllers {
             }
 
             if (ModelState.IsValid) {
-                if (!_db.Events.Where(e => e.UserId == userId).Any(row => _db.Events.Single(r => r.Id == row.Id).Date == model.Date)) {
-                    //_db.Database.AutoTransactionsEnabled = false;
-                    //using (var t = _db.Database.BeginTransaction()) {
-                        //try {
-                            //Guid transactionGuid = t.TransactionId;
+                if (!_app.Events.Where(e => e.UserId == userId).Any(row => _app.Events.Single(r => r.Id == row.Id).Date == model.Date)) {
+                   Event myEvent = new Event {
+                        Name = model.Name,
+                        NormalizedName = model.Name.ToUpper(),
+                        Description = model.Description,
+                        Date = model.Date,
+                        EventStatusId = model.EventStatusId,
+                        UserId = userId,
+                        RequestDate = DateTime.Now,
+                        RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
+                    };
 
-                            //Transaction transaction = new Transaction { TransactionGuid = transactionGuid };
+                    await _app.Events.AddAsync(myEvent);
+                    await _app.SaveChangesAsync();
 
-                            //await _db.Transactions.AddAsync(transaction);
-                            //await _db.SaveChangesAsync();
-
-                            Event myEvent = new Event {
-                                Name = model.Name,
-                                NormalizedName = model.Name.ToUpper(),
-                                Description = model.Description,
-                                Date = model.Date,
-                                EventStatusId = model.EventStatusId,
-                                UserId = userId,
-                                RequestDate = DateTime.Now,
-                                RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
-                            };
-                            await _db.Events.AddAsync(myEvent);
-                            await _db.SaveChangesAsync();
-
-                            //await _db.UserEvents.AddAsync(new UserEvent {
-                            //    EventId = myEvent.Id,
-                            //    UserId = userId,
-                            //    RequestDate = DateTime.Now,
-                            //    RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name)
-                            //});
-
-                            //await _db.UserEventHistory.AddAsync(new UserEventHistory {
-                            //    EventId = myEvent.Id,
-                            //    UserId = userId,
-                            //    TransactionId = transaction.TransactionId,
-                            //    RequestDate = DateTime.Now,
-                            //    RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name),
-                            //    ActionType = DatabaseActionTypes.Insert
-                            //});
-                            //await _db.SaveChangesAsync();
-
-                            //UserPersistenceHelper persistenceHelper =
-                            //    new UserPersistenceHelper(_db, transaction, DatabaseActionTypes.Insert, userId);
-
-                            //persistenceHelper.PersistHistory();
-
-                            //await _db.SaveChangesAsync();
-
-                            //t.Commit();
-                            return RedirectToAction("Index", new { userId = userId });
-                        //}
-                        //catch(Exception ex) {
-                            //ModelState.AddModelError("", ex.ToString());
-                            //t.Rollback();
-                        //}
-                    //}
+                    return RedirectToAction("Index", new { userId = userId });
                 }
                 ModelState.AddModelError("", "Events with same time for the same user cannot be added");
             }
 
-            model.EventStatuses = _db.EventStatuses.ToList();
+            model.EventStatuses = _app.EventStatuses.ToList();
 
             Dictionary<string, string> routeVals = new Dictionary<string, string> { };
             routeVals.Add("id", userId.ToString());
@@ -282,7 +245,7 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            int userId = _db.Events.Single(e => e.Id == id).UserId;
+            int userId = _app.Events.Single(e => e.Id == id).UserId;
             Dictionary<string, int> actions = new Dictionary<string, int> {
                 { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
             };
@@ -293,7 +256,7 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            Event thisEvent = await _db.Events.SingleAsync(e => e.Id == id);
+            Event thisEvent = await _app.Events.SingleAsync(e => e.Id == id);
 
             EventCreateModel model = new EventCreateModel {
                 UserId = userId,
@@ -302,7 +265,7 @@ namespace CondemnedAssistance.Controllers {
                 Description = thisEvent.Description,
                 EventStatusId = thisEvent.EventStatusId,
                 Date = thisEvent.Date,
-                EventStatuses = _db.EventStatuses.ToList()
+                EventStatuses = _app.EventStatuses.ToList()
             };
 
             Dictionary<string, string> routeVals = new Dictionary<string, string> { };
@@ -349,7 +312,7 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            int userId = _db.Events.Single(e => e.Id == id).UserId;
+            int userId = _app.Events.Single(e => e.Id == id).UserId;
             Dictionary<string, int> actions = new Dictionary<string, int> {
                 { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
             };
@@ -361,56 +324,28 @@ namespace CondemnedAssistance.Controllers {
             }
 
             if (ModelState.IsValid) {
-                if (!_db.Events.Where(e => e.UserId == userId && e.Id != id).Any(row => _db.Events.Single(r => r.Id == row.Id).Date == model.Date)) {
-                    //_db.Database.AutoTransactionsEnabled = false;
-                    //using(var t = _db.Database.BeginTransaction()) {
-                    //    try {
-                    //        Guid transactionGuid = t.TransactionId;
+                if (!_app.Events.Where(e => e.UserId == userId && e.Id != id).Any(row => _app.Events.Single(r => r.Id == row.Id).Date == model.Date)) {
+                    
+                    Event thisEvent = await _app.Events.SingleAsync(e => e.Id == id);
+                    thisEvent.Name = model.Name;
+                    thisEvent.NormalizedName = model.Name.ToUpper();
+                    thisEvent.Description = model.Description;
+                    thisEvent.Date = model.Date;
+                    thisEvent.EventStatusId = model.EventStatusId;
+                    thisEvent.RequestDate = DateTime.Now;
+                    thisEvent.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
 
-                    //        Transaction transaction = new Transaction { TransactionGuid = transactionGuid };
+                    _app.Events.Attach(thisEvent);
+                    _app.Entry(thisEvent).State = EntityState.Modified;
 
-                    //        await _db.Transactions.AddAsync(transaction);
-                    //        await _db.SaveChangesAsync();
+                    await _app.SaveChangesAsync();
 
-                            Event thisEvent = await _db.Events.SingleAsync(e => e.Id == id);
-                            thisEvent.Name = model.Name;
-                            thisEvent.NormalizedName = model.Name.ToUpper();
-                            thisEvent.Description = model.Description;
-                            thisEvent.Date = model.Date;
-                            thisEvent.EventStatusId = model.EventStatusId;
-                            thisEvent.RequestDate = DateTime.Now;
-                            thisEvent.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
-
-                            _db.Events.Attach(thisEvent);
-                            _db.Entry(thisEvent).State = EntityState.Modified;
-
-                            //await _db.UserEventHistory.AddAsync(new UserEventHistory {
-                            //    EventId = thisEvent.Id,
-                            //    RequestDate = DateTime.Now,
-                            //    RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name),
-                            //    ActionType = DatabaseActionTypes.Update,
-                            //    TransactionId = transaction.TransactionId,
-                            //    UserId = userId,
-                            //});
-
-                            await _db.SaveChangesAsync();
-
-                            //UserPersistenceHelper persistenceHelper =
-                            //    new UserPersistenceHelper(_db, transaction, DatabaseActionTypes.Update, userId);
-
-                            //t.Commit();
-                            return RedirectToAction("Index", new { userId = userId });
-                        //}
-                        //catch (Exception ex) {
-                        //    ModelState.AddModelError("", ex.ToString());
-                        //    t.Rollback();
-                        //}
-                    //}
+                    return RedirectToAction("Index", new { userId = userId });
                 }
                 ModelState.AddModelError("", "Already has event with same date"); 
             }
 
-            model.EventStatuses = _db.EventStatuses.ToList();
+            model.EventStatuses = _app.EventStatuses.ToList();
 
             Dictionary<string, string> routeVals = new Dictionary<string, string> { };
             routeVals.Add("id", userId.ToString());
@@ -456,7 +391,7 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            int userId = _db.Events.Single(e => e.Id == id).UserId;
+            int userId = _app.Events.Single(e => e.Id == id).UserId;
             Dictionary<string, int> actions = new Dictionary<string, int> {
                 { "childId", _db.UserRegisters.Single(r => r.UserId == userId).RegisterId }
             };
@@ -467,38 +402,8 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            //_db.Database.AutoTransactionsEnabled = false;
-
-            //using(var t = _db.Database.BeginTransaction()) {
-            //    try {
-            //        Guid transactionGuid = t.TransactionId;
-
-            //        Transaction transaction = new Transaction { TransactionGuid = transactionGuid };
-
-            //        await _db.Transactions.AddAsync(transaction);
-            //        await _db.SaveChangesAsync();
-
-            Event thisEvent = await _db.Events.SingleAsync(e => e.Id == id);
-            _db.Events.Remove(thisEvent);
-                    //UserEvent thisUserEvent = await _db.UserEvents.SingleAsync(e => e.EventId == id && e.UserId == userId);
-
-                    //await _db.UserEventHistory.AddAsync(new UserEventHistory {
-                    //    EventId = thisEvent.Id,
-                    //    RequestDate = DateTime.Now,
-                    //    RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name),
-                    //    TransactionId = transaction.TransactionId,
-                    //    ActionType = DatabaseActionTypes.Delete,
-                    //    UserId = userId
-                    //});
-
-            //        await _db.SaveChangesAsync();
-
-            //        t.Commit();
-            //    }catch(Exception ex) {
-            //        ModelState.AddModelError("", ex.ToString());
-            //        t.Rollback();
-            //    }
-            //}
+            Event thisEvent = await _app.Events.SingleAsync(e => e.Id == id);
+            _app.Events.Remove(thisEvent);
 
             return RedirectToAction("User", "Index");
         }
@@ -512,7 +417,7 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            List<EventStatus> model = _db.EventStatuses.ToList();
+            List<EventStatus> model = _app.EventStatuses.ToList();
             return View(model);
         }
 
@@ -537,8 +442,8 @@ namespace CondemnedAssistance.Controllers {
             }
 
             if (ModelState.IsValid) {
-                if (!_db.EventStatuses.Any(s => s.NormalizedName == model.Name.ToUpper())) {
-                    _db.EventStatuses.Add(new EventStatus {
+                if (!_app.EventStatuses.Any(s => s.NormalizedName == model.Name.ToUpper())) {
+                    _app.EventStatuses.Add(new EventStatus {
                         Name = model.Name,
                         NormalizedName = model.Name.ToUpper(),
                         Description = model.Description,
@@ -546,7 +451,7 @@ namespace CondemnedAssistance.Controllers {
                         RequestDate = DateTime.Now
                     });
 
-                    _db.SaveChanges();
+                    _app.SaveChanges();
                     return RedirectToAction("EventStatuses");
                 }
                 ModelState.AddModelError("", "Already has such value");
@@ -563,7 +468,7 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            EventStatus model = _db.EventStatuses.Single(s => s.Id == id);
+            EventStatus model = _app.EventStatuses.Single(s => s.Id == id);
             return View(model);
         }
 
@@ -577,13 +482,13 @@ namespace CondemnedAssistance.Controllers {
             }
 
             if (ModelState.IsValid) {
-                if (!_db.EventStatuses.Any(s => s.Id != id && s.NormalizedName == model.Name.ToUpper())) {
+                if (!_app.EventStatuses.Any(s => s.Id != id && s.NormalizedName == model.Name.ToUpper())) {
                     model.RequestDate = DateTime.Now;
                     model.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
-                    _db.EventStatuses.Attach(model);
-                    _db.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    _app.EventStatuses.Attach(model);
+                    _app.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
 
-                    _db.SaveChanges();
+                    _app.SaveChanges();
                     return RedirectToAction("EventStatuses");
                 }
                 ModelState.AddModelError("", "Already has such item");
@@ -600,10 +505,10 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
 
-            if(!_db.Events.Any(e => e.EventStatusId == id)) {
-                EventStatus model = _db.EventStatuses.Single(e => e.Id == id);
-                _db.EventStatuses.Remove(model);
-                _db.SaveChanges();
+            if(!_app.Events.Any(e => e.EventStatusId == id)) {
+                EventStatus model = _app.EventStatuses.Single(e => e.Id == id);
+                _app.EventStatuses.Remove(model);
+                _app.SaveChanges();
             }
             return RedirectToAction("EventStatuses");
         }

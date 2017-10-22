@@ -18,13 +18,15 @@ namespace CondemnedAssistance.Controllers {
     public class AddressController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
+        private ApplicationContext _app;
         private readonly IAuthorizationService _authorizationService;
         private int _controllerId;
 
-        public AddressController(UserContext context, IAuthorizationService authorizationService) {
+        public AddressController(UserContext context, ApplicationContext app, IAuthorizationService authorizationService) {
             _db = context;
+            _app = app;
             _authorizationService = authorizationService;
-            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Address.ToUpper()).Id;
+            _controllerId = _app.Controllers.Single(c => c.NormalizedName == Constants.Address.ToUpper()).Id;
         }
 
         [HttpGet]

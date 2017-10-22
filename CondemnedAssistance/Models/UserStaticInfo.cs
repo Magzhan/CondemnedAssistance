@@ -20,9 +20,9 @@ namespace CondemnedAssistance.Models {
         public User User { get; set; }
 
         public int UserStatusId { get; set; }
-        public UserStatus UserStatus { get; set; }
+        public Status UserStatus { get; set; }
 
         public int UserTypeId { get; set; }
-        public UserType UserType { get; set; }
+        public Type UserType { get; set; }
     }
 }

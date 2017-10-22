@@ -10,15 +10,17 @@ namespace CondemnedAssistance.ViewComponents {
     public class MessageHelpViewComponent : ViewComponent{
 
         private readonly UserContext _db;
+        private ApplicationContext _app;
 
-        public MessageHelpViewComponent(UserContext context) {
+        public MessageHelpViewComponent(UserContext context, ApplicationContext app) {
             _db = context;
+            _app = app;
         }
 
         public async Task<IViewComponentResult> InvokeAsync() {
             if (User.IsInRole("2"))
                 return View("Empty");
-            return View(await _db.Helps.ToListAsync());
+            return View(await _app.Helps.ToListAsync());
         }
 
     }

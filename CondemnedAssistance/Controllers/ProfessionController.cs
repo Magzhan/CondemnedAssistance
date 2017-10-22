@@ -12,13 +12,15 @@ namespace CondemnedAssistance.Controllers {
     public class ProfessionController : Microsoft.AspNetCore.Mvc.Controller {
 
         private UserContext _db;
+        private ApplicationContext _app;
         private IAuthorizationService _authorizationService;
         private int _controllerId;
 
-        public ProfessionController(UserContext context, IAuthorizationService authorizationService) {
+        public ProfessionController(UserContext context, ApplicationContext app, IAuthorizationService authorizationService) {
             _db = context;
+            _app = app;
             _authorizationService = authorizationService;
-            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Profession.ToUpper()).Id;
+            _controllerId = _app.Controllers.Single(c => c.NormalizedName == Constants.Profession.ToUpper()).Id;
         }
 
         [HttpGet]
@@ -28,7 +30,7 @@ namespace CondemnedAssistance.Controllers {
             if (!result.Succeeded) {
                 return new ChallengeResult();
             }
-            return View(_db.Professions.ToList());
+            return View(_app.Professions.ToList());
         }
 
         [HttpGet]
@@ -49,12 +51,12 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
             if (ModelState.IsValid) {
-                if (!_db.Professions.Any(p => p.NormalizedName == model.Name.ToUpper())){
+                if (!_app.Professions.Any(p => p.NormalizedName == model.Name.ToUpper())){
                     model.NormalizedName = model.Name.ToUpper();
                     model.RequestDate = DateTime.Now;
                     model.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
-                    _db.Professions.Add(model);
-                    _db.SaveChanges();
+                    _app.Professions.Add(model);
+                    _app.SaveChanges();
                     return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("", "Already exists");
@@ -69,7 +71,7 @@ namespace CondemnedAssistance.Controllers {
             if (!result.Succeeded) {
                 return new ChallengeResult();
             }
-            Profession model = _db.Professions.First(p => p.Id == id);
+            Profession model = _app.Professions.First(p => p.Id == id);
             return View(model);
         }
 
@@ -81,14 +83,14 @@ namespace CondemnedAssistance.Controllers {
                 return new ChallengeResult();
             }
             if (ModelState.IsValid) {
-                if(!_db.Professions.Any(p => p.Id != id && p.NormalizedName == model.Name.ToUpper())) {
+                if(!_app.Professions.Any(p => p.Id != id && p.NormalizedName == model.Name.ToUpper())) {
                     model.NormalizedName = model.Name.ToUpper();
                     model.RequestDate = DateTime.Now;
                     model.RequestUser = Convert.ToInt32(HttpContext.User.Identity.Name);
 
-                    _db.Professions.Attach(model);
-                    _db.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                    _db.SaveChanges();
+                    _app.Professions.Attach(model);
+                    _app.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    _app.SaveChanges();
                     return RedirectToAction("Index");
                 }
                 ModelState.AddModelError("", "Already exists");

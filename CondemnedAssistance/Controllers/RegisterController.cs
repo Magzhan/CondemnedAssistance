@@ -13,15 +13,17 @@ using System.Threading.Tasks;
 namespace CondemnedAssistance.Controllers {
     public class RegisterController : Microsoft.AspNetCore.Mvc.Controller {
         private UserContext _db;
+        private ApplicationContext _app;
         private IAuthorizationService _authorizationService;
         private RegisterHelper _registerHelper;
         private int _controllerId;
 
-        public RegisterController(UserContext context, IAuthorizationService authorizationService) {
+        public RegisterController(UserContext context, ApplicationContext app, IAuthorizationService authorizationService) {
             _db = context;
+            _app = app;
             _authorizationService = authorizationService;
             _registerHelper = new RegisterHelper(context);
-            _controllerId = _db.Controllers.Single(c => c.NormalizedName == Constants.Register.ToUpper()).Id;
+            _controllerId = _app.Controllers.Single(c => c.NormalizedName == Constants.Register.ToUpper()).Id;
         }
 
         [HttpGet]
