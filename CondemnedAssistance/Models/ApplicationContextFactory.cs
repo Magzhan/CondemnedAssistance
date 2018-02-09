@@ -9,8 +9,7 @@ namespace CondemnedAssistance.Models {
     public class ApplicationContextFactory : IDesignTimeDbContextFactory<ApplicationContext> {
         public ApplicationContext CreateDbContext(string[] args) {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CondemnedAssistance_1_2;Trusted_Connection=True;MultipleActiveResultSets=true");
-
+            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=TestSchema;Trusted_Connection=True;MultipleActiveResultSets=true");
             return new ApplicationContext(optionsBuilder.Options);
         }
     }

@@ -1,8 +1,12 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace CondemnedAssistance.Models {
+    [Table("Vacancy", Schema = "app")]
     public class Vacancy : TemplateTable{
     }
 
+    [Table("VacancyProfession", Schema = "app")]
     public class VacancyProfession {
         public long Id { get; set; }
 

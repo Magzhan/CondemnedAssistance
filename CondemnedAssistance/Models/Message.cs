@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CondemnedAssistance.Models {
+    [Table("Message", Schema = "app")]
     public class Message {
         public long Id { get; set; }
         public string Text { get; set; }
@@ -17,6 +19,7 @@ namespace CondemnedAssistance.Models {
         public int SenderId { get; set; }
     }
 
+    [Table("MessageExchange", Schema = "app")]
     public class MessageExchange {
         public long Id { get; set; }
 

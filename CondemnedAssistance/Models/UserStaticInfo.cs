@@ -1,7 +1,10 @@
-﻿using System;
+﻿using CondemnedAssistance.Services.Database;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CondemnedAssistance.Models {
+    [Table("UserStaticInfo", Schema = Schemas.User)]
     public class UserStaticInfo : TrackingTemplate{
         public int Id { get; set; }
         public string LastName { get; set; }

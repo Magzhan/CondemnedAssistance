@@ -1,7 +1,10 @@
-﻿using System;
+﻿using CondemnedAssistance.Services.Database;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CondemnedAssistance.Models {
+    [Table("User", Schema = Schemas.User)]
     public class User : TrackingTemplate {
         [Key]
         public int Id { get; set; }
@@ -22,12 +25,15 @@ namespace CondemnedAssistance.Models {
         public int AccessFailedCount { get; set; }
     }
 
+    [Table("Status", Schema = Schemas.User)]
     public class Status : TemplateTable { 
     }
 
+    [Table("Type", Schema = Schemas.User)]
     public class Type : TemplateTable {
     }
 
+    [Table("UserRegister", Schema = Schemas.User)]
     public class UserRegister : TrackingTemplate {
         [Key]
         public long Id { get; set; }
@@ -39,6 +45,7 @@ namespace CondemnedAssistance.Models {
         public Register Register { get; set; }
     }
 
+    [Table("UserAddress", Schema = Schemas.User)]
     public class UserAddress  : TrackingTemplate {
         [Key]
         public long Id { get; set; }
@@ -50,6 +57,7 @@ namespace CondemnedAssistance.Models {
         public Address Address { get; set; }
     }
 
+    [Table("UserProfession", Schema = Schemas.App)]
     public class UserProfession : TrackingTemplate {
         [Key]
         public long Id { get; set; }
@@ -60,6 +68,7 @@ namespace CondemnedAssistance.Models {
         public int UserId { get; set; }
     }
 
+    [Table("UserRole", Schema = Schemas.User)]
     public class UserRole : TrackingTemplate {
         [Key]
         public long Id { get; set; }
@@ -71,6 +80,7 @@ namespace CondemnedAssistance.Models {
         public Role Role { get; set; }
     }
 
+    [Table("UserHelp", Schema = Schemas.App)]
     public class UserHelp {
         public int Id { get; set; }
 
@@ -81,7 +91,7 @@ namespace CondemnedAssistance.Models {
     }
 
     // ---------------- History tables ------------------------- //
-
+    [Table("UserHistory", Schema = Schemas.History)]
     public class UserHistory : HistoryTemplate {
         [Key]
         public int RecordId { get; set; }
@@ -103,6 +113,7 @@ namespace CondemnedAssistance.Models {
         public int AccessFailedCount { get; set; }
     }
 
+    [Table("UserStaticInfoHistory", Schema = Schemas.History)]
     public class UserStaticInfoHistory : HistoryTemplate {
         public int Id { get; set; }
         public string LastName { get; set; }
@@ -124,6 +135,7 @@ namespace CondemnedAssistance.Models {
         public int UserTypeId { get; set; }
     }
 
+    [Table("UserRoleHistory", Schema = Schemas.History)]
     public class UserRoleHistory : HistoryTemplate {
         [Key]
         public long Id { get; set; }
@@ -133,6 +145,7 @@ namespace CondemnedAssistance.Models {
         public int RoleId { get; set; }
     }
 
+    [Table("UserRegisterHistory", Schema = Schemas.History)]
     public class UserRegisterHistory : HistoryTemplate {
         [Key]
         public long Id { get; set; }
@@ -142,6 +155,7 @@ namespace CondemnedAssistance.Models {
         public int RegisterId { get; set; }
     }
 
+    [Table("UserAddressHistory", Schema = Schemas.History)]
     public class UserAddressHistory : HistoryTemplate {
         [Key]
         public long Id { get; set; }
@@ -151,6 +165,7 @@ namespace CondemnedAssistance.Models {
         public int AddressId { get; set; }
     }
 
+    [Table("UserProfessionHistory", Schema = Schemas.History)]
     public class UserProfessionHistory : HistoryTemplate {
         [Key]
         public long Id { get; set; }

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CondemnedAssistance.Models {
+    [Table("Role", Schema = "user")]
     public class Role : TemplateTable {
     }
 
+    [Table("RoleAccess", Schema = "app")]
     public class RoleAccess : TrackingTemplate {
         public long Id { get; set; }
 

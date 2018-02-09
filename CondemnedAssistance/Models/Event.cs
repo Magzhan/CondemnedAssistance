@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CondemnedAssistance.Models {
+    [Table("Event", Schema = "app")]
     public class Event : TemplateTable {
         public DateTime Date { get; set; }
 
@@ -10,6 +12,7 @@ namespace CondemnedAssistance.Models {
         public int UserId { get; set; }
     }
 
+    [Table("EventStatus", Schema = "app")]
     public class EventStatus : TemplateTable{
     }
 }

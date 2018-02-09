@@ -28,8 +28,7 @@ using CondemnedAssistance.Services.Security.Role;
 using CondemnedAssistance.Services.Security.User;
 using System.Collections.Generic;
 
-namespace CondemnedAssistance
-{
+namespace CondemnedAssistance {
     public class Startup {
 
         public Startup(IHostingEnvironment env) {

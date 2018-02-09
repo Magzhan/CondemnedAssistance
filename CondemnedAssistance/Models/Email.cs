@@ -1,10 +1,13 @@
-﻿using System;
+﻿using CondemnedAssistance.Services.Database;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Models {
+    [Table("Email", Schema = Schemas.User)]
     public class Email {
         [Key]
         public long Id { get; set; }
@@ -12,6 +15,7 @@ namespace CondemnedAssistance.Models {
         public string Text { get; set; }
     }
 
+    [Table("EmailExchange", Schema = Schemas.User)]
     public class EmailExchange {
         public long Id { get; set; }
         public long EmailId { get; set; }

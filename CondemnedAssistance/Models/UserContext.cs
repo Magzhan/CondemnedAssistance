@@ -30,7 +30,7 @@ namespace CondemnedAssistance.Models {
         public DbSet<UserRegisterHistory> UserRegisterHistory { get; set; }
         public DbSet<UserAddressHistory> UserAddressHistory { get; set; }
         public UserContext(DbContextOptions<UserContext> options) : base(options) {
-
+            
         }
     }
 }
