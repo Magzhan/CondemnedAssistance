@@ -1,19 +1,17 @@
-﻿using System;
+﻿using CondemnedAssistance.Services.Database;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Models {
-    [Table("Education", Schema = "app")]
+    [Table("Education", Schema = Schemas.App)]
     public class Education : TemplateTable{
         public int EducationLevelId { get; set; }
 
         public EducationLevel EducationLevel { get; set; }
     }
 
-    [Table("EducationLevel", Schema = "app")]
+    [Table("EducationLevel", Schema = Schemas.App)]
     public class EducationLevel : TemplateTable{
         ICollection<Education> Educations { get; set; }
 
@@ -22,7 +20,7 @@ namespace CondemnedAssistance.Models {
         }
     }
 
-    [Table("UserEducation", Schema = "app")]
+    [Table("UserEducation", Schema = Schemas.App)]
     public class UserEducation {
         [Key]
         public int Id { get; set; }
@@ -31,5 +29,6 @@ namespace CondemnedAssistance.Models {
         public Education Education { get; set; }
 
         public int UserId { get; set; }
+        //public User User { get; set; }
     }
 }

@@ -1,12 +1,12 @@
-﻿
+﻿using CondemnedAssistance.Services.Database;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CondemnedAssistance.Models {
-    [Table("Vacancy", Schema = "app")]
+    [Table("Vacancy", Schema = Schemas.App)]
     public class Vacancy : TemplateTable{
     }
 
-    [Table("VacancyProfession", Schema = "app")]
+    [Table("VacancyProfession", Schema = Schemas.App)]
     public class VacancyProfession {
         public long Id { get; set; }
 

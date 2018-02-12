@@ -24,8 +24,6 @@ namespace CondemnedAssistance.Models {
         public DbSet<RoleAccess> RoleAccesses { get; set; }
         public DbSet<MessageExchange> MessageExchanges { get; set; }
 
-        public DbSet<UserProfessionHistory> UserProfessionHistory { get; set; }
-
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) {
 
         }

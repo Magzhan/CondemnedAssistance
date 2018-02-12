@@ -312,7 +312,7 @@ namespace CondemnedAssistance.Helpers {
                 _app.UserProfessions.Attach(profession);
                 _app.Entry(profession).State = EntityState.Modified;
 
-                _app.UserProfessionHistory.Add(new UserProfessionHistory { ProfessionId = profession.ProfessionId,
+                _db.UserProfessionHistory.Add(new UserProfessionHistory { ProfessionId = profession.ProfessionId,
                     RequestDate = DateTime.Now,
                     RequestUser = currentUser,
                     TransactionId = currentSession.TransactionId,
@@ -325,7 +325,7 @@ namespace CondemnedAssistance.Helpers {
                 switch (entityState) {
                     case EntityState.Added:
                         _app.UserProfessions.Add(new UserProfession { UserId = _user.Id, ProfessionId = professionId });
-                        _app.UserProfessionHistory.Add(new UserProfessionHistory {
+                        _db.UserProfessionHistory.Add(new UserProfessionHistory {
                             UserId = _user.Id,
                             ProfessionId = professionId,
                             RequestDate = DateTime.Now,
@@ -337,7 +337,7 @@ namespace CondemnedAssistance.Helpers {
                     case EntityState.Deleted:
                         UserProfession profession = _app.UserProfessions.First(p => p.ProfessionId == professionId && p.UserId == _user.Id);
                         _app.UserProfessions.Remove(profession);
-                        _app.UserProfessionHistory.Add(new UserProfessionHistory {
+                        _db.UserProfessionHistory.Add(new UserProfessionHistory {
                             UserId = profession.UserId,
                             ProfessionId = profession.ProfessionId,
                             RequestDate = DateTime.Now,
@@ -530,7 +530,7 @@ namespace CondemnedAssistance.Helpers {
             }
 
             foreach(UserProfession profession in _userProfessions) {
-                _app.UserProfessionHistory.Add(new UserProfessionHistory {
+                _db.UserProfessionHistory.Add(new UserProfessionHistory {
                     ProfessionId = profession.ProfessionId,
                     RequestDate = DateTime.Now,
                     RequestUser = currentUser,

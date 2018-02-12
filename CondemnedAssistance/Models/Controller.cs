@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CondemnedAssistance.Services.Database;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CondemnedAssistance.Models {
-    [Table("Controller", Schema = "app")]
+    [Table("Controller", Schema = Schemas.App)]
     public class Controller : TemplateTable {
     }
 
-    [Table("Action", Schema = "app")]
+    [Table("Action", Schema = Schemas.App)]
     public class Action : TemplateTable {
         public int ControllerId { get; set; }
         public Controller Controller { get; set; }

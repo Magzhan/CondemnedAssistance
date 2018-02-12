@@ -29,6 +29,7 @@ namespace CondemnedAssistance.Models {
         public DbSet<UserRoleHistory> UserRoleHistory { get; set; }
         public DbSet<UserRegisterHistory> UserRegisterHistory { get; set; }
         public DbSet<UserAddressHistory> UserAddressHistory { get; set; }
+        public DbSet<UserProfessionHistory> UserProfessionHistory { get; set; }
         public UserContext(DbContextOptions<UserContext> options) : base(options) {
             
         }

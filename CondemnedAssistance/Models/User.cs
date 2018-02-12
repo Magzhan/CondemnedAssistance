@@ -66,6 +66,7 @@ namespace CondemnedAssistance.Models {
         public Profession Profession { get; set; }
 
         public int UserId { get; set; }
+        //public User User { get; set; }
     }
 
     [Table("UserRole", Schema = Schemas.User)]
@@ -88,6 +89,7 @@ namespace CondemnedAssistance.Models {
         public Help Help { get; set; }
 
         public int UserId { get; set; }
+        //public User User { get; set; }
     }
 
     // ---------------- History tables ------------------------- //

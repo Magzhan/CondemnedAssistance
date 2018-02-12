@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using CondemnedAssistance.Services.Database;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CondemnedAssistance.Models {
-    [Table("Role", Schema = "user")]
+    [Table("Role", Schema = Schemas.User)]
     public class Role : TemplateTable {
     }
 
-    [Table("RoleAccess", Schema = "app")]
+    [Table("RoleAccess", Schema = Schemas.App)]
     public class RoleAccess : TrackingTemplate {
         public long Id { get; set; }
 
         public int RoleId { get; set; }
+        //public Role Role { get; set; }
 
         public int ControllerId { get; set; }
         public Controller Controller { get; set; }
