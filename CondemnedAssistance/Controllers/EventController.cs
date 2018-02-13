@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace CondemnedAssistance.Controllers {
     public class EventController : Microsoft.AspNetCore.Mvc.Controller {
@@ -182,7 +183,8 @@ namespace CondemnedAssistance.Controllers {
 
             if (ModelState.IsValid) {
                 if (!_app.Events.Where(e => e.UserId == userId).Any(row => _app.Events.Single(r => r.Id == row.Id).Date == model.Date)) {
-                   Event myEvent = new Event {
+
+                    Event myEvent = new Event {
                         Name = model.Name,
                         NormalizedName = model.Name.ToUpper(),
                         Description = model.Description,
@@ -207,31 +209,13 @@ namespace CondemnedAssistance.Controllers {
             routeVals.Add("id", userId.ToString());
 
             List<LinkClass> links = linkHelper.GetLinks("User", "Update").ToList();
-            links.Add(new LinkClass {
-                Action = "Update",
-                Controller = "User",
-                IsSelected = false,
-                Text = "Персональные данные",
-                RouteValues = routeVals
-            });
+            links.Add(new LinkClass { Action = "Update", Controller = "User", IsSelected = false, Text = "Персональные данные", RouteValues = routeVals });
             Dictionary<string, string> routeVals1 = new Dictionary<string, string> { };
             routeVals1.Add("userId", userId.ToString());
-            links.Add(new LinkClass {
-                Controller = "User",
-                Action = "History",
-                IsSelected = true,
-                Text = "История",
-                RouteValues = routeVals1
-            });
+            links.Add(new LinkClass { Controller = "User", Action = "History", IsSelected = true, Text = "История", RouteValues = routeVals1 });
             Dictionary<string, string> routeVals2 = new Dictionary<string, string> { };
             routeVals2.Add("userId", userId.ToString());
-            links.Add(new LinkClass {
-                Controller = "Event",
-                Action = "Index",
-                IsSelected = true,
-                Text = "Пробация",
-                RouteValues = routeVals2
-            });
+            links.Add(new LinkClass { Controller = "Event", Action = "Index", IsSelected = true, Text = "Пробация", RouteValues = routeVals2 });
             ViewData["sidebar"] = links.ToArray();
             return View(model);
         }

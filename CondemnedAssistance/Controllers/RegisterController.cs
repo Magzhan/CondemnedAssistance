@@ -40,6 +40,8 @@ namespace CondemnedAssistance.Controllers {
                     RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(row => row.Id == r.RegisterLevelId);
                     registerLevelModel.Id = registerLevel.Id;
                     registerLevelModel.Name = registerLevel.Name;
+                    registerLevelModel.IsFirstAncestor = registerLevel.IsFirstAncestor;
+                    registerLevelModel.IsLastChild = registerLevel.IsLastChild;
                     registerLevelModel.Description = registerLevel.Description;
                     registers.Add(new RegisterModel {
                         Id = r.Id,
@@ -53,18 +55,25 @@ namespace CondemnedAssistance.Controllers {
             } else {
                 int registerId = Convert.ToInt32(HttpContext.User.FindFirst(c => c.Type == "RegisterId").Value);
                 int userId = Convert.ToInt32(HttpContext.User.Identity.Name);
-                Register register = _db.Registers.First(r => r.Id == registerId);
-                RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.Id == register.RegisterLevelId);
+                //Register register = _db.Registers.First(r => r.Id == registerId);
+                //RegisterLevel registerLevel = _db.RegisterLevels.FirstOrDefault(r => r.Id == register.RegisterLevelId);
                 
                 registers = _registerHelper.GetUserRegisterModels(userId, registerId);
-                registers.Add(new RegisterModel {
-                    Id = register.Id,
-                    Name = register.Name,
-                    Description = register.Description,
-                    RegisterLevelId = register.RegisterLevelId,
-                    RegisterLevels = new List<RegisterLevelModel> { new RegisterLevelModel { Id = registerLevel.Id, Name = registerLevel.Name, Description = registerLevel.Description } },
-                    RegisterLevelHierarchies = _db.RegisterLevelHierarchies.ToList()
-                });
+                //registers.Add(new RegisterModel {
+                //    Id = register.Id,
+                //    Name = register.Name,
+                //    Description = register.Description,
+                //    RegisterLevelId = register.RegisterLevelId,
+                //    RegisterLevels = new List<RegisterLevelModel> {
+                //        new RegisterLevelModel {
+                //            Id = registerLevel.Id,
+                //            Name = registerLevel.Name,
+                //            Description = registerLevel.Description,
+                //            IsFirstAncestor = registerLevel.IsFirstAncestor,
+                //            IsLastChild = registerLevel.IsLastChild
+                //        } },
+                //    RegisterLevelHierarchies = _db.RegisterLevelHierarchies.ToList()
+                //});
 
                 registers = registers.OrderBy(r => r.RegisterLevelId).ToList();
             }            

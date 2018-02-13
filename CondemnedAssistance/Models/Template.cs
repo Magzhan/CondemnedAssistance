@@ -18,7 +18,7 @@ namespace CondemnedAssistance.Models {
         public DateTime RequestDate { get; set; }
     }
 
-    public class HistoryTemplate : TrackingTemplate{
+    public class HistoryTemplate :  TrackingTemplate {
         public long TransactionId { get; set; }
         public Transaction Transaction { get; set; }
 

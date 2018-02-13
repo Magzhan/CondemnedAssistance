@@ -19,7 +19,11 @@ namespace CondemnedAssistance.Helpers
             } else {
                 List<int> allChildren = new List<int>();
                 int[] tempChildren = _db.RegisterHierarchies.Where(r => r.ParentRegister == parentId).Select(r => r.ChildRegister).ToArray();
-                
+
+                allChildren.AddRange(tempChildren);
+                allChildren.Add(parentId);
+                allChildren.AddRange(children);
+
                 foreach (int child in tempChildren) {
                     allChildren.AddRange(GetRegisterChildren(tempChildren, child));
                 }
@@ -89,8 +93,15 @@ namespace CondemnedAssistance.Helpers
                     Name = r.Name,
                     Description = r.Description,
                     RegisterLevelId = r.RegisterLevelId,
-                    RegisterParentId = _db.RegisterHierarchies.FirstOrDefault(row => row.ChildRegister == r.Id).ParentRegister,
-                    RegisterLevels = new List<RegisterLevelModel> { new RegisterLevelModel { Id = registerLevel.Id, Name = registerLevel.Name, Description = registerLevel.Description } },
+                    RegisterParentId = (_db.RegisterHierarchies.FirstOrDefault(row => row.ChildRegister == r.Id) == null) ? 0 : _db.RegisterHierarchies.FirstOrDefault(row => row.ChildRegister == r.Id).ParentRegister,
+                    RegisterLevels = new List<RegisterLevelModel> {
+                        new RegisterLevelModel {
+                            Id = registerLevel.Id,
+                            Name = registerLevel.Name,
+                            Description = registerLevel.Description,
+                            IsFirstAncestor = registerLevel.IsFirstAncestor,
+                            IsLastChild = registerLevel.IsLastChild
+                        } },
                     RegisterLevelHierarchies = _db.RegisterLevelHierarchies.ToList()
                 });
             });

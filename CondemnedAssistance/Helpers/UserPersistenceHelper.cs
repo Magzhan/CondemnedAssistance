@@ -27,7 +27,6 @@ namespace CondemnedAssistance.Helpers {
         private List<UserProfession> _userProfessions;
 
         private IDbContextTransaction _transaction;
-        private TransactionScope _t;
         private Models.Transaction currentSession;
         private int currentUser;
         private DatabaseActionTypes currentAction;
@@ -195,6 +194,8 @@ namespace CondemnedAssistance.Helpers {
             }
 
             _userRole.RoleId = _model.RoleId;
+            _userRole.RequestDate = DateTime.Now;
+            _userRole.RequestUser = currentUser;
 
             switch (_state) {
                 case PersistenceState.Create:
@@ -214,6 +215,8 @@ namespace CondemnedAssistance.Helpers {
                     break;
             }
             _userRegister.RegisterId = _model.UserRegisterId;
+            _userRegister.RequestDate = DateTime.Now;
+            _userRegister.RequestUser = currentUser;
 
             switch (_state) {
                 case PersistenceState.Create:
@@ -230,9 +233,9 @@ namespace CondemnedAssistance.Helpers {
             switch (_state) {
                 case PersistenceState.Create:
                     _userAddresses = new UserAddress[] {
-                        new UserAddress { UserId = _user.Id, AddressId = _model.AddressLevelOneId},
-                        new UserAddress { UserId = _user.Id, AddressId = _model.AddressLevelTwoId},
-                        new UserAddress { UserId = _user.Id, AddressId = _model.AddressLevelThreeId}
+                        new UserAddress { UserId = _user.Id, AddressId = _model.AddressLevelOneId, RequestDate = DateTime.Now, RequestUser = currentUser},
+                        new UserAddress { UserId = _user.Id, AddressId = _model.AddressLevelTwoId, RequestDate = DateTime.Now, RequestUser = currentUser},
+                        new UserAddress { UserId = _user.Id, AddressId = _model.AddressLevelThreeId, RequestDate = DateTime.Now, RequestUser = currentUser}
                     }.ToList();
 
                     _db.UserAddresses.AddRange(_userAddresses);
@@ -250,6 +253,8 @@ namespace CondemnedAssistance.Helpers {
                                 address.AddressId = _model.AddressLevelThreeId;
                                 break;
                         }
+                        address.RequestDate = DateTime.Now;
+                        address.RequestUser = currentUser;
                         _db.UserAddresses.Attach(address);
                         _db.Entry(address).State = EntityState.Modified;
                     }
@@ -512,10 +517,14 @@ namespace CondemnedAssistance.Helpers {
 
             _userRoleHist.UserId = _userRole.UserId;
             _userRoleHist.RoleId = _userRole.RoleId;
+            _userRoleHist.RequestDate = DateTime.Now;
+            _userRoleHist.RequestUser = currentUser;
             _db.UserRoleHistory.Add(_userRoleHist);
 
             _userRegisterHist.UserId = _userRegister.UserId;
             _userRegisterHist.RegisterId = _userRegister.RegisterId;
+            _userRegisterHist.RequestDate = DateTime.Now;
+            _userRegisterHist.RequestUser = currentUser;
             _db.UserRegisterHistory.Add(_userRegisterHist);
 
             foreach (UserAddress address in _userAddresses) {
