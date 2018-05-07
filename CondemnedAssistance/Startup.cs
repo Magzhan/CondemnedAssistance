@@ -86,13 +86,14 @@ namespace CondemnedAssistance {
             //Websockets
             //MVC
 
+            app.UseWebSockets();
+
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
             else {
                 app.UseExceptionHandler("/error");
             }
-            app.UseWebSockets();
             app.UseStaticFiles();
 
             app.UseAuthentication();
