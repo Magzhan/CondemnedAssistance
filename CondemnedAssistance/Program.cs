@@ -15,6 +15,5 @@ namespace CondemnedAssistance {
 
             host.Run();
         }
-        //test test2 test3
     }
 }
