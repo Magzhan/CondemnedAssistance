@@ -304,13 +304,20 @@ namespace CondemnedAssistance {
                 await context.SaveChangesAsync();
             }
 
+            var resp = new RegisterLevel { Name = "Республика", IsFirstAncestor = true, IsLastChild = false, NormalizedName = "Республика".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1 };
+            var obl = new RegisterLevel { Name = "Облыс", IsFirstAncestor = false, IsLastChild = false, NormalizedName = "Облыс".ToUpper(), Description = "2", RequestDate = DateTime.Now, RequestUser = -1 };
+            var reg = new RegisterLevel { Name = "Район", IsFirstAncestor = false, IsLastChild = true, NormalizedName = "Район".ToUpper(), Description = "3", RequestDate = DateTime.Now, RequestUser = -1 };
+
             if (!await context.RegisterLevels.AnyAsync()) {
-                await context.RegisterLevels.AddRangeAsync(
-                    new RegisterLevel { Name = "Республика", NormalizedName = "Республика".ToUpper(), Description = "1", RequestDate = DateTime.Now, RequestUser = -1},
-                    new RegisterLevel { Name = "Облыс", NormalizedName = "Облыс".ToUpper(), Description = "2", RequestDate = DateTime.Now, RequestUser = -1 },
-                    new RegisterLevel { Name = "Район", NormalizedName = "Район".ToUpper(), Description = "3", RequestDate = DateTime.Now, RequestUser = -1 }
-                );
+                await context.RegisterLevels.AddRangeAsync(resp, obl, reg);
                 await context.SaveChangesAsync();
+            }
+
+            if(!await context.RegisterLevelHierarchies.AnyAsync()) {
+                await context.RegisterLevelHierarchies.AddRangeAsync(
+                    new RegisterLevelHierarchy {  ParentLevel = resp.Id, ChildLevel = obl.Id },
+                    new RegisterLevelHierarchy {  ParentLevel = obl.Id, ChildLevel = reg.Id }
+                );
             }
 
             if (!await context.Registers.AnyAsync()) {
@@ -359,6 +366,20 @@ namespace CondemnedAssistance {
                     RequestDate = DateTime.Now,
                     RequestUser = -1
                 };
+
+                User admin2 = new User
+                {
+                    Email = "akylzhan.bidakhmetov@gmail.com",
+                    EmailConfirmed = false,
+                    Login = "930615350539",
+                    PasswordHash = "qwerty",
+                    NormalizedEmail = "akylzhan.bidakhmetov@gmail.com".ToUpper(),
+                    PhoneNumber = "87019677200",
+                    PhoneNumberConfirmed = false,
+                    AccessFailedCount = 0,
+                    RequestDate = DateTime.Now,
+                    RequestUser = -1
+                };
                 UserStaticInfo admin1info = new UserStaticInfo {
                     Birthdate = new DateTime(1993, 10, 23),
                     FirstName = "Magzhan",
@@ -372,9 +393,30 @@ namespace CondemnedAssistance {
                     UserStatusId = 1,
                     UserTypeId = 1
                 };
+                UserStaticInfo admin2info = new UserStaticInfo
+                {
+                    Birthdate = new DateTime(1993, 06, 15),
+                    FirstName = "Akylzhan  ",
+                    Gender = true, // Male
+                    LastName = "Bidakhmetov",
+                    MainAddress = "Gete 107",
+                    MiddleName = "Nurlanuly",
+                    RequestDate = DateTime.Now,
+                    RequestUser = -1,
+                    Xin = "930615350539",
+                    UserStatusId = 1,
+                    UserTypeId = 1
+                };
                 UserRole admin1role = new UserRole {
                     RoleId = 3,
                     UserId = 2,
+                    RequestDate = DateTime.Now,
+                    RequestUser = -1
+                };
+                UserRole admin2role = new UserRole
+                {
+                    RoleId = 3,
+                    UserId = 3,
                     RequestDate = DateTime.Now,
                     RequestUser = -1
                 };
@@ -384,17 +426,27 @@ namespace CondemnedAssistance {
                     RequestUser = -1,
                     RequestDate = DateTime.Now
                 };
+                UserRegister admin2register = new UserRegister
+                {
+                    UserId = 3,
+                    RegisterId = 1,
+                    RequestUser = -1,
+                    RequestDate = DateTime.Now
+                };
                 await context.Users.AddRangeAsync(
-                    system, admin1
-                );
+                    system, admin1,admin2
+                    );
                 await context.SaveChangesAsync();
 
                 admin1info.UserId = admin1.Id;
-                await context.UserInfo.AddAsync(admin1info);
+                admin2info.UserId = admin2.Id;
+                await context.UserInfo.AddRangeAsync(admin1info, admin2info);
                 admin1role.UserId = admin1.Id;
-                await context.UserRoles.AddAsync(admin1role);
+                admin2role.UserId = admin2.Id;
+                await context.UserRoles.AddRangeAsync(admin1role, admin2role);
                 admin1register.UserId = admin1.Id;
-                await context.UserRegisters.AddAsync(admin1register);
+                admin2register.UserId = admin2.Id;
+                await context.UserRegisters.AddRangeAsync(admin1register, admin2register);
             }
             await context.SaveChangesAsync();
         }
