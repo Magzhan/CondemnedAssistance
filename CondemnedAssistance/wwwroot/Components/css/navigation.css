@@ -69,10 +69,11 @@
     z-index: 2;
     left: 60%;
     margin-left: -100px;
-    top: -400px;
+    /*top: -400px;*/
     color: #777;
+    display: none;
 }
-
+    
 .dropOut {
     width: 200px;
     background: white;
@@ -93,6 +94,7 @@
     .dropOut ul {
         float: left;
         padding: 0 0;
+        
     }
 
         .dropOut ul li {
@@ -103,10 +105,13 @@
             padding: 12px 0 10px 15px;
             margin: 0px 15px;
             color: #777;
+
+            
         }
 
             .dropOut ul li a {
                 color: #777;
+
             }
 
     .dropOut li:first-child {
@@ -118,6 +123,7 @@
         -webkit-transition: all 200ms ease-in;
         -o-transition: all 200ms ease-in;
         -moz-transition: all 200ms ease-in;
+        display: block;
     }
 
 ul li:hover a {
@@ -128,6 +134,7 @@ ul li:hover a {
 
 ul li:hover .dropdownContain {
     top: 45px;
+    display: block;
 }
 
 ul li:hover .underline {
@@ -137,4 +144,5 @@ ul li:hover .underline {
 ul li:hover .dropOut {
     opacity: 1;
     margin-top: 8px;
+  
 }
